@@ -1,0 +1,22 @@
+
+State Machine - |vga_test|vidState
+Name vidState.vSync vidState.hSync vidState.activeVideo 
+vidState.activeVideo 0 0 0 
+vidState.hSync 0 1 1 
+vidState.vSync 1 0 1 
+
+State Machine - |vga_test|horState
+Name horState.blank horState.backPorch horState.syncPulse horState.frontPorch horState.activeVideo 
+horState.activeVideo 0 0 0 0 0 
+horState.frontPorch 0 0 0 1 1 
+horState.syncPulse 0 0 1 0 1 
+horState.backPorch 0 1 0 0 1 
+horState.blank 1 0 0 0 1 
+
+State Machine - |vga_test|verState
+Name verState.blank verState.backPorch verState.syncPulse verState.frontPorch verState.activeVideo 
+verState.activeVideo 0 0 0 0 0 
+verState.frontPorch 0 0 0 1 1 
+verState.syncPulse 0 0 1 0 1 
+verState.backPorch 0 1 0 0 1 
+verState.blank 1 0 0 0 1 
