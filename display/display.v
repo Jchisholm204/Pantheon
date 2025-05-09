@@ -51,16 +51,37 @@ vga_controller vga(
     .oVGA_Sync(oVGA_Sync)
 );
 
+wire [7:0] line;
+reg [7:0] char;
+
+font_rom fonts(
+    .iChar(char),
+    .iRow(row[3:0]),
+    .oLine(line)
+);
+
 always @(posedge iClk_50) begin
-    if(row < vga_controller.ROW_VA/2) begin
-        R = 10'd400;
-        G = 10'd0;
-        B = 10'd800;
+    if(col[3]) begin
+        char = 8'h69;
     end else begin
-        R = 10'd200;
-        G = 10'd0;
-        B = 10'd400;
+        char = 8'h0;
     end
+    // if(row > 16 && row < 32 && col < 16 && col > 8) begin
+    //     R = 10'd0;
+    //     G = 10'd0;
+    //     B = 10'd0;
+    // end else if(row < vga_controller.ROW_VA/2) begin
+    //     R = 10'd400;
+    //     G = 10'd0;
+    //     B = 10'd800;
+    // end else begin
+    //     R = 10'd200;
+    //     G = 10'd0;
+    //     B = 10'd400;
+    // end
+    R = line[col[2:0]] ? 10'd1000 : 10'd0;
+    G = line[col[2:0]] ? 10'd1000 : 10'd0;
+    B = line[col[2:0]] ? 10'd1000 : 10'd0;
 end
 
 endmodule
