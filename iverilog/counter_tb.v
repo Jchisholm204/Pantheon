@@ -1,6 +1,7 @@
 module count_up_tb();
 wire [3:0] count;
 reg clk,reset; 
+
 count_up DUT(.clk(clk),.reset(reset),.count(count));
 
 initial begin
