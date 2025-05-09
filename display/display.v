@@ -53,6 +53,7 @@ vga_controller vga(
 
 wire [7:0] line;
 reg [7:0] char;
+wire [31:0] buffer_data;
 
 font_rom fonts(
     .iChar(char),
@@ -60,28 +61,25 @@ font_rom fonts(
     .oLine(line)
 );
 
+frame_buffer buffer(
+    .iClk(iClk_50),
+    .nRst(nRst),
+    .iWriteEn(1'b0),
+    .iWAddr(32'd0),
+    .iRAddr({19'd0, row[9:4], col[9:3]}),
+    .iData(32'd0),
+    .oData(buffer_data)
+);
+
 always @(posedge iClk_50) begin
-    if(col[3]) begin
-        char = 8'h69;
-    end else begin
-        char = 8'h0;
-    end
-    // if(row > 16 && row < 32 && col < 16 && col > 8) begin
-    //     R = 10'd0;
-    //     G = 10'd0;
-    //     B = 10'd0;
-    // end else if(row < vga_controller.ROW_VA/2) begin
-    //     R = 10'd400;
-    //     G = 10'd0;
-    //     B = 10'd800;
-    // end else begin
-    //     R = 10'd200;
-    //     G = 10'd0;
-    //     B = 10'd400;
-    // end
-    R = line[col[2:0]] ? 10'd1000 : 10'd0;
-    G = line[col[2:0]] ? 10'd1000 : 10'd0;
-    B = line[col[2:0]] ? 10'd1000 : 10'd0;
+    char = buffer_data[7:0];
+    R = line[col[3:0]] ? {buffer_data[31:24], 2'b00} : 10'd0;
+    G = line[col[3:0]] ? {buffer_data[23:16], 2'b00} : 10'd0;
+    B = line[col[3:0]] ? {buffer_data[15:8],  2'b00} : 10'd0;
+
+    // R = line[col[3:0]] ? 10'd500 : 10'd0;
+    // G = line[col[3:0]] ? 10'd500 : 10'd0;
+    // B = line[col[3:0]] ? 10'd500 : 10'd0;
 end
 
 endmodule

@@ -1,3 +1,14 @@
+/**
+ * @file font_rom.v
+ * @author Jacob Chisholm (https://Jchisholm204.github.io)
+ * @brief Font Read Only Memory - Stores Font Bit Maps
+ * @version 0.1
+ * @date Created: 2025-05-08
+ * @modified Last Modified: 2025-05-08
+ *
+ * @copyright Copyright (c) 2025
+ */
+
 module font_rom(
     iChar,
     iRow,
