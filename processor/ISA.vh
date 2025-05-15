@@ -1,15 +1,4 @@
 /**
- * @file isa_decoder.v
- * @author Jacob Chisholm (https://Jchisholm204.github.io)
- * @brief 
- * @version 0.1
- * @date Created: 2025-05-11
- * @modified Last Modified: 2025-05-11
- *
- * @copyright Copyright (c) 2025
- */
-
-/**
  * @file ISA.vh
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
  * @brief 
@@ -143,6 +132,7 @@
 // U Type Instructions
 `define ISA_OP_LUI   7'b0110111
 `define ISA_OP_AUIPC 7'b0110111
+
 
 
 

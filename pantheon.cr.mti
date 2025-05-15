@@ -1,0 +1,38 @@
+/home/jacob/Documents/github/Pantheon/processor/control/control.v {0 {vlog -work work -stats=none /home/jacob/Documents/github/Pantheon/processor/control/control.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module Control
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(166): (vlog-2730) Undefined variable: 'OP_JFR'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OPF_R'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OPF_I'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_DIV'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_MUL'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_ST'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_MFH'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_MFL'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(173): (vlog-2730) Undefined variable: 'OP_IN'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(178): (vlog-2730) Undefined variable: 'OPF_J'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(180): (vlog-2730) Undefined variable: 'OPF_B'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(190): (vlog-2730) Undefined variable: 'OP_ADD'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(190): (vlog-2730) Undefined variable: 'OP_ADDI'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(190): (vlog-2163) Macro `CTRL_ALU_ADD is undefined.
+** Error: (vlog-13069) /home/jacob/Documents/github/Pantheon/processor/control/control.v(190): near ":": syntax error, unexpected ':'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(191): (vlog-2163) Macro `CTRL_ALU_SUB is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(192): (vlog-2163) Macro `CTRL_ALU_OR is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(193): (vlog-2163) Macro `CTRL_ALU_AND is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(194): (vlog-2163) Macro `CTRL_ALU_MUL is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(195): (vlog-2163) Macro `CTRL_ALU_DIV is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(196): (vlog-2163) Macro `CTRL_ALU_SLL is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(197): (vlog-2163) Macro `CTRL_ALU_SRL is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(198): (vlog-2163) Macro `CTRL_ALU_SRA is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(199): (vlog-2163) Macro `CTRL_ALU_ROR is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(200): (vlog-2163) Macro `CTRL_ALU_ROL is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(201): (vlog-2163) Macro `CTRL_ALU_NOT is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(202): (vlog-2163) Macro `CTRL_ALU_NEG is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(204): (vlog-2163) Macro `CTRL_ALU_ADD is undefined.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(218): (vlog-2730) Undefined variable: 'OP_OUT'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(225): (vlog-2730) Undefined variable: 'OP_LD'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(238): (vlog-2730) Undefined variable: 'OP_BRx'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(238): (vlog-2730) Undefined variable: 'ID_BRD'.
+** Error: /home/jacob/Documents/github/Pantheon/processor/control/control.v(238): (vlog-2730) Undefined variable: 'ID_imm32'.
+
+} {4.0 37.0} {}}
