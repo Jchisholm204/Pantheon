@@ -12,6 +12,9 @@ CHAR_HEIGHT = 16
 CHAR_START = 0x20  # Space
 CHAR_END   = 0x7F  # DEL (printable characters)
 
+def reverse_bits(byte):
+    return int('{:08b}'.format(byte)[::-1], 2)
+
 def render_char_to_bitmap(font, char):
     img = Image.new("L", (CHAR_WIDTH, CHAR_HEIGHT), 0)
     draw = ImageDraw.Draw(img)
@@ -38,8 +41,9 @@ def main():
             for x in range(CHAR_WIDTH):
                 pixel = cropped.getpixel((x, y))
                 if pixel:
-                    row_bits |= (1 << (7 - x))  # MSB on the left
-            hex_lines.append(f"{row_bits:02X}")
+                    row_bits |= (1 << (7 - x))  # Original MSB-left layout
+            reversed_row = reverse_bits(row_bits)  # <-- Add this
+            hex_lines.append(f"{reversed_row:02X}")
 
     with open(OUTPUT_PATH, "w") as f:
         f.write("\n".join(hex_lines))

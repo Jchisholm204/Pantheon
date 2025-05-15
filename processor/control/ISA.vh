@@ -29,6 +29,8 @@
 `define ISA_F7_SRA  7'b0100000
 `define ISA_F7_OR   7'b0000000
 `define ISA_F7_AND  7'b0000000
+// M Extention
+`define ISA_F7_MUL  7'b0000001
 
 // Immediate [11:5] - For Shifts
 `define ISA_IM_SLLI 7'b0000000
@@ -46,6 +48,15 @@
 `define ISA_F3_SRA  3'b101
 `define ISA_F3_OR   3'b110
 `define ISA_F3_AND  3'b111
+// M Extention
+`define ISA_F3_MUL   3'b000
+`define ISA_F3_MULH  3'b001
+`define ISA_F3_MULSU 3'b010
+`define ISA_F3_MULU  3'b011
+`define ISA_F3_DIV   3'b100
+`define ISA_F3_DIVU  3'b101
+`define ISA_F3_REM   3'b110
+`define ISA_F3_REMU  3'b111
 
 /*
 * Store Type Instructions
@@ -119,8 +130,8 @@
 
 
 // U Type Instructions
-`define ISA_OPU_LUI   7'b0110111
-`define ISA_OPU_AUIPC 7'b0110111
+`define ISA_OP_LUI   7'b0110111
+`define ISA_OP_AUIPC 7'b0110111
 
 
 
