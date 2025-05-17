@@ -1,15 +1,16 @@
 /**
  * @file decoder.sv
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
- * @brief 
+ * @brief Instruction Mapping Decoder
  * @version 0.1
  * @date Created: 2025-05-14
  * @modified Last Modified: 2025-05-14
  *
  * @copyright Copyright (c) 2025
  */
+import rv32_isa::*;
 
-module Decoder (
+module decoder (
     iINS,
     oOpCode,
     oRS1, oRS2, oRD,
@@ -17,9 +18,9 @@ module Decoder (
     oImmI, oImmU, oImmJ, oImmB, oImmS
 );
 
-input wire [31:0] iINS;
+input  wire [RegWidth-1:0] iINS;
 output wire [31:0] oOpCode;
-output wire [4:0] oRS1, oRS2, oRD;
+output wire [RegAddrWidth-1:0] oRS1, oRS2, oRD;
 output wire [2:0] oFunc3;
 output wire [6:0] oFunc7;
 output wire [31:0] oImmI;
@@ -54,3 +55,4 @@ assign oImmB = {{19{ImmB[11]}}, ImmB};
 assign oImmS = {{19{ImmS[11]}}, ImmS};
 
 endmodule
+

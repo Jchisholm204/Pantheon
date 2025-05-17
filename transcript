@@ -14,3 +14,36 @@
 # Compile of control.v failed with 33 errors.
 # Compile of isa_decoder.v was successful.
 # 2 compiles, 1 failed with 33 errors.
+# Compile of control.v failed with 33 errors.
+# Compile of isa_decoder.v was successful.
+# 2 compiles, 1 failed with 33 errors.
+# Compile of decoder.sv was successful.
+# Error opening /home/jacob/Documents/github/Pantheon/processor/ID/decoder.sv
+# Path name '/home/jacob/Documents/github/Pantheon/processor/ID/decoder.sv' doesn't exist.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv was successful.
+# 3 compiles, 0 failed with no errors.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv failed with 6 errors.
+# 3 compiles, 1 failed with 6 errors.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv failed with 6 errors.
+# 3 compiles, 1 failed with 6 errors.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv was successful.
+# 3 compiles, 0 failed with no errors.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv was successful.
+# 3 compiles, 0 failed with no errors.
+# Compile of register_file.sv failed with 1 errors.
+# Compile of decoder.sv was successful.
+# Compile of rv32_isa.sv was successful.
+# Compile of register_file.sv failed with 2 errors.
+# 3 compiles, 1 failed with 2 errors.
+# Compile of register_file.sv failed with 2 errors.
+# Compile of register_file.sv was successful.
