@@ -5,7 +5,7 @@ VERILOG_SOURCES = $(filter-out %cocotb_iverilog_dump.v, \
 TOPLEVEL = register_file
 MODULE = register_file  # Name of the Python test without .py
 
-WAVES=1  # This tells cocotb to dump VCD automatically
+WAVES=3  # This tells cocotb to dump VCD automatically
 SIM=icarus
 
 IVERILOG_FLAGS += -D ICARUS_TRACE_ARRAYS
