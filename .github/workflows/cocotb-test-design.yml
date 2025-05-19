@@ -29,10 +29,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential autoconf flex bison gperf pkg-config \
-            libreadline-dev texinfo libboost-dev libboost-system-dev libboost-filesystem-dev
+          libreadline-dev texinfo libboost-dev libboost-system-dev libboost-filesystem-dev
 
-          # Clone Icarus Verilog repo (v11.0 is latest stable as of now)
-          git clone --depth=1 --branch v11.0 https://github.com/steveicarus/iverilog.git
+          # Clone the latest Icarus Verilog master branch
+          git clone --depth=1 https://github.com/steveicarus/iverilog.git
 
           cd iverilog
           autoreconf -fiv
