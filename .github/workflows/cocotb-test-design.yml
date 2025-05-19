@@ -1,12 +1,5 @@
 name: CocoTB Design Verification
 on: [push]
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
-
-permissions:
-  contents: read
 
 jobs:
   TestDesign:
