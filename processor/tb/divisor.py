@@ -66,16 +66,16 @@ async def test_div32_large(dut):
 async def test_div32_small(dut):
     """Basic test for DIV32 module"""
     random.seed(9876348765)
-    for signed in [0, 1]:
+    for signed in [1, -1]:
         for i in range(200):
             # dividend = random.randint(0, 2**31 - 1)
             # divisor = random.randint(1, 2**31 - 1)
             random.seed(i*23040274)
-            divisor = int(random.random()*894923202)
+            divisor = int(random.random()*894923202)*signed
             random.seed(i*2873462)
-            dividend = int(random.random()*28376)
+            dividend = int(random.random()*28376)*signed
 
-            dut.iSigned.value = signed
+            dut.iSigned.value = signed < 0
             dut.iDividend.value = dividend
             dut.iDivisor.value = divisor
 
