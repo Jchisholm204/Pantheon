@@ -1,5 +1,5 @@
 name: CocoTB Design Verification
-on:
+on: [push]
   push:
     branches: [ $default-branch ]
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  TestDesign:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
