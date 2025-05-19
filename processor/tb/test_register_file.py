@@ -130,7 +130,7 @@ def test_register_file_runner():
     runner.build(
             verilog_sources=sources,
             hdl_toplevel="register_file",
-            clean=True,
+            clean=False,
             waves=True,
             always=True,
             build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
@@ -138,7 +138,8 @@ def test_register_file_runner():
     runner.test(
             hdl_toplevel="register_file",
             test_module="test_register_file",
-            plusargs=["-fst"]
+            plusargs=["-fst"],
+            waves=True
             )
 
 

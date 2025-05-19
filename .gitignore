@@ -19,3 +19,6 @@ sim_build/*
 *.vcd
 results.xml
 work/*
+
+# Nvim
+.nvim/*

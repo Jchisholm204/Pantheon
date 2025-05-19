@@ -104,7 +104,7 @@ def test_div32_runner():
     runner.build(
         verilog_sources=sources,
         hdl_toplevel="DIV32",
-        clean=True,
+        clean=False,
         waves=True,
         build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
         always=True,
@@ -112,9 +112,8 @@ def test_div32_runner():
     runner.test(
         hdl_toplevel="DIV32",
         test_module="test_divisor",
-        # extra_env={"WAVES_FORMAT": "vcd", "WAVES_FILE": "DIV32.vcd"},
-        # test_args=["-fst"],
-        plusargs=["-fst"]
+        plusargs=["-fst"],
+        waves=True
     )
 
 

@@ -47,3 +47,4 @@
 # 3 compiles, 1 failed with 2 errors.
 # Compile of register_file.sv failed with 2 errors.
 # Compile of register_file.sv was successful.
+# Window cannot be closed because the modal window "Quit Vsim" is still open.
