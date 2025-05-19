@@ -8,7 +8,7 @@
  *
  * @copyright Copyright (c) 2025
  */
-
+`timescale 1ns/100ps
 import rv32_isa::RegWidth;
 import rv32_isa::RegAddrWidth;
 
@@ -48,4 +48,4 @@ endgenerate
 assign oRs1 = (iAddr_Rs1 == {RegAddrWidth{1'b0}}) ? {RegWidth{1'b0}} : 'z;
 assign oRs2 = (iAddr_Rs2 == {RegAddrWidth{1'b0}}) ? {RegWidth{1'b0}} : 'z;
 
-endmodule
+endmodule;

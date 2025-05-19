@@ -1,11 +1,13 @@
 import cocotb
-from cocotb.triggers import Timer
-from cocotb.result import TestFailure
-from cocotb.binary import BinaryValue
+import os
 import random
+from cocotb.triggers import Timer
+from cocotb.runner import get_runner
+from pathlib import Path
+
 
 @cocotb.test()
-async def test_div32_basic(dut):
+async def div32_basic(dut):
     """Basic test for DIV32 module"""
     random.seed(9876348765)
     for signed in [0, 1]:
@@ -34,7 +36,7 @@ async def test_div32_basic(dut):
 
 
 @cocotb.test()
-async def test_div32_large(dut):
+async def div32_large(dut):
     """Basic test for DIV32 module"""
     random.seed(9876348765)
     for signed in [0, 1]:
@@ -63,7 +65,7 @@ async def test_div32_large(dut):
 
 
 @cocotb.test()
-async def test_div32_small(dut):
+async def div32_small(dut):
     """Basic test for DIV32 module"""
     random.seed(9876348765)
     for signed in [1, -1]:
@@ -89,3 +91,32 @@ async def test_div32_small(dut):
 
             assert q == expected_q, f'{dividend}/{divisor}, Q: {expected_q}, got {q}'
             assert r == expected_r, f"Expected remainder {expected_r}, got {r}"
+
+
+def test_div32_runner():
+    sim = os.getenv("SIM", "icarus")
+
+    proj_path = Path(__file__).resolve().parent.parent
+
+    sources = [proj_path / "ALU/DIV32.sv"]
+
+    runner = get_runner(sim)
+    runner.build(
+        verilog_sources=sources,
+        hdl_toplevel="DIV32",
+        clean=True,
+        waves=True,
+        build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
+        always=True,
+    )
+    runner.test(
+        hdl_toplevel="DIV32",
+        test_module="test_divisor",
+        # extra_env={"WAVES_FORMAT": "vcd", "WAVES_FILE": "DIV32.vcd"},
+        # test_args=["-fst"],
+        plusargs=["-fst"]
+    )
+
+
+if __name__ == "__main__":
+    test_div32_runner()

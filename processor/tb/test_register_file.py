@@ -1,6 +1,9 @@
 import cocotb
+import os
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge
+from cocotb.runner import get_runner
+from pathlib import Path
 
 
 async def setup_test(dut):
@@ -112,3 +115,32 @@ async def regfile_test_forwarding(dut):
         regVal = dut.oRs1.value.integer
         assert regVal == testVal, \
             f"Failed Forward Write on Reg {reg}, expected {testVal:#x}, got {regVal:#x}"
+
+
+def test_register_file_runner():
+    sim = os.getenv("SIM", "icarus")
+
+    proj_path = Path(__file__).resolve().parent.parent
+
+    # sources = [proj_path / "register_file.sv",
+    #            proj_path / "rv32_isa.sv"]
+    sources = list((proj_path).glob("*.sv"))
+
+    runner = get_runner(sim)
+    runner.build(
+            verilog_sources=sources,
+            hdl_toplevel="register_file",
+            clean=True,
+            waves=True,
+            always=True,
+            build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
+            )
+    runner.test(
+            hdl_toplevel="register_file",
+            test_module="test_register_file",
+            plusargs=["-fst"]
+            )
+
+
+if __name__ == "__main__":
+    test_register_file_runner()

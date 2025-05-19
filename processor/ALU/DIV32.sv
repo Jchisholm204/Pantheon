@@ -1,3 +1,4 @@
+`timescale 1ns/100ps
 module DIV32(
     iSigned,
     iDivisor, iDividend,
@@ -80,5 +81,6 @@ assign shift = {iA[30:0], iDivR};
 assign oA = shift[31] ? shift + iDivD : shift - iDivD;
 // Output 1 to result if the add/sub result was positive
 assign oQ = ~oA[31];
+// assign oQ = 1'b0;
 
 endmodule
