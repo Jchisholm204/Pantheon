@@ -1,3 +1,14 @@
+/**
+ * @file DIV32.sv
+ * @author Jacob Chisholm (https://Jchisholm204.github.io)
+ * @brief 
+ * @version 0.1
+ * @date Created: 2025-05-17
+ * @modified Last Modified: 2025-05-19
+ *
+ * @copyright Copyright (c) 2025
+ */
+
 `timescale 1ns/100ps
 module DIV32(
     iSigned,
