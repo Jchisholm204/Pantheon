@@ -118,7 +118,7 @@ async def regfile_test_forwarding(dut):
 
 
 def test_register_file_runner():
-    sim = os.getenv("SIM", "verilator")
+    sim = os.getenv("SIM", "icarus")
 
     proj_path = Path(__file__).resolve().parent.parent
 
