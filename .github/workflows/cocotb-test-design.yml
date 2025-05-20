@@ -6,43 +6,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python ENV
         uses: actions/setup-python@v3
         with:
-          python-version: "3.11"
-
+          python-version: "3.13"
       - name: Install Python Deps
         run: |
           python -m pip install --upgrade pip
           pip install cocotb pytest
-
-      - name: Cache Icarus Verilog build
-        id: cache-iverilog
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/iverilog-install
-          key: iverilog-${{ runner.os }}-v11.0
-
-      - name: Build and install Icarus Verilog from source
-        if: steps.cache-iverilog.outputs.cache-hit != 'true'
-        run: |
+      - name: Install iverilog/icarus
           sudo apt-get update
-          sudo apt-get install -y build-essential autoconf flex bison gperf pkg-config \
-          libreadline-dev texinfo libboost-dev libboost-system-dev libboost-filesystem-dev
-
-          # Clone the latest Icarus Verilog master branch
-          git clone --depth=1 https://github.com/steveicarus/iverilog.git
-
-          cd iverilog
-          autoreconf -fiv
-          ./configure --prefix=$GITHUB_WORKSPACE/iverilog-install
-          make -j$(nproc)
-          make install
-
-      - name: Add Icarus Verilog to PATH
-        run: echo "${{ github.workspace }}/iverilog-install/bin" >> $GITHUB_PATH
-
+          sudo apt-get install -y iverilog
       - name: Run Pytest
         run: pytest
         continue-on-error: true
