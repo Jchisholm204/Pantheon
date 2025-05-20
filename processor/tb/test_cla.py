@@ -56,13 +56,19 @@ def test_cla_runner():
 
     sources = [proj_path / "ALU/CLA.sv"]
 
+    if sim == "icarus":
+        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
+    else:
+        build_args = ["--trace", "-Wno-fatal"]
+
     runner = get_runner(sim)
     runner.build(
         verilog_sources=sources,
         hdl_toplevel="CLA",
         clean=False,
         waves=True,
-        build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
+        # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
+        build_args=build_args,
         always=True,
     )
     runner.test(

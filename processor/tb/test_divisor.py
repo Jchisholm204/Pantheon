@@ -100,13 +100,18 @@ def test_div32_runner():
 
     sources = [proj_path / "ALU/DIV32.sv"]
 
+    if sim == "icarus":
+        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
+    else:
+        build_args = ["--trace", "-Wno-fatal"]
+
     runner = get_runner(sim)
     runner.build(
         verilog_sources=sources,
         hdl_toplevel="DIV32",
         clean=False,
         waves=True,
-        build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
+        build_args=build_args,
         always=True,
     )
     runner.test(

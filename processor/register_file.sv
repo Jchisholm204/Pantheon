@@ -28,13 +28,13 @@ output wor [RegWidth-1:0] oRs1, oRs2;
 
 genvar i;
 generate
-for(i=1; i < NRegs-1; i++) begin : gen_registers
+for(i=1; i < NRegs; i++) begin : gen_registers
     logic [RegWidth-1:0] R;
     always_ff @(posedge iClk, negedge nRst) begin : reg_write
         if(!nRst)
             R <= {RegWidth{1'b0}};
         else begin
-            if(iWriteEn & (iAddr_Rd == i[RegWidth-1:0]))
+            if(iWriteEn & (iAddr_Rd == i[RegAddrWidth-1:0]))
                 R <= iRd;
         end
     end

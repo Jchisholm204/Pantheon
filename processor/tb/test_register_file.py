@@ -118,22 +118,30 @@ async def regfile_test_forwarding(dut):
 
 
 def test_register_file_runner():
-    sim = os.getenv("SIM", "icarus")
+    sim = os.getenv("SIM", "verilator")
 
     proj_path = Path(__file__).resolve().parent.parent
 
-    # sources = [proj_path / "register_file.sv",
-    #            proj_path / "rv32_isa.sv"]
-    sources = list((proj_path).glob("*.sv"))
+    sources = [
+            proj_path / "rv32_isa.sv",
+            proj_path / "register_file.sv",
+            ]
+    # sources = list((proj_path).glob("*.sv"))
+
+    if sim == "icarus":
+        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
+    else:
+        build_args = ["-Wno-fatal"]
 
     runner = get_runner(sim)
     runner.build(
             verilog_sources=sources,
             hdl_toplevel="register_file",
             clean=False,
-            waves=True,
+            waves=False,
             always=True,
-            build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
+            # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
+            build_args=build_args
             )
     runner.test(
             hdl_toplevel="register_file",
