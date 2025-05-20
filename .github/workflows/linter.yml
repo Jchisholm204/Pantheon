@@ -1,22 +1,11 @@
-# .github/workflows/lint.yml
-name: Verilog Lint
-
-on: [push, pull_request]
-
+name: Verible linter example
+on:
+  pull_request:
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Verible
-        run: |
-          sudo apt-get install -y wget
-          wget https://github.com/chipsalliance/verible/releases/latest/download/verible-verilog-lint-Ubuntu-22.04.tar.gz
-          tar -xzf verible-verilog-lint-*.tar.gz
-          sudo mv verible-verilog-lint*/bin/verible-verilog-lint /usr/local/bin/
-
-      - name: Lint SystemVerilog
-        run: |
-          verible-verilog-lint $(find . -name "*.sv" -o -name "*.v") --parse_fatal
-
+    - uses: actions/checkout@master
+    - uses: chipsalliance/verible-linter-action@main
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
