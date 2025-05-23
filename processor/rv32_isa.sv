@@ -56,6 +56,7 @@ localparam logic [2:0] OpF3SRL  = 3'b101;
 localparam logic [2:0] OpF3SRA  = 3'b101;
 localparam logic [2:0] OpF3OR   = 3'b110;
 localparam logic [2:0] OpF3AND  = 3'b111;
+
 // Function 3 - Store Instructions
 localparam logic [2:0] OpF3SB   = 3'b000;
 localparam logic [2:0] OpF3SH   = 3'b001;
@@ -86,14 +87,14 @@ localparam logic [2:0] OpF3CSRRWI = 3'b101;
 localparam logic [2:0] OpF3CSRRCI = 3'b110;
 localparam logic [2:0] OpF3CSRRSI = 3'b111;
 // Function 3 - M Extention
-localparam logic [2:0] OpF3MUL   = 3'b000;
-localparam logic [2:0] OpF3MULH  = 3'b001;
-localparam logic [2:0] OpF3MULSU = 3'b010;
-localparam logic [2:0] OpF3MULU  = 3'b011;
-localparam logic [2:0] OpF3DIV   = 3'b100;
-localparam logic [2:0] OpF3DIVU  = 3'b101;
-localparam logic [2:0] OpF3REM   = 3'b110;
-localparam logic [2:0] OpF3REMU  = 3'b111;
+localparam logic [2:0] OpF3MUL    = 3'b000;
+localparam logic [2:0] OpF3MULH   = 3'b001;
+localparam logic [2:0] OpF3MULHSU = 3'b010;
+localparam logic [2:0] OpF3MULHU  = 3'b011;
+localparam logic [2:0] OpF3DIV    = 3'b100;
+localparam logic [2:0] OpF3DIVU   = 3'b101;
+localparam logic [2:0] OpF3REM    = 3'b110;
+localparam logic [2:0] OpF3REMU   = 3'b111;
 
 localparam int RegAddrWidth = 5;
 localparam int RegWidth = 32;
