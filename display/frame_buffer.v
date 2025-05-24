@@ -44,12 +44,6 @@ assign oData = buffer[iRAddr];
 
 always @(posedge iClk or negedge nRst) begin
     if(!nRst) begin
-        // genvar i;
-        // generate
-        //     for(i = 0; i < N; i = i + 1) begin
-        //         buffer[i] = 32'd0;
-        //     end
-        // endgenerate
     end else begin
         if(iWriteEn) begin
             buffer[iWAddr] = iData;

@@ -79,7 +79,7 @@ async def left_logic_test(dut):
             res = dut.oD.value.integer
             expected = (initial << i) & 0xFFFFFFFF
             assert res == expected, \
-                f"Failed Right Logical Shift \
+                f"Failed Left Logical Shift \
                 {bin(res)} =/= {bin(expected)}"
 
 

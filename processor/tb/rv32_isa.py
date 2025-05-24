@@ -1,0 +1,87 @@
+OpAluR    = 0b0110011
+OpAluI    = 0b0010011
+OpStore   = 0b0100011
+OpLoad    = 0b0000011
+OpMscMem  = 0b0001111
+OpJal     = 0b1101111
+OpJalR    = 0b1100111
+OpBranch  = 0b1100011
+OpSysCall = 0b1110011
+OpLUI     = 0b0110111
+OpAUIPC   = 0b0110111
+
+# Function 7 - ALU Instructions
+OpF7ADD = 0b0000000
+OpF7SUB = 0b0100000
+OpF7SLL = 0b0000000
+OpF7SLT = 0b0000000
+OpF7SLTU= 0b0000000
+OpF7XOR = 0b0000000
+OpF7SRL = 0b0000000
+OpF7SRA = 0b0100000
+OpF7OR  = 0b0000000
+OpF7AND = 0b0000000
+# Function 7 - M Extention
+OpF7MUL = 0b0000001
+
+# Immediate [11:5 - For Shifts
+OpImSLLI = 0b0000000
+OpImSRLI = 0b0000000
+OpImSRAI = 0b0100000
+# Immediate [11:0 - For ECALL/EBREAK
+OpImCall = 0b000000000000
+OpImBrk  = 0b000000000001
+
+# Function 3 - ALU Instructions
+OpF3ADD  = 0b000
+OpF3SUB  = 0b000
+OpF3SLL  = 0b001
+OpF3SLT  = 0b010
+OpF3SLTU = 0b011
+OpF3XOR  = 0b100
+OpF3SRL  = 0b101
+OpF3SRA  = 0b101
+OpF3OR   = 0b110
+OpF3AND  = 0b111
+
+# Function 3 - Store Instructions
+OpF3SB   = 0b000
+OpF3SH   = 0b001
+OpF3SW   = 0b010
+# Function 3 - Load Instructions
+OpF3LB   = 0b000
+OpF3LH   = 0b001
+OpF3LW   = 0b010
+OpF3LBU  = 0b100
+OpF3LHU  = 0b101
+# Function 3 - Misc Mem Instructions
+OpF3FENCE = 0b000
+OpF3FencI = 0b001
+# Function 3 - Branch Instructions
+OpF3BEQ  = 0b000
+OpF3BNE  = 0b001
+OpF3BLT  = 0b100
+OpF3BGE  = 0b101
+OpF3BLTU = 0b110
+OpF3BGEU = 0b111
+# Function 3 - SysCall Instructions
+OpF3ECALL  = 0b000
+OpF3EBREAK = 0b000
+OpF3CSRRW  = 0b001
+OpF3CSRRS  = 0b010
+OpF3CSRRC  = 0b011
+OpF3CSRRWI = 0b101
+OpF3CSRRCI = 0b110
+OpF3CSRRSI = 0b111
+# Function 3 - M Extention
+OpF3MUL    = 0b000
+OpF3MULH   = 0b001
+OpF3MULHSU = 0b010
+OpF3MULHU  = 0b011
+OpF3DIV    = 0b100
+OpF3DIVU   = 0b101
+OpF3REM    = 0b110
+OpF3REMU   = 0b111
+
+RegAddrWidth = 5
+RegWidth = 32
