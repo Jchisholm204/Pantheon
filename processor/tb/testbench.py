@@ -1,6 +1,5 @@
 # Testbench superclass
 import os
-import cocotb
 from cocotb.runner import get_runner
 from pathlib import Path
 
@@ -22,17 +21,18 @@ class TB:
         else:
             build_args = ["--trace", "-Wno-fatal"]
         runner = get_runner(self.sim)
-        runner.build(
+        print(runner.build(
             verilog_sources=self.sources,
             hdl_toplevel=self.hdl_toplevel,
             clean=False,
             waves=True,
             build_args=build_args,
             always=True,
-        )
-        runner.test(
+        ))
+        print(runner.test(
             hdl_toplevel=self.hdl_toplevel,
             test_module=self.test_module,
             plusargs=["-fst"],
             waves=True
-        )
+        ))
+

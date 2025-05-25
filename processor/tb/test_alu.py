@@ -128,3 +128,7 @@ def test_alu_runner():
     tb.add_source("ALU/SHIFT.sv")
     tb.add_source("ALU/ALU.sv")
     tb.run_tests()
+
+
+if __name__ == "main":
+    test_alu_runner()
