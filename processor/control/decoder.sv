@@ -19,7 +19,7 @@ module decoder (
 );
 
 input  wire [RegWidth-1:0] iINS;
-output wire [31:0] oOpCode;
+output wire [6:0] oOpCode;
 output wire [RegAddrWidth-1:0] oRS1, oRS2, oRD;
 output wire [2:0] oFunc3;
 output wire [6:0] oFunc7;
@@ -55,4 +55,5 @@ assign oImmB = {{19{ImmB[11]}}, ImmB};
 assign oImmS = {{19{ImmS[11]}}, ImmS};
 
 endmodule
+
 
