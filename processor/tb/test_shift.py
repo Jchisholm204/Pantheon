@@ -1,15 +1,32 @@
 import cocotb
-import os
 import random
 from cocotb.triggers import Timer
-from cocotb.runner import get_runner
-from pathlib import Path
+import testbench
 
 
 def to_signed32(n):
     """Convert unsigned 32-bit int to signed 32-bit."""
     n = n & 0xFFFFFFFF
     return n if n < 0x80000000 else n - 0x100000000
+
+
+async def verify_sra(initial, shift, result):
+    assert (result == ((initial >> shift))), \
+        f"Failed SRA \
+        {bin((initial >> shift))} =/= {bin((result))}, i={shift}"
+
+
+async def verify_srl(initial, shift, result):
+    assert result == (initial >> shift), \
+        f"Failed SRL \
+        {bin(result)} =/= {bin(initial >> shift)}"
+
+
+async def verify_sll(initial, shift, result):
+    expected = (initial << shift) & 0xFFFFFFFF
+    assert result == expected, \
+        f"Failed SLL \
+        {bin(result)} =/= {bin(expected)}"
 
 
 @cocotb.test()
@@ -42,9 +59,7 @@ async def right_arith_test_minval(dut):
         await Timer(1, "ns")
         res = dut.oD.value.integer
         res = to_signed32(res)
-        assert ((res)) == ((initial >> i)), \
-            f"Failed Right Arithmetic Shift (minval): \
-            {bin((initial >> i))} =/= {bin((res))}, i={i}"
+        verify_sra(initial, i, res)
 
 
 @cocotb.test
@@ -59,9 +74,7 @@ async def right_logic_test(dut):
             dut.iShamt.value = i
             await Timer(1, "ns")
             res = dut.oD.value.integer
-            assert res == (initial >> i), \
-                f"Failed Right Logical Shift \
-                {bin(res)} =/= {bin(initial >> i)}"
+            verify_srl(initial, i, res)
 
 
 @cocotb.test
@@ -77,40 +90,13 @@ async def left_logic_test(dut):
             dut.iShamt.value = i
             await Timer(1, "ns")
             res = dut.oD.value.integer
-            expected = (initial << i) & 0xFFFFFFFF
-            assert res == expected, \
-                f"Failed Left Logical Shift \
-                {bin(res)} =/= {bin(expected)}"
+            verify_sll(initial, i, res)
 
 
 def test_shift_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [proj_path / "ALU/SHIFT.sv"]
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["--trace", "-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-        verilog_sources=sources,
-        hdl_toplevel="SHIFT",
-        clean=False,
-        waves=True,
-        # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
-        build_args=build_args,
-        always=True,
-    )
-    runner.test(
-        hdl_toplevel="SHIFT",
-        test_module="test_shift",
-        plusargs=["-fst"],
-        waves=True
-    )
+    tb = testbench.TB("test_shift", "SHIFT")
+    tb.add_source("ALU/SHIFT.sv")
+    tb.run_tests()
 
 
 if __name__ == "__main__":

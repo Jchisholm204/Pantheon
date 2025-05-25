@@ -5,6 +5,8 @@ from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
 import rv32_isa
+import test_shift
+import testbench
 
 
 @cocotb.test()
@@ -50,11 +52,7 @@ async def alu_sll_test(dut):
             dut.iB.value = i
             await Timer(1, "ns")
             res = dut.oZ.value.integer
-            expected = (initial << i) & 0xFFFFFFFF
-            assert res == expected, \
-                f"Failed SLL \
-                {bin(res)} =/= {bin(expected)}, {i}"
-
+            test_shift.verify_sll(initial, i, res)
 
 @cocotb.test()
 async def alu_xor_test(dut):
@@ -121,42 +119,12 @@ async def alu_rem_test(dut):
 
 
 def test_alu_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [
-            proj_path / "rv32_isa.sv",
-            proj_path / "ALU/ALU.sv",
-            proj_path / "ALU/CLA.sv",
-            proj_path / "ALU/BitWise.sv",
-            proj_path / "ALU/DIV32.sv",
-            proj_path / "ALU/MUL32.sv",
-            proj_path / "ALU/SHIFT.sv"
-            ]
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["--trace", "-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-        verilog_sources=sources,
-        hdl_toplevel="ALU",
-        clean=False,
-        waves=True,
-        # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
-        build_args=build_args,
-        always=True,
-    )
-    runner.test(
-        hdl_toplevel="ALU",
-        test_module="test_alu",
-        plusargs=["-fst"],
-        waves=True
-    )
-
-
-if __name__ == "__main__":
-    test_alu_runner()
+    tb = testbench.TB("test_alu", "ALU")
+    tb.add_source("rv32_isa.sv")
+    tb.add_source("ALU/CLA.sv")
+    tb.add_source("ALU/BitWise.sv")
+    tb.add_source("ALU/DIV32.sv")
+    tb.add_source("ALU/MUL32.sv")
+    tb.add_source("ALU/SHIFT.sv")
+    tb.add_source("ALU/ALU.sv")
+    tb.run_tests()
