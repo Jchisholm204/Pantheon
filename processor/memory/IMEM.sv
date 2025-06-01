@@ -37,13 +37,6 @@ assign oData = mem_wb.data_read;
 // Processor Memory Stall Output
 assign oStall = iEn & ~mem_wb.ack;
 
-// always_comb begin
-//     case (iFunc3[1:0])
-//         2'b00: mem_wb.width = eDW_B;
-//         2'b01: mem_wb.width = eDW_H;
-//         default: mem_wb.width = eDW_W;
-//     endcase
-// end
 
 endmodule
 

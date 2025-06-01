@@ -6,6 +6,15 @@
  * @date Created: 2025-05-31
  * @modified Last Modified: 2025-05-31
  *
+ * 
+ * All wishbone signals must be active high
+ * Port sizes must be 8, 16, 32, or 64 bit
+ *  Default port size is 32 bit
+ *
+ * All interfaces should use little endian format
+ *  (Lowest Byte in Lowest Address)
+ *
+ *
  * @copyright Copyright (c) 2025
  */
 
@@ -21,9 +30,9 @@ typedef enum logic [1:0] {
 interface WISHBONE_IF 
 #(parameter ADDR_WIDTH=32, DATA_WIDTH=32)
 (
-    iClk, nRst
+    iClk, iRst
 );
-input logic iClk, nRst;
+input logic iClk, iRst;
 
 logic [ADDR_WIDTH-1:0] addr;
 logic [DATA_WIDTH-1:0] data_read, data_write;
@@ -39,12 +48,12 @@ logic ack;
 eDataWidth width;
 
 modport master (
-    input iClk, nRst, ack, data_read,
+    input iClk, iRst, ack, data_read,
     output addr, data_write, we, stb, cyc, width
 );
 
 modport slave(
-    input iClk, nRst, addr, data_write, we, stb, cyc, width,
+    input iClk, iRst, addr, data_write, we, stb, cyc, width,
     output ack, data_read
 );
 
