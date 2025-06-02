@@ -9,39 +9,55 @@
  * @copyright Copyright (c) 2025
  */
 
+`timescale 1ns/100ps
 module IF(
     iClk, iEn, nRst,
-    iPC_ext,
-    iPC, iMemIns,
-    oPC, oIR
+    iPCS_EXT, iStall,
+    iPC_EXT,
+    oStall,
+    // Pipeline Register
+    oPC, oPC4, oIR
 );
 input wire iClk, iEn, nRst;
-input wire iPC_ext;
-input wire [31:0] iPC, iMemIns;
-output wire [31:0] oPC, oIR;
+input wire iPCS_EXT, iStall;
+input wire [31:0] iPC_EXT;
+output logic oStall;
+output logic [31:0] oPC, oPC4, oIR;
 
-reg [31:0] IR, PC;
+wire [31:0] PC, PC4, IR;
 
-// Next PC calculation
-wire [31:0] PCn, PC4;
-assign PC4 = PC + 32'd4;
-assign PCn = iPC_ext ? iPC : PC4;
+WISHBONE_IF wb_imem(
+    .iClk(iClk),
+    .iRst(~nRst)
+);
 
-always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst) begin
-        IR <= 32'd0;
-        PC <= 32'd0;
-    end else begin
-        if(iEn) begin
-            IR <= iMemIns;
-            PC <= PCn;
-        end
-    end
+PC pc(
+    .iClk(iClk),
+    .nRst(nRst),
+    .iStall(iStall),
+    .iPC(iPC_EXT),
+    .iEXT_S(iPCS_EXT),
+    .oPC(PC),
+    .oPC4(PC4)
+);
+
+IMEM wbi(
+    .iEn(iEn & ~iStall),
+    .iAddr(PC),
+    .oData(IR),
+    .oStall(oStall),
+    .mem_wb(wb_imem.master)
+);
+
+ROMBlock insmem(
+    .mem_wb(wb_imem.slave)
+);
+
+always_ff @(posedge iClk) begin
+    oPC <= PC;
+    oPC4 <= PC4;
+    oIR <= IR;
 end
-
-// Assign module outputs
-assign oPC = PC4;
-assign oIR = IR;
 
 endmodule
 

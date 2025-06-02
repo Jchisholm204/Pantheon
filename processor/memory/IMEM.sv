@@ -13,26 +13,25 @@
 
 module IMEM (
     // Clock and reset must be driven externally
-    iEn, iWrite,
-    iAddr, iData,
+    iEn,
+    iAddr,
     oData,
     oStall,
     mem_wb
 );
-input logic iEn, iWrite;
-input logic [31:0] iAddr, iData;
+input logic iEn;
+input logic [31:0] iAddr;
 output logic [31:0] oData;
 output logic oStall;
 WISHBONE_IF.master mem_wb;
 
 // Wishbone Inteface Control Assignments
 assign mem_wb.addr = iAddr;
-assign mem_wb.we = iWrite;
+assign mem_wb.we = 1'b0;
 assign mem_wb.stb = iEn;
 assign mem_wb.cyc = iEn;
 assign mem_wb.width = eDW_W;
 // Wishbone Interface Data Assignments
-assign mem_wb.data_write = iData;
 assign oData = mem_wb.data_read;
 // Processor Memory Stall Output
 assign oStall = iEn & ~mem_wb.ack;
