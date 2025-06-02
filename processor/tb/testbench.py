@@ -11,9 +11,13 @@ class TB:
         self.sim = os.getenv("SIM", "icarus")
         self.basepath = Path(__file__).resolve().parent.parent
         self.sources = []
+        self.parameters = {}
 
     def add_source(self, source: str):
         self.sources += [self.basepath / source]
+
+    def add_param(self, key: str, value):
+        self.parameters.update({key: value})
 
     def run_tests(self):
         if self.sim == "icarus":
@@ -28,11 +32,11 @@ class TB:
             waves=True,
             build_args=build_args,
             always=True,
+            parameters=self.parameters
         ))
         print(runner.test(
             hdl_toplevel=self.hdl_toplevel,
             test_module=self.test_module,
             plusargs=["-fst"],
-            waves=True
+            waves=True,
         ))
-

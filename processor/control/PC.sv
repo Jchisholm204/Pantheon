@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2025
  */
 `timescale 1ns/100ps
-module PC(
+module PC #(parameter logic [31:0] START_ADDR = 32'd0)(
     iClk, nRst, iStall,
     iPC, iEXT_S,
     oPC, oPC4
@@ -37,7 +37,7 @@ CLA pc_adder(
 always_ff @(posedge iClk, negedge nRst) begin
     // Active Low Reset Signal
     if(!nRst) begin
-        oPC <= 32'd0;
+        oPC <= START_ADDR;
     end else begin
         // PC External Load Select (Stall is active high)
         if(!iStall) oPC <= iEXT_S ? iPC : oPC4;
