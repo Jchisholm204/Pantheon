@@ -5,10 +5,10 @@ from pathlib import Path
 
 
 class TB:
-    def __init__(self, test_module: str, hdl_toplevel: str):
+    def __init__(self, test_module: str, hdl_toplevel: str, sim="verilator"):
         self.test_module = test_module
         self.hdl_toplevel = hdl_toplevel
-        self.sim = os.getenv("SIM", "icarus")
+        self.sim = os.getenv("SIM", sim)
         self.basepath = Path(__file__).resolve().parent.parent
         self.sources = []
         self.parameters = {}

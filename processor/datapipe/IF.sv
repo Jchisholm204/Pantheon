@@ -46,11 +46,11 @@ IMEM wbi(
     .iAddr(PC),
     .oData(IR),
     .oStall(oStall),
-    .mem_wb(wb_imem.master)
+    .mem_wb(wb_imem)
 );
 
 ROMBlock insmem(
-    .mem_wb(wb_imem.slave)
+    .mem_wb(wb_imem)
 );
 
 always_ff @(posedge iClk) begin

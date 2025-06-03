@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2025
  */
 
+`timescale 1ns/100ps
 package rv32_isa;
 
 localparam logic [6:0] OpAluR    = 7'b0110011;

@@ -8,6 +8,7 @@
  *
  * @copyright Copyright (c) 2025
  */
+`timescale 1ns/100ps
 module RAMBlock #(parameter SIZE=4096)
 (
     mem_wb

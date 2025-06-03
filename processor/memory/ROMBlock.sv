@@ -8,18 +8,19 @@
  *
  * @copyright Copyright (c) 2025
  */
+`timescale 1ns/100ps
 module ROMBlock #(parameter SIZE=4096)
 (
-    mem_wb
+    WISHBONE_IF.slave mem_wb
 );
-WISHBONE_IF.slave mem_wb;
+// input WISHBONE_IF.slave mem_wb;
 
 
 // Memory (4kB)
 logic [7:0] ROM[SIZE-1:0];
 
 initial begin
-    $readmemh("ROM.hex", ROM, 0, SIZE);
+    $readmemh("../asm/test.hex", ROM, 0, SIZE);
 end
 
 always_comb begin

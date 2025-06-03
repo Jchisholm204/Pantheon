@@ -10,6 +10,7 @@
  *
  * @copyright Copyright (c) 2025
  */
+`timescale 1ns/100ps
 module DMEM (
     // Clock and reset must be driven externally
     iFunc3,
