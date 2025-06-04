@@ -9,8 +9,10 @@
  * @copyright Copyright (c) 2025
  */
 `timescale 1ns/100ps
-module ROMBlock #(parameter SIZE=4096)
-(
+module ROMBlock #(
+    parameter SIZE=4096,
+    parameter FILE=""
+)(
     WISHBONE_IF.slave mem_wb
 );
 // input WISHBONE_IF.slave mem_wb;
@@ -20,7 +22,11 @@ module ROMBlock #(parameter SIZE=4096)
 logic [7:0] ROM[SIZE-1:0];
 
 initial begin
-    $readmemh("../asm/test.hex", ROM, 0, SIZE);
+    if(FILE == "") begin
+        $readmemh("../asm/test.hex", ROM, 0, SIZE);
+    end else begin
+        $readmemh(FILE, ROM, 0, SIZE);
+    end
 end
 
 always_comb begin
