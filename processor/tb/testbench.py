@@ -12,12 +12,16 @@ class TB:
         self.basepath = Path(__file__).resolve().parent.parent
         self.sources = []
         self.parameters = {}
+        self.defines = {}
 
     def add_source(self, source: str):
         self.sources += [self.basepath / source]
 
     def add_param(self, key: str, value):
         self.parameters.update({key: value})
+
+    def add_define(self, key: str, value):
+        self.defines.update({key: value})
 
     def run_tests(self):
         if self.sim == "icarus":
@@ -32,7 +36,8 @@ class TB:
             waves=True,
             build_args=build_args,
             always=True,
-            parameters=self.parameters
+            parameters=self.parameters,
+            defines=self.defines
         ))
         print(runner.test(
             hdl_toplevel=self.hdl_toplevel,

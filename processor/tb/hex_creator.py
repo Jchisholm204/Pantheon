@@ -1,5 +1,3 @@
-import os
-
 
 class HexCreator:
     def __init__(self, file_name="hexout.hex"):
@@ -83,14 +81,15 @@ class HexCreator:
     def get_ins(self):
         return self.instructions
 
+    def get_data(self):
+        return self.data
+
     def get_hex(byt):
         high = (byt & 0xF0) >> 4
-        if high >= 10:
-            high = 'A' + high - 10
         low = byt & 0x0F
-        if low >= 10:
-            low = 'A' + low - 10
-        return f'{high}{low}'
+        high_char = chr(65 + high - 10) if high >= 10 else chr(48 + high)
+        low_char = chr(65 + low - 10) if low >= 10 else chr(48 + low)
+        return f'{high_char}{low_char}'
 
     def export(self, fname=""):
         if fname == "":
@@ -98,10 +97,10 @@ class HexCreator:
         with open(fname, "w") as file:
             file.write("@00000000\n")
             for ins in self.instructions:
-                file.write(f'{self.get_hex(ins)} ')
-                file.write(f'{self.get_hex(ins >> 8)} ')
-                file.write(f'{self.get_hex(ins >> 16)} ')
-                file.write(f'{self.get_hex(ins >> 24)} ')
+                file.write(f'{HexCreator.get_hex(ins)} ')
+                file.write(f'{HexCreator.get_hex(ins >> 8)} ')
+                file.write(f'{HexCreator.get_hex(ins >> 16)} ')
+                file.write(f'{HexCreator.get_hex(ins >> 24)} ')
             file.write("\n")
             for (addr, dat) in self.data:
                 file.write(f'@{self.get_hex(addr)}')

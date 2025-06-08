@@ -10,23 +10,21 @@
  */
 `timescale 1ns/100ps
 module ROMBlock #(
-    parameter SIZE=4096,
-    parameter FILE=""
+    parameter SIZE=4096
 )(
     WISHBONE_IF.slave mem_wb
 );
 // input WISHBONE_IF.slave mem_wb;
 
+`ifndef ROMFile
+    `define ROMFile "../asm/test.hex"
+`endif
 
 // Memory (4kB)
 logic [7:0] ROM[SIZE-1:0];
 
 initial begin
-    if(FILE == "") begin
-        $readmemh("../asm/test.hex", ROM, 0, SIZE);
-    end else begin
-        $readmemh(FILE, ROM, 0, SIZE);
-    end
+    $readmemh(`ROMFile, ROM, 0, SIZE);
 end
 
 always_comb begin

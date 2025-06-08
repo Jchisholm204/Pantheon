@@ -10,7 +10,7 @@
  */
 
 `timescale 1ns/100ps
-module IF(
+module IF (
     iClk, iEn, nRst,
     iPCS_EXT, iStall,
     iPC_EXT,
