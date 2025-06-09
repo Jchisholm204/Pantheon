@@ -11,23 +11,17 @@
 import rv32_isa::*;
 
 module decoder (
-    iINS,
-    oOpCode,
-    oRS1, oRS2, oRD,
-    oFunc3, oFunc7,
-    oImmI, oImmU, oImmJ, oImmB, oImmS
+    input  wire [RegWidth-1:0] iINS,
+    output wire [6:0] oOpCode,
+    output wire [RegAddrWidth-1:0] oRS1, oRS2, oRD,
+    output wire [2:0] oFunc3,
+    output wire [6:0] oFunc7,
+    output wire [31:0] oImmI,
+    output wire [31:0] oImmU,
+    output wire [31:0] oImmJ,
+    output wire [31:0] oImmB,
+    output wire [31:0] oImmS
 );
-
-input  wire [RegWidth-1:0] iINS;
-output wire [6:0] oOpCode;
-output wire [RegAddrWidth-1:0] oRS1, oRS2, oRD;
-output wire [2:0] oFunc3;
-output wire [6:0] oFunc7;
-output wire [31:0] oImmI;
-output wire [31:0] oImmU;
-output wire [31:0] oImmJ;
-output wire [31:0] oImmB;
-output wire [31:0] oImmS;
 
 wire [11:0] ImmI;
 wire [19:0] ImmU;
