@@ -27,8 +27,9 @@ class TB:
         if self.sim == "icarus":
             build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
         else:
-            build_args = ["--trace", "-Wno-fatal"]
+            build_args = ["--trace", "-Wno-fatal", "--trace-structs"]
         runner = get_runner(self.sim)
+        os.environ["DUMPFILE"] = "shitter.vcd"
         print(runner.build(
             verilog_sources=self.sources,
             hdl_toplevel=self.hdl_toplevel,
@@ -42,6 +43,6 @@ class TB:
         print(runner.test(
             hdl_toplevel=self.hdl_toplevel,
             test_module=self.test_module,
-            plusargs=["-fst"],
+            plusargs=["-fst", "--trace-structs"],
             waves=True,
         ))
