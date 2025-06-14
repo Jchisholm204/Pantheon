@@ -2,6 +2,8 @@
 import os
 from cocotb.runner import get_runner
 from pathlib import Path
+import shutil
+import inspect
 
 
 class TB:
@@ -29,7 +31,6 @@ class TB:
         else:
             build_args = ["--trace", "-Wno-fatal", "--trace-structs"]
         runner = get_runner(self.sim)
-        os.environ["DUMPFILE"] = "shitter.vcd"
         print(runner.build(
             verilog_sources=self.sources,
             hdl_toplevel=self.hdl_toplevel,
@@ -46,3 +47,9 @@ class TB:
             plusargs=["-fst", "--trace-structs"],
             waves=True,
         ))
+        sim_build = os.path.join(os.getcwd(), "sim_build")
+        try:
+            os.rename(os.path.join(sim_build, "dump.vcd"), os.path.join(sim_build, f"{self.hdl_toplevel}.vcd"))
+            print(f"[+] Renamed Waveform dump.vcd -> {self.hdl_toplevel}.vcd")
+        except FileExistsError:
+            print("[!] No dump.vcd file found")
