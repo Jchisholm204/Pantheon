@@ -10,21 +10,18 @@
  */
 
 `timescale 1ns/100ps
-module IF (
-    iClk, iEn, nRst,
-    iPCS_EXT, iStall,
-    iPC_EXT,
-    oStall,
-    // Pipeline Register
-    oPC, oPC4, oIR
-);
-input wire iClk, iEn, nRst;
-input wire iPCS_EXT, iStall;
-input wire [31:0] iPC_EXT;
-output logic oStall;
-output logic [31:0] oPC, oPC4, oIR;
+import pipeline_types::if_id_t;
 
-wire [31:0] PC, PC4, IR;
+module IF (
+    input wire iClk, iEn, nRst,
+    input wire iPCS_EXT, iStall,
+    input wire [31:0] iPC_EXT,
+    output logic oStall,
+    // Pipeline Register
+    output if_id_t oID
+);
+
+wire [31:0] PC, PC4, ins_data;
 
 WISHBONE_IF wb_imem(
     .iClk(iClk),
@@ -44,7 +41,7 @@ PC pc(
 IMEM wbi(
     .iEn(iEn & ~iStall),
     .iAddr(PC),
-    .oData(IR),
+    .oData(ins_data),
     .oStall(oStall),
     .mem_wb(wb_imem)
 );
@@ -53,10 +50,16 @@ ROMBlock insmem(
     .mem_wb(wb_imem)
 );
 
-always_ff @(posedge iClk) begin
-    oPC <= PC;
-    oPC4 <= PC4;
-    oIR <= IR;
+always_ff @(posedge iClk, negedge nRst) begin
+    if(!nRst) begin
+        oID.pc <= 32'd0;
+        oID.pc4 <= 32'd0;
+        oID.instruction <= 32'd0;
+    end else if(~iStall) begin
+        oID.pc <= PC;
+        oID.pc4 <= PC4;
+        oID.instruction <= ins_data;
+    end
 end
 
 endmodule

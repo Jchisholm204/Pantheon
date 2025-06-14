@@ -4,6 +4,7 @@ from cocotb.clock import Clock
 import testbench
 from hex_creator import HexCreator
 from rv32_isa import *
+from pipeline_structs import gets, IF_ID
 
 
 def setup_mem(fname="testROM.hex"):
@@ -33,6 +34,8 @@ def test_if_runner():
     tb = testbench.TB("test_if", "IF")
     tb.add_define("ROMFile", f'"../{fname}"')
     tb.add_source("rv32_isa.sv")
+    tb.add_source("types/reg_transport.sv")
+    tb.add_source("types/pipeline_types.sv")
     tb.add_source("control/PC.sv")
     tb.add_source("ALU/CLA.sv")
     tb.add_source("../wishbone/WISHBONE_IF.sv")
@@ -52,5 +55,6 @@ async def if_memread(dut):
     await setup_if(dut)
     for ins in rom.get_ins():
         await RisingEdge(dut.iClk)
-        oIR = dut.oIR.value.integer
+        # oIR = dut.oID.value[64:95].integer
+        oIR = gets(dut.oID, IF_ID, "instruction").integer
         assert oIR == ins, "Failed Memory Read"

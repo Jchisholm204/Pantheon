@@ -29,7 +29,7 @@ class TB:
         if self.sim == "icarus":
             build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
         else:
-            build_args = ["--trace", "-Wno-fatal", "--trace-structs"]
+            build_args = ["--trace", "-Wno-fatal", "--trace-structs", "--vpi"]
         runner = get_runner(self.sim)
         print(runner.build(
             verilog_sources=self.sources,
@@ -44,7 +44,7 @@ class TB:
         print(runner.test(
             hdl_toplevel=self.hdl_toplevel,
             test_module=self.test_module,
-            plusargs=["-fst", "--trace-structs"],
+            plusargs=["-fst", "--trace-structs", "--vpi"],
             waves=True,
         ))
         sim_build = os.path.join(os.getcwd(), "sim_build")
