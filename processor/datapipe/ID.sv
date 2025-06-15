@@ -10,52 +10,29 @@
  */
 `timescale 1ns/100ps
 import rv32_isa::*;
+import pipeline_types::if_id_t;
+import pipeline_types::id_ex_t;
+import pipeline_types::pipe_control_t;
 
 module ID (
     // Pipeline Signals
     input wire iClk, iEn, nRst, iStall,
-    input logic iWriteEn,
-    // IF Signals
-    input logic [31:0] iPC, iPC4, iINS,
-    // Write Back Signals
-    input logic [RegAddrWidth-1:0] iAddrRd,
-    input logic [RegWidth-1:0] iRd,
-    output logic [RegAddrWidth-1:0] oAddrRd, oAddrRs1, oAddrRs2,
-    // Pipeline Output Signals
-    output logic [RegWidth-1:0] oRs1, oRs2,
-    output logic [6:0] oFunc7,
-    output logic [2:0] oFunc3,
-    // Control Signals
-    output logic oPCS_EXT,
-    output logic [31:0] oPC_EXT,
-    output logic oMemEn, oWriteEn
+    input if_id_t iIF,
+    input logic [RegWidth-1:0] iRs1, iRs2,
+    output logic [RegAddrWidth-1:0] oAddrRs1, oAddrRs2,
+    output id_ex_t oEX
 );
 
-logic [6:0] OpCode;
-logic [RegAddrWidth-1:0] AddrRs1, AddrRs2, AddrRd;
 logic [RegWidth-1:0] ImmI, ImmU, ImmJ, ImmB, ImmS;
 
-register_file rf(
-    .iClk(iClk),
-    .nRst(nRst),
-    .iWriteEn(iWriteEn),
-    .iAddr_Rd(iAddrRd),
-    .iAddr_Rs1(AddrRs1),
-    .iAddr_Rs2(AddrRs2),
-    .iRd(iRd),
-    .oRs1(oRs1),
-    .oRs2(oRs2)
-);
-
-
 decoder dec(
-    .iINS(iINS),
-    .oOpCode(OpCode),
-    .oRS1(AddrRs1),
-    .oRS2(AddrRs2),
-    .oRD(AddrRd),
-    .oFunc3(oFunc3),
-    .oFunc7(oFunc7),
+    .iINS(iIF.instruction),
+    .oOpCode(oEX.ctrl.opcode),
+    .oRS1(oEX.rs1.addr),
+    .oRS2(oEX.rs2.addr),
+    .oRD(oEX.rd_addr),
+    .oFunc3(oEX.ctrl.func3),
+    .oFunc7(oEX.ctrl.func7),
     .oImmI(ImmI),
     .oImmU(ImmU),
     .oImmJ(ImmJ),

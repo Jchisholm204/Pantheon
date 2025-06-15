@@ -18,9 +18,9 @@ import reg_transport::reg_transport_t;
 package pipeline_types;
 
 typedef struct packed {
+    logic [6:0] opcode;
     logic [2:0] func3;
     logic [6:0] func7;
-    logic [6:0] opcode;
     logic mem_en, ex_en, wb_en;
     logic valid;
 } pipe_control_t;
