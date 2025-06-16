@@ -4,7 +4,7 @@ from cocotb.clock import Clock
 import testbench
 from hex_creator import HexCreator
 from rv32_isa import *
-from pipeline_structs import gets, IF_ID
+from sv_structs import if_id_t
 
 
 def setup_mem(fname="testROM.hex"):
@@ -56,5 +56,6 @@ async def if_memread(dut):
     for ins in rom.get_ins():
         await RisingEdge(dut.iClk)
         # oIR = dut.oID.value[64:95].integer
-        oIR = gets(dut.oID, IF_ID, "instruction").integer
+        oIR = if_id_t(dut.oID).instruction
+        # oIR = gets(dut.oID, IF_ID, "instruction").integer
         assert oIR == ins, "Failed Memory Read"

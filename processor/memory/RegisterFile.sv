@@ -35,7 +35,7 @@ genvar i;
 generate 
 for(i=1; i < n_regs; i++) begin : gen_regs
     logic [RegWidth-1:0] rout;
-    Register #(.width(reg_width)) reg(
+    Register #(reg_width) Rx(
         .iClk(iClk),
         .nRst(nRst),
         .iWrite((iRd.addr == i) & iWriteEn),
