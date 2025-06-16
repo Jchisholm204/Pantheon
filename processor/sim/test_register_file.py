@@ -32,7 +32,7 @@ async def regfile_write_read_test(dut):
         dut.iWriteEn.value = 1
         iRd = reg_transport_t(dut.iRd)
         iRd.value = addr + 0x2A0
-        await FallingEdge(dut.iClk)
+        # await FallingEdge(dut.iClk)
         iRd.addr = addr
         # iRd.value = addr + 0x2A0
         await RisingEdge(dut.iClk)

@@ -1,10 +1,12 @@
 # This file must mirror the pipeline_types.sv file
 from cocotb.handle import ModifiableObject
+from cocotb.binary import BinaryValue
 
 
 class if_id_t:
     def __init__(self, signal: ModifiableObject):
         self._signal = signal
+        self._recent = BinaryValue(None, 96)
 
     @property
     def pc(self):
@@ -12,10 +14,10 @@ class if_id_t:
 
     @pc.setter
     async def pc(self, value):
-        old = self._signal.value
+        old = self._recent.integer
         old = old & 0x0000_0000_FFFF_FFFF_FFFF_FFFF
         new = old | (value & 0xFFFF_FFFF)
-        self._signal.value = new
+        self._signal.value
 
     @property
     def pc4(self):
@@ -43,12 +45,14 @@ class if_id_t:
 class reg_transport_t:
     def __init__(self, signal: ModifiableObject):
         self._signal = signal
+        self._recent = BinaryValue(None, 37)
 
     def _get(self):
-        return self._signal.value
+        return self._recent
 
     def _set(self, value):
-        self._signal.value = value
+        self._recent = BinaryValue(value, 37, False)
+        self._signal.value = self._recent
 
     @property
     def value(self):
