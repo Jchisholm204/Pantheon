@@ -3,10 +3,42 @@ from cocotb.handle import ModifiableObject
 from cocotb.binary import BinaryValue
 
 
-class if_id_t:
-    def __init__(self, signal: ModifiableObject):
+class SuperStruct:
+    def __init__(self, signal: ModifiableObject, width: int):
+        """ Initialize the SuperStruct
+        SuperStruct:
+            Structure that manages signal storage for System Verilog Structs
+
+        Args:
+            signal: CoCoTB Signal representing the struct
+            width: Total bit width of the struct
+        """
         self._signal = signal
-        self._recent = BinaryValue(None, 96)
+        # Write only Shadow copy of the CoCoTB simulation value
+        self._recent = BinaryValue(None, width, False)
+        self._width = width
+
+    def write(self, value):
+        """ Write out the whole struct to the simulation
+
+        Args:
+            value (): Struct Values to write out
+        """
+        self._recent = BinaryValue(value, self._width, False)
+        self._signal.value = self._recent
+
+    def read(self):
+        """ Read from write only Shadow copy of CoCoTB
+
+        Returns:
+            The last written signal value
+        """
+        return self._recent
+
+
+class if_id_t(SuperStruct):
+    def __init__(self, signal: ModifiableObject):
+        super().__init__(signal, 96)
 
     @property
     def pc(self):
@@ -14,10 +46,10 @@ class if_id_t:
 
     @pc.setter
     async def pc(self, value):
-        old = self._recent.integer
+        old = int(self.read())
         old = old & 0x0000_0000_FFFF_FFFF_FFFF_FFFF
         new = old | (value & 0xFFFF_FFFF)
-        self._signal.value
+        self.write(new)
 
     @property
     def pc4(self):
@@ -25,10 +57,10 @@ class if_id_t:
 
     @pc4.setter
     async def pc4(self, value):
-        old = self._signal.value
+        old = int(self.read())
         old = old & 0xFFFF_FFFF_0000_0000_FFFF_FFFF
         new = old | ((value & 0xFFFF_FFFF) << 32)
-        self._signal.value = new
+        self.write(new)
 
     @property
     def instruction(self):
@@ -36,23 +68,15 @@ class if_id_t:
 
     @instruction.setter
     async def instruction(self, value):
-        old = self._signal.value
+        old = int(self.read())
         old = old & 0xFFFF_FFFF_FFFF_FFFF_0000_0000
         new = old | ((value & 0xFFFF_FFFF) << 64)
-        self._signal.value = new
+        self.write(new)
 
 
-class reg_transport_t:
+class reg_transport_t(SuperStruct):
     def __init__(self, signal: ModifiableObject):
-        self._signal = signal
-        self._recent = BinaryValue(None, 37)
-
-    def _get(self):
-        return self._recent
-
-    def _set(self, value):
-        self._recent = BinaryValue(value, 37, False)
-        self._signal.value = self._recent
+        super().__init__(signal, 37)
 
     @property
     def value(self):
@@ -61,11 +85,10 @@ class reg_transport_t:
 
     @value.setter
     def value(self, value):
-        old = int(self._get())
+        old = int(self.read())
         old &= ~0xFFFF_FFFF
         new = old | (value & 0xFFFF_FFFF)
-        self._set(new)
-        # self._signal.value = new
+        self.write(new)
 
     @property
     def addr(self):
@@ -73,13 +96,11 @@ class reg_transport_t:
 
     @addr.setter
     def addr(self, value):
-        old = int(self._get())
-        # old = self._signal.value.integer
+        old = int(self.read())
         old &= ~(0x1F << 32)
         new = old | ((value & 0x1F) << 32)
         print(value)
-        self._set(new)
-        # self._signal.value = new
+        self.write(new)
 
 
 def gets(val, typ, acc):
