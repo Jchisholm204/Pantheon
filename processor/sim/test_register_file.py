@@ -5,7 +5,7 @@ from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.runner import get_runner
 from pathlib import Path
 from testbench import TB
-from sv_structs import reg_transport_t
+from reg_transport_t import reg_transport_t
 
 
 async def setup_test(dut):

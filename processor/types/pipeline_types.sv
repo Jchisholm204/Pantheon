@@ -18,11 +18,11 @@ import reg_transport::reg_transport_t;
 package pipeline_types;
 
 typedef struct packed {
-    logic [6:0] opcode;
-    logic [2:0] func3;
-    logic [6:0] func7;
-    logic mem_en, ex_en, wb_en, imm_en;
     logic valid;
+    logic imm_en, wb_en, ex_en, mem_en;
+    logic [6:0] func7;
+    logic [2:0] func3;
+    logic [6:0] opcode;
 } pipe_control_t;
 
 typedef struct packed {
@@ -32,10 +32,10 @@ typedef struct packed {
 } if_id_t;
 
 typedef struct packed {
-    pipe_control_t ctrl;
-    reg_transport_t rs1, rs2;
     logic [RegAddrWidth-1:0] rd_addr;
     logic [RegWidth-1:0] immediate;
+    reg_transport_t rs1, rs2;
+    pipe_control_t ctrl;
 } id_ex_t;
 
 typedef struct packed {
