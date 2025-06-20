@@ -81,7 +81,7 @@ class if_id_t(SuperStruct):
 
     @pc.setter
     def pc(self, value):
-        self.write_bits(0, 31)
+        self.write_bits(0, 31, value)
 
     @property
     def pc4(self):
@@ -89,7 +89,7 @@ class if_id_t(SuperStruct):
 
     @pc4.setter
     def pc4(self, value):
-        self.write_bits(32, 63)
+        self.write_bits(32, 63, value)
 
     @property
     def instruction(self):
@@ -97,7 +97,7 @@ class if_id_t(SuperStruct):
 
     @instruction.setter
     def instruction(self, value):
-        self.write_bits(64, 95)
+        self.write_bits(64, 95, value)
 
 
 class id_ex_t(SuperStruct):

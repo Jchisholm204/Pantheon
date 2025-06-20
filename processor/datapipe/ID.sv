@@ -94,11 +94,11 @@ assign oEX.rs1.addr  = rs1_en ? dec_rs1 : {RegAddrWidth{1'b0}};
 assign oEX.rs2.value = rs2_en ? iRs2    : {RegWidth{1'b0}};
 assign oEX.rs2.addr  = rs2_en ? dec_rs2 : {RegAddrWidth{1'b0}};
 assign oEX.rd_addr   = rd_en  ? dec_rd  : {RegAddrWidth{1'b0}};
-assign oEX.immediate = OPF_I ? ID_ImmI :
-                       OPF_U ? ID_ImmU :
-                       OPF_B ? ID_ImmB :
-                       OPF_J ? ID_ImmJ :
-                       OPF_S ? ID_ImmS :
+assign oEX.immediate = OPF_I ? dec_immI :
+                       OPF_U ? dec_immU :
+                       OPF_B ? dec_immB :
+                       OPF_J ? dec_immJ :
+                       OPF_S ? dec_immS :
                        32'd0;
 
 // Branch Outcome Signals
@@ -107,8 +107,9 @@ BranchOutcome bpred(
     .iRs1(iRs1),
     .iRs2(iRs2),
     .iFunc3(dec_func3),
-    .oBrTrue(brtrue),
+    .oBrTrue(brtrue)
 );
+
 assign oBrTrue = brtrue & OP_Branch;
 
 endmodule

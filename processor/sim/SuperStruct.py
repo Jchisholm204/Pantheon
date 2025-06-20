@@ -45,6 +45,10 @@ class SuperStruct:
             high: high position
             value: Struct Values to write out
         """
+        # Invert width
+        t_low = low
+        low = self._width - high - 1
+        high = self._width - t_low + 1
         val = int(self._recent)
         width = high - low + 1
         mask = ((1 << width) - 1) << (low + self._offset)
