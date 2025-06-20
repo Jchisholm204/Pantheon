@@ -79,56 +79,51 @@ async def regfile_write_read_test(dut):
     dut._log.info("Register file write/read test passed!")
 
 
-# @cocotb.test()
-# async def regfile_test_r0(dut):
-#     await setup_test(dut)
-#     # Read from r0
-#     dut.iAddr_Rs1.value = 0
-#     dut.iAddr_Rs2.value = 0
-#     await RisingEdge(dut.iClk)
-#     data = dut.oRs1.value.integer
-#     assert data == 0, "Failed to read 0 from R0"
-#     # Attempt to write to R0 (Should Fail)
-#     dut.iWriteEn.value = 1
-#     dut.iAddr_Rd.value = 0
-#     dut.iRd.value = 0xF0F0F0F0
-#     await RisingEdge(dut.iClk)
-#     await RisingEdge(dut.iClk)
-#     data = dut.oRs1.value.integer
-#     assert data == 0, "R0 was not 0 after write"
-#     data = dut.oRs2.value.integer
-#     assert data == 0, "R0 was not 0 after write"
-#     dut._log.info("R0 Passed Tests")
-#
-#
-# @cocotb.test()
-# async def regfile_test_forwarding(dut):
-#     await setup_test(dut)
-#
-#     await FallingEdge(dut.iClk)
-#     for reg in range(1, 31):
-#         testVal = reg * 0x1111  # unique value per reg
-#         dut.iWriteEn.value = 1
-#         dut.iAddr_Rd.value = reg
-#         dut.iAddr_Rs1.value = reg
-#         dut.iRd.value = testVal
-#
-#         await RisingEdge(dut.iClk)  # write happens on posedge
-#         dut.iWriteEn.value = 0     # disable write after posedge
-#
-#         # wait for output to update on negedge
-#         await FallingEdge(dut.iClk)
-#
-#         regVal = dut.oRs1.value.integer
-#         assert regVal == testVal, \
-#             f"Failed Forward Write on Reg {reg}, expected {testVal:#x}, got {regVal:#x}"
+@cocotb.test()
+async def regfile_test_r0(dut):
+    await setup_test(dut)
+    # Read from r0
+    dut.iAddrRs1.value = 0
+    dut.iAddrRs2.value = 0
+    await RisingEdge(dut.iClk)
+    data = dut.oRs1.value.integer
+    assert data == 0, "Failed to read 0 from R0"
+    # Attempt to write to R0 (Should Fail)
+    dut.iWriteEn.value = 1
+    iRd = reg_transport_t(dut.iRd)
+    iRd.addr = 0
+    iRd.value = 0xF0F0F0F0
+    await RisingEdge(dut.iClk)
+    await RisingEdge(dut.iClk)
+    data = dut.oRs1.value.integer
+    assert data == 0, "R0 was not 0 after write"
+    data = dut.oRs2.value.integer
+    assert data == 0, "R0 was not 0 after write"
+    dut._log.info("R0 Passed Tests")
 
 
-@cocotb.test
-async def test_test(dut):
-    print(f'Type of Dut: {type(dut)}')
-    print(f'Type of RS1: {type(dut.oRs1)}')
-    print(f'Type of RS1.value: {type(dut.oRs1.value)}')
+@cocotb.test()
+async def regfile_test_forwarding(dut):
+    await setup_test(dut)
+
+    await FallingEdge(dut.iClk)
+    for reg in range(1, 31):
+        testVal = reg * 0x1111  # unique value per reg
+        dut.iWriteEn.value = 1
+        iRd = reg_transport_t(dut.iRd)
+        iRd.addr = reg
+        iRd.value = testVal
+        dut.iAddrRs1.value = reg
+
+        await RisingEdge(dut.iClk)  # write happens on posedge
+        dut.iWriteEn.value = 0     # disable write after posedge
+
+        # wait for output to update on negedge
+        await FallingEdge(dut.iClk)
+
+        regVal = dut.oRs1.value.integer
+        assert regVal == testVal, \
+            f"Failed Forward Write on Reg {reg}, expected {testVal:#x}, got {regVal:#x}"
 
 
 def old_register_file_runner():

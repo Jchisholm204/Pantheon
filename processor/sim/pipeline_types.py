@@ -1,6 +1,5 @@
 from SuperStruct import SuperStruct
 from reg_transport_t import reg_transport_t
-from cocotb.handle import ModifiableObject
 
 
 class pipe_control_t(SuperStruct):
@@ -77,11 +76,11 @@ class if_id_t(SuperStruct):
         super().__init__(parent, 96, offset)
 
     @property
-    def instruction(self):
+    def pc(self):
         self.read_bits(0, 31)
 
-    @instruction.setter
-    def instruction(self, value):
+    @pc.setter
+    def pc(self, value):
         self.write_bits(0, 31)
 
     @property
@@ -93,17 +92,17 @@ class if_id_t(SuperStruct):
         self.write_bits(32, 63)
 
     @property
-    def pc(self):
-        self.read_bits(64, 95)
+    def instruction(self):
+        return self.read_bits(64, 95)
 
-    @pc.setter
-    def pc(self, value):
+    @instruction.setter
+    def instruction(self, value):
         self.write_bits(64, 95)
 
 
 class id_ex_t(SuperStruct):
-    def __init__(self, signal: ModifiableObject):
-        super().__init__(signal, 96)
+    def __init__(self, parent):
+        super().__init__(parent, 96)
         self.ctrl = pipe_control_t(super, 0)
         self.rs2 = reg_transport_t(super, self.ctrl._width)
         self.rs1 = reg_transport_t(super, self.rs1._width + self.ctrl._offset)
