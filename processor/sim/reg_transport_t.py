@@ -16,7 +16,7 @@ class reg_transport_t(SuperStruct):
 
     @property
     def addr(self):
-        return self.read_bits(32, 35)
+        return self.read_bits(32, 36)
 
     @addr.setter
     def addr(self, value):

@@ -46,9 +46,13 @@ class SuperStruct:
             value: Struct Values to write out
         """
         # Invert width
+        # if isinstance(self._parent, SuperStruct):
+        #     t_low = low
+        #     low = self._width - high - 1
+        #     high = self._width - t_low + 1
         t_low = low
         low = self._width - high - 1
-        high = self._width - t_low + 1
+        high = self._width - t_low - 1
         val = int(self._recent)
         width = high - low + 1
         mask = ((1 << width) - 1) << (low + self._offset)
@@ -73,4 +77,9 @@ class SuperStruct:
         Returns:
             The last written signal value
         """
+        # Invert width
+        if isinstance(self._parent, SuperStruct):
+            t_low = low
+            low = self._width - high - 1
+            high = self._width - t_low - 1
         return self.read()[low + self._offset:high + self._offset]

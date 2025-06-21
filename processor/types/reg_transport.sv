@@ -16,8 +16,8 @@ import rv32_isa::RegAddrWidth;
 package reg_transport;
 
 typedef struct packed {
-    logic [RegAddrWidth-1:0] addr;
     logic [RegWidth-1:0] value;
+    logic [RegAddrWidth-1:0] addr;
 } reg_transport_t;
 
 endpackage

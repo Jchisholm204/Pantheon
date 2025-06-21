@@ -33,11 +33,22 @@ if __name__ == "__main__":
     test_id_runner()
 
 
-@cocotb.test()
-async def test_id_add(dut):
+@cocotb.test
+async def id_sample_add(dut):
     rom = mem_sample_add()
     await setup_id(dut)
     iIF = if_id_t(dut.iIF)
-    for ins in rom.get_ins():
-        iIF.instruction = ins
-        await RisingEdge(dut.iClk)
+    ins = rom.get_ins()[0]
+    iIF.instruction = ins
+    await RisingEdge(dut.iClk)
+    await RisingEdge(dut.iClk)
+    oEX = id_ex_t(dut.oEX)
+    # assert int(oEX.immediate) == 5, "Imm Decode Fail"
+    assert oEX.rs1.addr == 0, "RS1 Decode Fail"
+    iIF.instruction = rom.get_ins()[1]
+    await RisingEdge(dut.iClk)
+    await RisingEdge(dut.iClk)
+    assert int(oEX.rs1.value) == 1, "RS1 Decode Fail"
+    # assert oEX.ctrl.opcode == 19, "opcode Decode Fail"
+    # assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
+    # assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
