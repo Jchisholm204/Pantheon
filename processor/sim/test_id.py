@@ -54,6 +54,8 @@ async def id_sample_add(dut):
     assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
     assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
     assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
 
     # Load the second instruction
     iIF.instruction = rom.get_ins()[1]
@@ -68,3 +70,5 @@ async def id_sample_add(dut):
     assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
     assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
     assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
