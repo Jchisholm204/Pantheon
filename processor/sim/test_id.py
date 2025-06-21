@@ -50,6 +50,11 @@ async def id_sample_add(dut):
     assert int(oEX.immediate) == 5, "Imm Decode Fail"
     assert oEX.rs1.addr == 0, "RS1 Decode Fail"
     assert int(ctrl.opcode) == OpAluI, "opcode Decode Fail"
+    assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
+    assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
+
     # Load the second instruction
     iIF.instruction = rom.get_ins()[1]
     await RisingEdge(dut.iClk)
@@ -61,3 +66,5 @@ async def id_sample_add(dut):
     assert int(opcode) == OpAluR, "opcode Decode Fail"
     assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
     assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"

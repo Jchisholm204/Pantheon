@@ -21,8 +21,11 @@ typedef struct packed {
     logic [6:0] opcode;
     logic [2:0] func3;
     logic [6:0] func7;
+    logic mem_en;
+    logic ex_en;
+    logic wb_en;
+    logic imm_en;
     logic valid;
-    logic imm_en, wb_en, ex_en, mem_en;
 } pipe_control_t;
 
 typedef struct packed {

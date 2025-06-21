@@ -4,7 +4,7 @@ from reg_transport_t import reg_transport_t
 
 class pipe_control_t(SuperStruct):
     def __init__(self, parent, offset=0):
-        super().__init__(parent, 23, offset)
+        super().__init__(parent, 22, offset)
 
     @property
     def opcode(self):
@@ -36,39 +36,39 @@ class pipe_control_t(SuperStruct):
 
     @mem_en.setter
     def mem_en(self, value):
-        self.write_bits(18, 18)
+        self.write_bits(17, 17)
 
     @property
     def ex_en(self):
-        return self.read_bits(19, 19)
+        return self.read_bits(18, 18)
 
     @ex_en.setter
     def ex_en(self, value):
-        self.write_bits(19, 19)
+        self.write_bits(18, 18)
 
     @property
     def wb_en(self):
-        return self.read_bits(20, 20)
+        return self.read_bits(19, 19)
 
     @wb_en.setter
     def wb_en(self, value):
-        self.write_bits(21, 21)
+        self.write_bits(19, 19)
 
     @property
     def imm_en(self):
-        return self.read_bits(22, 22)
+        return self.read_bits(20, 20)
 
     @imm_en.setter
     def imm_en(self, value):
-        self.write_bits(22, 22)
+        self.write_bits(20, 20)
 
     @property
     def valid(self):
-        return self.read_bits(23, 23)
+        return self.read_bits(21, 21)
 
     @valid.setter
     def valid(self, value):
-        self.write_bits(46, 46)
+        self.write_bits(21, 21)
 
 
 class if_id_t(SuperStruct):
@@ -104,10 +104,10 @@ class id_ex_t(SuperStruct):
     def __init__(self, parent):
         super().__init__(parent, 134)
         self.ctrl = pipe_control_t(self, 0)
-        self.rs1 = reg_transport_t(self, self.ctrl._width-1)
+        self.rs1 = reg_transport_t(self, self.ctrl._width)
         rs2_base = self.ctrl._width + self.rs1._width
-        self.rs2 = reg_transport_t(self, rs2_base-1)
-        self._base = rs2_base + self.rs2._width - 1
+        self.rs2 = reg_transport_t(self, rs2_base)
+        self._base = rs2_base + self.rs2._width
 
     @property
     def immediate(self):
