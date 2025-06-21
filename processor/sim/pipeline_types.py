@@ -102,17 +102,17 @@ class if_id_t(SuperStruct):
 
 class id_ex_t(SuperStruct):
     def __init__(self, parent):
-        super().__init__(parent, 96)
-        self.ctrl = pipe_control_t(parent, 0)
+        super().__init__(parent, 134)
+        self.ctrl = pipe_control_t(self, 0)
         self.rs1 = reg_transport_t(self, self.ctrl._width-1)
-        self.rs2 = reg_transport_t(self, self.ctrl._width)
-        # self.rs1 = reg_transport_t(self)
-        self._base = self.rs1._offset
+        rs2_base = self.ctrl._width + self.rs1._width
+        self.rs2 = reg_transport_t(self, rs2_base-1)
+        self._base = rs2_base + self.rs2._width - 1
 
     @property
     def immediate(self):
-        # return self.read_bits(self._base, self._base+31)
-        return self.read_bits(0, 31)
+        return self.read_bits(self._base, self._base+31)
+        # return self.read_bits(0, 31)
 
     @immediate.setter
     def immediate(self, value):

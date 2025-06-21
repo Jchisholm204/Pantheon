@@ -78,8 +78,8 @@ class SuperStruct:
             The last written signal value
         """
         # Invert width
-        if isinstance(self._parent, SuperStruct):
-            t_low = low
-            low = self._width - high - 1
-            high = self._width - t_low - 1
+        # if isinstance(self._parent, SuperStruct):
+        #     t_low = low
+        #     low = self._width - high - 1
+        #     high = self._width - t_low - 1
         return self.read()[low + self._offset:high + self._offset]

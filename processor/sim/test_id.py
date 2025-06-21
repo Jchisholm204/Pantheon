@@ -5,6 +5,7 @@ import testbench
 from hex_creator import HexCreator
 from pipeline_types import if_id_t, id_ex_t, pipe_control_t
 from sample_mem import mem_sample_add
+from rv32_isa import OpAluR, OpAluI
 
 
 async def setup_id(dut):
@@ -43,15 +44,20 @@ async def id_sample_add(dut):
     await RisingEdge(dut.iClk)
     await RisingEdge(dut.iClk)
     oEX = id_ex_t(dut.oEX)
-    # assert int(oEX.immediate) == 5, "Imm Decode Fail"
+    # ctrl = pipe_control_t(dut.oEX)
+    # ctrl = pipe_control_t(oEX)
+    ctrl = oEX.ctrl
+    assert int(oEX.immediate) == 5, "Imm Decode Fail"
     assert oEX.rs1.addr == 0, "RS1 Decode Fail"
+    assert int(ctrl.opcode) == OpAluI, "opcode Decode Fail"
     iIF.instruction = rom.get_ins()[1]
     await RisingEdge(dut.iClk)
     await RisingEdge(dut.iClk)
-    assert int(oEX.rs1.value) == 1, "RS1 Decode Fail"
+    assert int(oEX.rs1.addr) == 1, "RS1 Decode Fail"
+    assert int(oEX.rs2.addr) == 1, "RS2 Decode Fail"
     # opcode = dut.oEX.value[0:6]
     # opcode = pipe_control_t(dut.oEX).opcode
     opcode = oEX.ctrl.opcode
-    assert int(opcode) == 51, "opcode Decode Fail"
-    # assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
-    # assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
+    assert int(opcode) == OpAluR, "opcode Decode Fail"
+    assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
+    assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
