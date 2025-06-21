@@ -120,8 +120,8 @@ class id_ex_t(SuperStruct):
 
     @property
     def rd_addr(self):
-        return self.read_bits(self._base+32, self._base+63)
+        return self.read_bits(self._base+32, self._base+36)
 
     @rd_addr.setter
     def rd_addr(self, value):
-        self.write_bits(self._base+32, self._base+63, value)
+        self.write_bits(self._base+32, self._base+36, value)

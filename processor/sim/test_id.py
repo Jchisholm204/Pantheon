@@ -4,8 +4,8 @@ from cocotb.clock import Clock
 import testbench
 from hex_creator import HexCreator
 from pipeline_types import if_id_t, id_ex_t, pipe_control_t
-from sample_mem import mem_sample_add
-from rv32_isa import OpAluR, OpAluI
+from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
+from rv32_isa import *
 
 
 async def setup_id(dut):
@@ -72,3 +72,87 @@ async def id_sample_add(dut):
     assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"
     assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
     assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
+
+
+@cocotb.test
+async def id_sample_alu(dut):
+    rom = mem_sample_alu()
+    await setup_id(dut)
+    iIF = if_id_t(dut.iIF)
+    oEX = id_ex_t(dut.oEX)
+    # Load the first instruction 
+    iIF.instruction = rom.get_ins()[0]
+    await RisingEdge(dut.iClk)
+    # Test that the instruction was decoded correctly
+    assert oEX.rs1.addr == 2, "RS1 Decode Fail"
+    assert oEX.rs2.addr == 3, "RS2 Decode Fail"
+    assert oEX.ctrl.opcode == OpAluR, "opcode Fail"
+    assert oEX.ctrl.func3 == OpF3OR, "F3 Decode Fail"
+    assert oEX.ctrl.func7 == OpF7OR, "F7 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
+
+    # Load the instruction 
+    iIF.instruction = rom.get_ins()[1]
+    await RisingEdge(dut.iClk)
+    # Test that the instruction was decoded correctly
+    assert oEX.rs1.addr == 12, "RS1 Decode Fail"
+    assert oEX.rs2.addr == 13, "RS2 Decode Fail"
+    assert oEX.ctrl.opcode == OpAluR, "opcode Fail"
+    assert oEX.ctrl.func3 == OpF3AND, "F3 Decode Fail"
+    assert oEX.ctrl.func7 == OpF7AND, "F7 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
+
+    # Load the instruction 
+    iIF.instruction = rom.get_ins()[2]
+    await RisingEdge(dut.iClk)
+    # Test that the instruction was decoded correctly
+    assert oEX.rs1.addr == 30, "RS1 Decode Fail"
+    assert oEX.rs2.addr == 17, "RS2 Decode Fail"
+    assert oEX.ctrl.opcode == OpAluR, "opcode Fail"
+    assert oEX.ctrl.func3 == OpF3SLL, "F3 Decode Fail"
+    assert oEX.ctrl.func7 == OpF7SLL, "F7 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 0, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 1, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 0, "MEM Enable Fail"
+
+
+@cocotb.test
+async def id_sample_mem(dut):
+    rom = mem_sample_mem()
+    await setup_id(dut)
+    iIF = if_id_t(dut.iIF)
+    oEX = id_ex_t(dut.oEX)
+    # Load the first instruction 
+    iIF.instruction = rom.get_ins()[0]
+    await RisingEdge(dut.iClk)
+    # Test that the instruction was decoded correctly
+    assert oEX.rs1.addr == 2, "RS1 Decode Fail"
+    assert oEX.rs2.addr == 3, "RS2 Decode Fail"
+    assert oEX.immediate == 20, "Imm Fail"
+    assert oEX.ctrl.opcode == OpStore, "opcode Fail"
+    assert oEX.ctrl.func3 == OpF3SW, "F3 Decode Fail"
+    assert oEX.ctrl.wb_en == 0, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 0, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 1, "MEM Enable Fail"
+    # Load the first instruction 
+    iIF.instruction = rom.get_ins()[1]
+    await RisingEdge(dut.iClk)
+    # Test that the instruction was decoded correctly
+    assert oEX.rs1.addr == 5, "RS1 Decode Fail"
+    assert oEX.rd_addr == 4, "RD Dec Fail"
+    # assert oEX.rs2.addr == 5, "RS2 Decode Fail"
+    assert oEX.immediate == 0x64, "Imm Fail"
+    assert oEX.ctrl.opcode == OpLoad, "opcode Fail"
+    assert oEX.ctrl.func3 == OpF3LW, "F3 Decode Fail"
+    assert oEX.ctrl.wb_en == 1, "WB Enable Fail"
+    assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
+    assert oEX.ctrl.ex_en == 0, "EX Enable Fail"
+    assert oEX.ctrl.mem_en == 1, "MEM Enable Fail"

@@ -18,3 +18,18 @@ def mem_sample_add(fname="testROM.hex"):
     rom.add_Iins(OpAluI, 1, OpF3ADD, 0, 0x5)
     rom.add_Rins(OpAluR, 2, OpF3ADD, 1, 1, OpF7ADD)
     return rom
+
+
+def mem_sample_alu(fname="testROM.hex"):
+    rom = HexCreator(fname)
+    rom.add_Rins(OpAluR, 1, OpF3OR, 2, 3, OpF7OR)
+    rom.add_Rins(OpAluR, 1, OpF3AND, 12, 13, OpF7AND)
+    rom.add_Rins(OpAluR, 1, OpF3SLL, 30, 17, OpF7SLL)
+    return rom
+
+
+def mem_sample_mem(fname="testROM.hex"):
+    rom = HexCreator(fname)
+    rom.add_Sins(OpStore, OpF3SW, 2, 3, 20)
+    rom.add_Iins(OpLoad, 4, OpF3LW, 5, 0x64)
+    return rom
