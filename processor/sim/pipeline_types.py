@@ -8,7 +8,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def opcode(self):
-        self.read_bits(0, 6)
+        return self.read_bits(0, 6)
 
     @opcode.setter
     def opcode(self, value):
@@ -16,7 +16,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def func3(self):
-        self.read_bits(7, 9)
+        return self.read_bits(7, 9)
 
     @func3.setter
     def func3(self, value):
@@ -24,7 +24,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def func7(self):
-        self.read_bits(10, 16)
+        return self.read_bits(10, 16)
 
     @func7.setter
     def func7(self, value):
@@ -32,7 +32,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def mem_en(self):
-        self.read_bits(17, 17)
+        return self.read_bits(17, 17)
 
     @mem_en.setter
     def mem_en(self, value):
@@ -40,7 +40,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def ex_en(self):
-        self.read_bits(19, 19)
+        return self.read_bits(19, 19)
 
     @ex_en.setter
     def ex_en(self, value):
@@ -48,7 +48,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def wb_en(self):
-        self.read_bits(20, 20)
+        return self.read_bits(20, 20)
 
     @wb_en.setter
     def wb_en(self, value):
@@ -56,7 +56,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def imm_en(self):
-        self.read_bits(22, 22)
+        return self.read_bits(22, 22)
 
     @imm_en.setter
     def imm_en(self, value):
@@ -64,7 +64,7 @@ class pipe_control_t(SuperStruct):
 
     @property
     def valid(self):
-        self.read_bits(23, 23)
+        return self.read_bits(23, 23)
 
     @valid.setter
     def valid(self, value):
@@ -77,7 +77,7 @@ class if_id_t(SuperStruct):
 
     @property
     def pc(self):
-        self.read_bits(0, 31)
+        return self.read_bits(0, 31)
 
     @pc.setter
     def pc(self, value):
@@ -103,7 +103,7 @@ class if_id_t(SuperStruct):
 class id_ex_t(SuperStruct):
     def __init__(self, parent):
         super().__init__(parent, 96)
-        self.ctrl = pipe_control_t(self, 0)
+        self.ctrl = pipe_control_t(parent, 0)
         self.rs1 = reg_transport_t(self, self.ctrl._width-1)
         self.rs2 = reg_transport_t(self, self.ctrl._width)
         # self.rs1 = reg_transport_t(self)

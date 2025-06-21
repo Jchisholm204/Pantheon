@@ -3,7 +3,7 @@ from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
 import testbench
 from hex_creator import HexCreator
-from pipeline_types import if_id_t, id_ex_t
+from pipeline_types import if_id_t, id_ex_t, pipe_control_t
 from sample_mem import mem_sample_add
 
 
@@ -49,6 +49,9 @@ async def id_sample_add(dut):
     await RisingEdge(dut.iClk)
     await RisingEdge(dut.iClk)
     assert int(oEX.rs1.value) == 1, "RS1 Decode Fail"
-    # assert oEX.ctrl.opcode == 19, "opcode Decode Fail"
+    # opcode = dut.oEX.value[0:6]
+    # opcode = pipe_control_t(dut.oEX).opcode
+    opcode = oEX.ctrl.opcode
+    assert int(opcode) == 51, "opcode Decode Fail"
     # assert oEX.ctrl.func3 == 0, "F3 Decode Fail"
     # assert oEX.ctrl.func7 == 0, "F7 Decode Fail"
