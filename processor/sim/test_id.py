@@ -10,12 +10,13 @@ from rv32_isa import *
 
 async def setup_id(dut):
     clock = Clock(dut.iClk, 10, units='ns')
-    dut.iEn.value = 1
+    dut.iEn.value = 0
     dut.nRst.value = 0
     cocotb.start_soon(clock.start())
     await RisingEdge(dut.iClk)
     await RisingEdge(dut.iClk)
     dut.nRst.value = 1
+    dut.iEn.value = 1
     await RisingEdge(dut.iClk)
 
 
@@ -43,7 +44,7 @@ async def id_sample_add(dut):
     ins = rom.get_ins()[0]
     iIF.instruction = ins
     await RisingEdge(dut.iClk)
-    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     oEX = id_ex_t(dut.oEX)
     ctrl = oEX.ctrl
@@ -60,7 +61,7 @@ async def id_sample_add(dut):
     # Load the second instruction
     iIF.instruction = rom.get_ins()[1]
     await RisingEdge(dut.iClk)
-    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that it was decoded correctly
     assert int(oEX.rs1.addr) == 1, "RS1 Decode Fail"
     assert int(oEX.rs2.addr) == 1, "RS2 Decode Fail"
@@ -83,6 +84,7 @@ async def id_sample_alu(dut):
     # Load the first instruction 
     iIF.instruction = rom.get_ins()[0]
     await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     assert oEX.rs1.addr == 2, "RS1 Decode Fail"
     assert oEX.rs2.addr == 3, "RS2 Decode Fail"
@@ -97,6 +99,7 @@ async def id_sample_alu(dut):
     # Load the instruction 
     iIF.instruction = rom.get_ins()[1]
     await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     assert oEX.rs1.addr == 12, "RS1 Decode Fail"
     assert oEX.rs2.addr == 13, "RS2 Decode Fail"
@@ -111,6 +114,7 @@ async def id_sample_alu(dut):
     # Load the instruction 
     iIF.instruction = rom.get_ins()[2]
     await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     assert oEX.rs1.addr == 30, "RS1 Decode Fail"
     assert oEX.rs2.addr == 17, "RS2 Decode Fail"
@@ -132,6 +136,7 @@ async def id_sample_mem(dut):
     # Load the first instruction 
     iIF.instruction = rom.get_ins()[0]
     await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     assert oEX.rs1.addr == 2, "RS1 Decode Fail"
     assert oEX.rs2.addr == 3, "RS2 Decode Fail"
@@ -142,9 +147,10 @@ async def id_sample_mem(dut):
     assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
     assert oEX.ctrl.ex_en == 0, "EX Enable Fail"
     assert oEX.ctrl.mem_en == 1, "MEM Enable Fail"
-    # Load the first instruction 
+    # Load the first instruction
     iIF.instruction = rom.get_ins()[1]
     await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
     # Test that the instruction was decoded correctly
     assert oEX.rs1.addr == 5, "RS1 Decode Fail"
     assert oEX.rd_addr == 4, "RD Dec Fail"
