@@ -17,6 +17,7 @@ async def setup_id(dut):
     await RisingEdge(dut.iClk)
     dut.nRst.value = 1
     dut.iEn.value = 1
+    dut.iStall.value = 0
     await RisingEdge(dut.iClk)
 
 
@@ -162,3 +163,53 @@ async def id_sample_mem(dut):
     assert oEX.ctrl.imm_en == 1, "IMM Enable Fail"
     assert oEX.ctrl.ex_en == 0, "EX Enable Fail"
     assert oEX.ctrl.mem_en == 1, "MEM Enable Fail"
+
+
+@cocotb.test
+async def id_stall(dut):
+    # Can use any instruction set for this
+    rom = mem_sample_mem()
+    await setup_id(dut)
+    iIF = if_id_t(dut.iIF)
+    oEX = id_ex_t(dut.oEX)
+    # Load the first instruction 
+    iIF.instruction = rom.get_ins()[0]
+    # Latch the instruction
+    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
+    # Check that the instruction was loaded
+    assert oEX.ctrl.opcode == OpStore, "read fail"
+    # Assert the stall signal
+    dut.iStall.value = 1
+    # Load a new instruction
+    iIF.instruction = rom.get_ins()[0]
+    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
+    # Check to see that the instruction in the pipe has not changed
+    assert oEX.ctrl.opcode != OpLoad, "stall fail, data new"
+    assert oEX.ctrl.opcode == OpStore, "stall fail, data random"
+    pass
+
+
+@cocotb.test
+async def id_reset(dut):
+    # Can use any instruction set for this
+    rom = mem_sample_mem()
+    await setup_id(dut)
+    iIF = if_id_t(dut.iIF)
+    oEX = id_ex_t(dut.oEX)
+    # Load the first instruction 
+    iIF.instruction = rom.get_ins()[0]
+    # Latch the instruction
+    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
+    # Check that the instruction was loaded
+    assert oEX.ctrl.opcode == OpStore, "read fail"
+    # Assert the reset signal
+    dut.iStall.value = 1
+    dut.nRst = 0
+    await RisingEdge(dut.iClk)
+    await FallingEdge(dut.iClk)
+    # Check to see that pipe register has been reset
+    assert dut.oEX == 0, "reset fail"
+    pass

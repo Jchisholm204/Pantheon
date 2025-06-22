@@ -82,25 +82,30 @@ assign imm_en = OPF_I | OPF_U | OPF_J | OPF_B | OPF_S;
 
 // Pipeline Control Outputs
 always_ff @(posedge iClk, negedge nRst) begin
-    oEX.ctrl.mem_en <= OP_Store | OP_Load;
-    oEX.ctrl.ex_en <= OP_ALUR | OP_ALUI;
-    oEX.ctrl.wb_en  <= rd_en;
-    oEX.ctrl.imm_en <= imm_en;
-    oEX.ctrl.valid <= ~iStall;
-    oEX.ctrl.opcode <= dec_opcode;
-    oEX.ctrl.func3  <= dec_func3;
-    oEX.ctrl.func7  <= dec_func7;
-    oEX.rs1.value <= rs1_en ? iRs1    : {RegWidth{1'b0}};
-    oEX.rs1.addr  <= rs1_en ? dec_rs1 : {RegAddrWidth{1'b0}};
-    oEX.rs2.value <= rs2_en ? iRs2    : {RegWidth{1'b0}};
-    oEX.rs2.addr  <= rs2_en ? dec_rs2 : {RegAddrWidth{1'b0}};
-    oEX.rd_addr   <= rd_en  ? dec_rd  : {RegAddrWidth{1'b0}};
-    oEX.immediate <= OPF_I ? dec_immI :
-        OPF_U ? dec_immU :
-        OPF_B ? dec_immB :
-        OPF_J ? dec_immJ :
-        OPF_S ? dec_immS :
-        32'd0;
+    if(!nRst) begin
+        oEX <= '0;
+    end
+    if(!iStall) begin
+        oEX.ctrl.mem_en <= OP_Store | OP_Load;
+        oEX.ctrl.ex_en <= OP_ALUR | OP_ALUI;
+        oEX.ctrl.wb_en  <= rd_en;
+        oEX.ctrl.imm_en <= imm_en;
+        oEX.ctrl.valid <= ~iStall;
+        oEX.ctrl.opcode <= dec_opcode;
+        oEX.ctrl.func3  <= dec_func3;
+        oEX.ctrl.func7  <= dec_func7;
+        oEX.rs1.value <= rs1_en ? iRs1    : {RegWidth{1'b0}};
+        oEX.rs1.addr  <= rs1_en ? dec_rs1 : {RegAddrWidth{1'b0}};
+        oEX.rs2.value <= rs2_en ? iRs2    : {RegWidth{1'b0}};
+        oEX.rs2.addr  <= rs2_en ? dec_rs2 : {RegAddrWidth{1'b0}};
+        oEX.rd_addr   <= rd_en  ? dec_rd  : {RegAddrWidth{1'b0}};
+        oEX.immediate <= OPF_I ? dec_immI :
+            OPF_U ? dec_immU :
+            OPF_B ? dec_immB :
+            OPF_J ? dec_immJ :
+            OPF_S ? dec_immS :
+            32'd0;
+    end
 end
 
 // Branch Outcome Signals
