@@ -46,11 +46,13 @@ typedef struct packed {
     pipe_control_t ctrl;
     reg_transport_t rs1, rs2;
     reg_transport_t rd;
+    logic [RegWidth-1:0] immediate;
 } ex_mem_t;
 
 typedef struct packed {
     pipe_control_t ctrl;
     reg_transport_t rd;
 } mem_wb_t;
+
 
 endpackage
