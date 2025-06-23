@@ -60,6 +60,9 @@ always_ff @(posedge iClk, negedge nRst) begin
         oMEM = '0;
     else if(!iStall) begin
         oMEM.ctrl = iID.ctrl;
+        oMEM.rs = iD.rs2;
+        oMEM.rd.addr = iID.rd_addr;
+        oMEM.rd.value = ALU_Z;
     end
 end
 
