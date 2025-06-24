@@ -25,7 +25,6 @@ module EX(
     input logic iFwExS2_en,
     input logic iFwMeS1_en,
     input logic iFwMeS2_en,
-    input logic [RegWidth-1:0] iFwEx,
     input logic [RegWidth-1:0] iFwMe
 );
 
@@ -43,14 +42,16 @@ always_comb begin
     if(iFwMeS1_en)
         ALU_A = iFwMe;
     else if(iFwExS1_en)
-        ALU_A = iFwEx;
+        ALU_A = oMEM.rd.value;
     else
         ALU_A = iID.rs1.value;
 
     if(iFwMeS2_en)
         ALU_B = iFwMe;
     else if(iFwExS2_en)
-        ALU_B = iFwEx;
+        ALU_B = oMEM.rd.value;
+    else if(iID.ctrl.imm_en)
+        ALU_B = iID.immediate;
     else
         ALU_B = iID.rs2.value;
 end
