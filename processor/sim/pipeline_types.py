@@ -125,3 +125,19 @@ class id_ex_t(SuperStruct):
     @rd_addr.setter
     def rd_addr(self, value):
         self.write_bits(self._base+32, self._base+36, value)
+
+
+class ex_mem_t(SuperStruct):
+    def __init__(self, parent):
+        super().__init__(parent, 96)
+        self.ctrl = pipe_control_t(self, 0)
+        self.rs = reg_transport_t(self, self.ctrl._width)
+        rd_base = self.ctrl._width + self.rs._width
+        self.rd = reg_transport_t(self, rd_base)
+
+
+class mem_wb_t(SuperStruct):
+    def __init__(self, parent):
+        super().__init__(parent, 96)
+        self.ctrl = pipe_control_t(self, 0)
+        self.rd = reg_transport_t(self, self.ctrl._width)
