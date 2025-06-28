@@ -2,8 +2,7 @@ import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
 import testbench
-from hex_creator import HexCreator
-from pipeline_types import if_id_t, id_ex_t, pipe_control_t
+from pipeline_types import if_id_t, id_ex_t
 from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
 from rv32_isa import *
 
