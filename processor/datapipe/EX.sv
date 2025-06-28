@@ -28,6 +28,9 @@ module EX(
 
 logic [RegWidth-1:0] ALU_A, ALU_B, ALU_Z;
 
+logic [6:0] ALU_F7;
+logic [2:0] ALU_F3;
+
 ALU alu(
     .iA(ALU_A),
     .iB(ALU_B),
@@ -52,6 +55,15 @@ always_comb begin
         ALU_B = iID.immediate;
     else
         ALU_B = iID.rs2.value;
+
+    if(iID.ctrl.ex_en & iID.ctrl.valid) begin
+        ALU_F7 = iID.ctrl.func7;
+        ALU_F3 = iID.ctrl.func3;
+    end else begin
+        ALU_F7 = 7'd0;
+        ALU_F3 = 3'd0;
+    end
+
 end
 
 always_ff @(posedge iClk, negedge nRst) begin
