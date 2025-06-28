@@ -14,12 +14,10 @@
 import rv32_isa::*;
 import pipeline_types::id_ex_t;
 import pipeline_types::ex_mem_t;
-import pipeline_types::ex_fw_t;
 
 module EX(
     input logic iClk, iEn, nRst, iStall,
     input id_ex_t iID,
-    input ex_fw_t iFW,
     output ex_mem_t oMEM,
     input logic iFwExS1_en,
     input logic iFwExS2_en,

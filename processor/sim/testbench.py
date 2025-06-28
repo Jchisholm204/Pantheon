@@ -19,6 +19,10 @@ class TB:
     def add_source(self, source: str):
         self.sources += [self.basepath / source]
 
+    def add_sources(self, sources):
+        for source in sources:
+            self.add_source(source)
+
     def add_param(self, key: str, value):
         self.parameters.update({key: value})
 
