@@ -20,7 +20,7 @@ class pipe_control_t(SuperStruct):
 
     @func3.setter
     def func3(self, value):
-        self.write_bits(7, 9)
+        self.write_bits(7, 9, value)
 
     @property
     def func7(self):
@@ -28,7 +28,7 @@ class pipe_control_t(SuperStruct):
 
     @func7.setter
     def func7(self, value):
-        self.write_bits(10, 16)
+        self.write_bits(10, 16, value)
 
     @property
     def mem_en(self):
@@ -36,7 +36,7 @@ class pipe_control_t(SuperStruct):
 
     @mem_en.setter
     def mem_en(self, value):
-        self.write_bits(17, 17)
+        self.write_bits(17, 17, value)
 
     @property
     def ex_en(self):
@@ -44,7 +44,7 @@ class pipe_control_t(SuperStruct):
 
     @ex_en.setter
     def ex_en(self, value):
-        self.write_bits(18, 18)
+        self.write_bits(18, 18, value)
 
     @property
     def wb_en(self):
@@ -52,7 +52,7 @@ class pipe_control_t(SuperStruct):
 
     @wb_en.setter
     def wb_en(self, value):
-        self.write_bits(19, 19)
+        self.write_bits(19, 19, value)
 
     @property
     def imm_en(self):
@@ -60,7 +60,7 @@ class pipe_control_t(SuperStruct):
 
     @imm_en.setter
     def imm_en(self, value):
-        self.write_bits(20, 20)
+        self.write_bits(20, 20, value)
 
     @property
     def valid(self):
@@ -68,7 +68,7 @@ class pipe_control_t(SuperStruct):
 
     @valid.setter
     def valid(self, value):
-        self.write_bits(21, 21)
+        self.write_bits(21, 21, value)
 
 
 class if_id_t(SuperStruct):
@@ -102,7 +102,7 @@ class if_id_t(SuperStruct):
 
 class id_ex_t(SuperStruct):
     def __init__(self, parent):
-        super().__init__(parent, 134)
+        super().__init__(parent, 133)
         self.ctrl = pipe_control_t(self, 0)
         self.rs1 = reg_transport_t(self, self.ctrl._width)
         rs2_base = self.ctrl._width + self.rs1._width
@@ -129,7 +129,8 @@ class id_ex_t(SuperStruct):
 
 class ex_mem_t(SuperStruct):
     def __init__(self, parent):
-        super().__init__(parent, 96)
+        super().__init__(parent, 133)
+        # super().__init__(parent, 96)
         self.ctrl = pipe_control_t(self, 0)
         self.rs = reg_transport_t(self, self.ctrl._width)
         rd_base = self.ctrl._width + self.rs._width
