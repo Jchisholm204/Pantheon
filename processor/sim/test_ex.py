@@ -43,34 +43,34 @@ async def ex_std_op(dut):
     await RisingEdge(dut.iClk)
     iID = id_ex_t(dut.iID)
     # iID.ctrl = pipe_control_t(iID)
-    A = 0x22
-    B = 0x1
-    # iID.rs1.value = 0x1
-    # iID.rs2.value = B
-    iID.ctrl.func3 = OpF3AND
+    A = 100
+    B = 55
+    iID.rs1.value = A
+    iID.rs2.value = B
+    iID.ctrl.func3 = OpF3SUB
     iID.ctrl.opcode = 0x7F
-    # iID.ctrl.func7 = OpF7AND
-    # iID.ctrl.valid = 1
-    # iID.ctrl.wb_en = 1
-    # iID.ctrl.ex_en = 1
-    # iID.ctrl.imm_en = 0
-    # iID.immediate = 0x123
+    iID.ctrl.func7 = OpF7SUB
+    iID.ctrl.valid = 1
+    iID.ctrl.wb_en = 1
+    iID.ctrl.ex_en = 1
+    iID.ctrl.imm_en = 0
+    iID.immediate = 0x124
     print("ID VALUE 1")
     print(iID._recent.integer)
     print(dut.iID._type)
     print(dut.oMEM._type)
     # dut.iID.value = iID._recent.integer
     await RisingEdge(dut.iClk)
-    # ctrl = pipe_control_t(iID)
-    # ctrl.func3 = 0x1
-    # ctrl.imm_en = 1
-    # dut.iID.value = ctrl._recent.integer
-    # await RisingEdge(dut.iClk)
-    # print("ID VALUE")
-    # print(iID._recent.integer)
-    # dut.iID.value = iID._recent.integer
-    # await RisingEdge(dut.iClk)
-    # # Assert that the instruction was performed correctly
+    ctrl = pipe_control_t(iID)
+    ctrl.func3 = 0x1
+    ctrl.imm_en = 1
+    dut.iID.value = ctrl._recent.integer
+    await RisingEdge(dut.iClk)
+    print("ID VALUE")
+    print(iID._recent.integer)
+    dut.iID.value = iID._recent.integer
+    await RisingEdge(dut.iClk)
+    # Assert that the instruction was performed correctly
     # oMEM = ex_mem_t(dut.oMEM)
     # assert oMEM.rd.value == A-B, "Failed SUB"
     pass

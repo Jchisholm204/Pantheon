@@ -104,18 +104,11 @@ class if_id_t(SuperStruct):
 class id_ex_t(SuperStruct):
     def __init__(self, parent, input=False):
         super().__init__(parent, 133)
-        if input:
-            self.ctrl = pipe_control_t(self)
-            self.rs1 = reg_transport_t(self, self.ctrl._width)
-            rs2_base = self.ctrl._width + self.rs1._width
-            self.rs2 = reg_transport_t(self, rs2_base)
-            self._base = rs2_base + self.rs2._width
-        else:
-            self.ctrl = pipe_control_t(self, 0)
-            self.rs1 = reg_transport_t(self, self.ctrl._width)
-            rs2_base = self.ctrl._width + self.rs1._width
-            self.rs2 = reg_transport_t(self, rs2_base)
-            self._base = rs2_base + self.rs2._width
+        self.ctrl = pipe_control_t(self, 0)
+        self.rs1 = reg_transport_t(self, self.ctrl._width)
+        rs2_base = self.ctrl._width + self.rs1._width
+        self.rs2 = reg_transport_t(self, rs2_base)
+        self._base = rs2_base + self.rs2._width
 
     @property
     def immediate(self):
