@@ -13,7 +13,7 @@ class pipe_control_t(SuperStruct):
 
     @opcode.setter
     def opcode(self, value):
-        self.write_bits(0, 6)
+        self.write_bits(0, 6, value)
 
     @property
     def func3(self):
@@ -105,7 +105,7 @@ class id_ex_t(SuperStruct):
     def __init__(self, parent, input=False):
         super().__init__(parent, 133)
         if input:
-            self.ctrl = pipe_control_t(self, 0)
+            self.ctrl = pipe_control_t(self)
             self.rs1 = reg_transport_t(self, self.ctrl._width)
             rs2_base = self.ctrl._width + self.rs1._width
             self.rs2 = reg_transport_t(self, rs2_base)

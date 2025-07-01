@@ -32,10 +32,12 @@ class SuperStruct:
         if isinstance(self._parent, ModifiableObject):
             self._recent = BinaryValue(value, self._width, False)
             self._parent.value = self._recent
+            print("Writing to self")
         elif isinstance(self._parent, SuperStruct):
+            print("Writing to parent")
             self._parent.write(value)
         else:
-            pass
+            TypeError("Cannot Write to unknown type")
 
     def write_bits(self, low, high, value):
         """ Write out the whole struct to the simulation
@@ -46,13 +48,20 @@ class SuperStruct:
             value: Struct Values to write out
         """
         # Invert width
-        if isinstance(self._parent, SuperStruct):
+        # if isinstance(self._parent, SuperStruct):
+        #     t_low = low
+        #     low = self._width - high - 1
+        #     high = self._width - t_low + 1
+        if not isinstance(self._parent, SuperStruct):
+        # if True:
             t_low = low
             low = self._width - high - 1
-            high = self._width - t_low + 1
-        t_low = low
-        low = self._width - high - 1
-        high = self._width - t_low - 1
+            high = self._width - t_low - 1
+        if isinstance(self._parent, SuperStruct):
+            self._parent: SuperStruct = self._parent
+            t_low = low
+            low = self._parent._width - high - 1
+            high = self._parent._width - t_low - 1
         val = int(self._recent)
         width = high - low + 1
         mask = ((1 << width) - 1) << (low + self._offset)
