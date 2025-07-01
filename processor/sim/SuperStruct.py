@@ -46,10 +46,10 @@ class SuperStruct:
             value: Struct Values to write out
         """
         # Invert width
-        # if isinstance(self._parent, SuperStruct):
-        #     t_low = low
-        #     low = self._width - high - 1
-        #     high = self._width - t_low + 1
+        if isinstance(self._parent, SuperStruct):
+            t_low = low
+            low = self._width - high - 1
+            high = self._width - t_low + 1
         t_low = low
         low = self._width - high - 1
         high = self._width - t_low - 1

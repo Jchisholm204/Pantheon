@@ -1,4 +1,5 @@
 from SuperStruct import SuperStruct
+from cocotb.handle import ModifiableObject
 from reg_transport_t import reg_transport_t
 
 
@@ -101,13 +102,20 @@ class if_id_t(SuperStruct):
 
 
 class id_ex_t(SuperStruct):
-    def __init__(self, parent):
+    def __init__(self, parent, input=False):
         super().__init__(parent, 133)
-        self.ctrl = pipe_control_t(self, 0)
-        self.rs1 = reg_transport_t(self, self.ctrl._width)
-        rs2_base = self.ctrl._width + self.rs1._width
-        self.rs2 = reg_transport_t(self, rs2_base)
-        self._base = rs2_base + self.rs2._width
+        if input:
+            self.ctrl = pipe_control_t(self, 0)
+            self.rs1 = reg_transport_t(self, self.ctrl._width)
+            rs2_base = self.ctrl._width + self.rs1._width
+            self.rs2 = reg_transport_t(self, rs2_base)
+            self._base = rs2_base + self.rs2._width
+        else:
+            self.ctrl = pipe_control_t(self, 0)
+            self.rs1 = reg_transport_t(self, self.ctrl._width)
+            rs2_base = self.ctrl._width + self.rs1._width
+            self.rs2 = reg_transport_t(self, rs2_base)
+            self._base = rs2_base + self.rs2._width
 
     @property
     def immediate(self):
@@ -128,13 +136,17 @@ class id_ex_t(SuperStruct):
 
 
 class ex_mem_t(SuperStruct):
-    def __init__(self, parent):
+    def __init__(self, parent, input=False):
         super().__init__(parent, 133)
-        # super().__init__(parent, 96)
-        self.ctrl = pipe_control_t(self, 0)
-        self.rs = reg_transport_t(self, self.ctrl._width)
-        rd_base = self.ctrl._width + self.rs._width
-        self.rd = reg_transport_t(self, rd_base)
+        if input:
+            self.ctrl = pipe_control_t(self, 0)
+            self.rs = reg_transport_t(self, self.ctrl._width)
+            rd_base = self.ctrl._width + self.rs._width
+            self.rd = reg_transport_t(self, rd_base)
+        else:
+            self.rd = reg_transport_t(self)
+            self.rs = reg_transport_t(self, self.rd._width)
+            self.ctrl = pipe_control_t(self, 0)
 
 
 class mem_wb_t(SuperStruct):
