@@ -20,7 +20,7 @@ class SuperStruct:
         self._recent = BinaryValue(None, width, False)
         self._width = width
         if isinstance(self._parent, SuperStruct):
-            self._offset = -offset
+            self._offset = offset
         else:
             self._offset = offset
         if not isinstance(parent, (ModifiableObject, SuperStruct)):
@@ -55,18 +55,20 @@ class SuperStruct:
             t_low = low
             low = self._width - high - 1
             high = self._width - t_low - 1
+            offset = self._offset
         # Invert width for child
         elif isinstance(self._parent, SuperStruct):
             t_low = low
             low = self._parent._width - high - 1
             high = self._parent._width - t_low - 1
+            offset = -self._offset
         else:
             raise TypeError("Cannot Arrange bits for value with no parent")
         # Get the most recent value
         val = int(self._get_recent())
         width = high - low + 1
         mask = ((1 << width) - 1) << (low + self._offset)
-        val = (val & ~mask) | ((value & (1 << width) - 1)) << (low + self._offset)
+        val = (val & ~mask) | ((value & (1 << width) - 1)) << (low + offset)
         self.write(val)
 
     def read(self):
