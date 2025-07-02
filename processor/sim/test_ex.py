@@ -65,3 +65,92 @@ async def ex_sub_tes(dut):
     # Add extra sim time for readability
     await RisingEdge(dut.iClk)
     pass
+
+
+@cocotb.test
+async def ex_mem_tes(dut):
+    await setup_ex(dut)
+    # Setup a sample instruction (sub)
+    # await RisingEdge(dut.iClk)
+    iID = id_ex_t(dut.iID)
+    A = 0x123
+    B = 0x456
+    C = 0x235
+    iID.rs1.value = A
+    iID.rs2.value = B
+    iID.ctrl.func3 = OpF3SUB
+    iID.ctrl.opcode = 0x7F
+    iID.ctrl.func7 = OpF7SUB
+    iID.ctrl.valid = 1
+    iID.ctrl.wb_en = 1
+    # Ensure EX is disabled, immediate is enabled
+    iID.ctrl.ex_en = 0
+    iID.ctrl.mem_en = 1
+    iID.ctrl.imm_en = 1
+    iID.immediate = C
+    # Value will appear on input on rising edge
+    await RisingEdge(dut.iClk)
+    # Wait for procesing
+    # Value latches in output reg on next rising edge
+    await RisingEdge(dut.iClk)
+    # Assert that the instruction was performed correctly
+    oMEM = ex_mem_t(dut.oMEM)
+    assert oMEM.rd.value == A+C, "Failed Mem Add"
+    assert oMEM.rs.value == B, "Failed Pass RS"
+    # Add extra sim time for readability
+    await RisingEdge(dut.iClk)
+    pass
+
+
+@cocotb.test
+async def ex_stall(dut):
+    await setup_ex(dut)
+    # Setup a sample instruction (sub)
+    # await RisingEdge(dut.iClk)
+    iID = id_ex_t(dut.iID)
+    A = 0x123
+    B = 0x456
+    C = 0x235
+    iID.rs1.value = A
+    iID.rs2.value = B
+    iID.ctrl.func3 = OpF3ADD
+    iID.ctrl.opcode = 0x7F
+    iID.ctrl.func7 = OpF7ADD
+    iID.ctrl.valid = 1
+    iID.ctrl.wb_en = 1
+    # Ensure EX is disabled, immediate is enabled
+    iID.ctrl.ex_en = 1
+    iID.ctrl.mem_en = 1
+    iID.ctrl.imm_en = 1
+    iID.immediate = C
+    # Value will appear on input on rising edge
+    await RisingEdge(dut.iClk)
+    # Wait for procesing
+    # Value latches in output reg on next rising edge
+    await RisingEdge(dut.iClk)
+    # Assert that the instruction was performed correctly
+    oMEM = ex_mem_t(dut.oMEM)
+    assert oMEM.rd.value == A+C, "Failed Mem Add"
+    assert oMEM.rs.value == B, "Failed Pass RS"
+    # Assert the stall signal
+    dut.iStall.value = 1
+    # Change inputs
+    iID.rs1.value = 0
+    iID.rs2.value = 0
+    iID.immediate = 0
+    await RisingEdge(dut.iClk)
+    await RisingEdge(dut.iClk)
+    assert oMEM.rd.value == A+C, "Failed Mem Add"
+    assert oMEM.rs.value == B, "Failed Pass RS"
+    dut.iStall.value = 0
+    # iID.rs1.write(0)
+    iID.rs1.value = 0x0
+    iID.rs2.value = 0x0
+    iID.ctrl.imm_en = 0
+    await RisingEdge(dut.iClk)
+    await RisingEdge(dut.iClk)
+    assert oMEM.rd.value == 0, "Failed Mem Add"
+    assert oMEM.rs.value == 0, "Failed Pass RS"
+    # Add extra sim time for readability
+    await RisingEdge(dut.iClk)
+    pass

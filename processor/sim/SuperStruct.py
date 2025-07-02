@@ -35,9 +35,9 @@ class SuperStruct:
         if isinstance(self._parent, ModifiableObject):
             self._recent = BinaryValue(value, self._width, False)
             self._parent.value = self._recent
-            print("Writing to self")
+            # print("Writing to self")
         elif isinstance(self._parent, SuperStruct):
-            print("Writing to parent")
+            # print("Writing to parent")
             self._parent.write(value)
         else:
             raise TypeError("Cannot Write to unknown type")
@@ -67,8 +67,9 @@ class SuperStruct:
         # Get the most recent value
         val = int(self._get_recent())
         width = high - low + 1
-        mask = ((1 << width) - 1) << (low + self._offset)
-        val = (val & ~mask) | ((value & (1 << width) - 1)) << (low + offset)
+        mask = ((1 << width) - 1) << (low + offset)
+        # val = (val & ~mask) | ((value & (1 << width) - 1)) << (low + offset)
+        val = (val & ~mask) | ((value & ((1 << width) - 1)) << (low + offset))
         self.write(val)
 
     def read(self):

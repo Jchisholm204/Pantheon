@@ -34,8 +34,8 @@ logic [2:0] ALU_F3;
 ALU alu(
     .iA(ALU_A),
     .iB(ALU_B),
-    .iFunc3(iID.ctrl.func3),
-    .iFunc7(iID.ctrl.func7),
+    .iFunc3(ALU_F3),
+    .iFunc7(ALU_F7),
     .oZ(ALU_Z)
 );
 
