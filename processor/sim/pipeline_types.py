@@ -1,4 +1,5 @@
 from SuperStruct import SuperStruct
+from cocotb.handle import ModifiableObject
 from reg_transport_t import reg_transport_t
 
 
@@ -12,7 +13,7 @@ class pipe_control_t(SuperStruct):
 
     @opcode.setter
     def opcode(self, value):
-        self.write_bits(0, 6)
+        self.write_bits(0, 6, value)
 
     @property
     def func3(self):
@@ -101,7 +102,7 @@ class if_id_t(SuperStruct):
 
 
 class id_ex_t(SuperStruct):
-    def __init__(self, parent):
+    def __init__(self, parent, input=False):
         super().__init__(parent, 133)
         self.ctrl = pipe_control_t(self, 0)
         self.rs1 = reg_transport_t(self, self.ctrl._width)
@@ -128,9 +129,8 @@ class id_ex_t(SuperStruct):
 
 
 class ex_mem_t(SuperStruct):
-    def __init__(self, parent):
+    def __init__(self, parent, input=False):
         super().__init__(parent, 133)
-        # super().__init__(parent, 96)
         self.ctrl = pipe_control_t(self, 0)
         self.rs = reg_transport_t(self, self.ctrl._width)
         rd_base = self.ctrl._width + self.rs._width
