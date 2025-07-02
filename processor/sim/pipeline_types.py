@@ -131,15 +131,10 @@ class id_ex_t(SuperStruct):
 class ex_mem_t(SuperStruct):
     def __init__(self, parent, input=False):
         super().__init__(parent, 133)
-        if input:
-            self.ctrl = pipe_control_t(self, 0)
-            self.rs = reg_transport_t(self, self.ctrl._width)
-            rd_base = self.ctrl._width + self.rs._width
-            self.rd = reg_transport_t(self, rd_base)
-        else:
-            self.rd = reg_transport_t(self)
-            self.rs = reg_transport_t(self, self.rd._width)
-            self.ctrl = pipe_control_t(self, 0)
+        self.ctrl = pipe_control_t(self, 0)
+        self.rs = reg_transport_t(self, self.ctrl._width)
+        rd_base = self.ctrl._width + self.rs._width
+        self.rd = reg_transport_t(self, rd_base)
 
 
 class mem_wb_t(SuperStruct):
