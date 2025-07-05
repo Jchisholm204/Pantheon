@@ -12,20 +12,13 @@
  */
 `timescale 1ns/100ps
 module DMEM (
-    // Clock and reset must be driven externally
-    iFunc3,
-    iEn, iWrite,
-    iAddr, iData,
-    oData,
-    oStall,
-    mem_wb
+    input logic iClk, nRst, iEn, iWrite,
+    input logic [2:0] iFunc3,
+    input logic [31:0] iAddr, iData,
+    output logic [31:0] oData,
+    output logic oStall,
+    WISHBONE_IF.master mem_wb
 );
-input logic [2:0] iFunc3;
-input logic iEn, iWrite;
-input logic [31:0] iAddr, iData;
-output logic [31:0] oData;
-output logic oStall;
-WISHBONE_IF.master mem_wb;
 
 // Signed reads,, data in shorthand
 logic [31:0] signed_byte, signed_half, dIn;
@@ -35,6 +28,8 @@ assign mem_wb.addr = iAddr;
 assign mem_wb.we = iWrite;
 assign mem_wb.stb = iEn;
 assign mem_wb.cyc = iEn;
+assign mem_wb.iClk = iClk;
+assign mem_wb.iRst = ~nRst;
 
 // Combinational assignment for data width
 always_comb begin
