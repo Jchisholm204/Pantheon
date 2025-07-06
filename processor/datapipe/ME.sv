@@ -24,14 +24,15 @@ module ME(
 
 logic mem_en;
 logic [31:0] mem_out;
-WISHBONE_IF dmem_wb;
+WISHBONE_IF dmem_wb(
+    .iClk(iClk),
+    .iRst(~nRst)
+);
 assign mem_en = iEn & iEX.ctrl.mem_en & iEX.ctrl.valid;
 
 DMEM dmem(
-    .iClk(iClk),
-    .nRst(nRst),
     .iEn(mem_en),
-    .iWrite(mem_en & iEX.ctrl.wb_en),
+    .iWrite(mem_en & ~iEX.ctrl.wb_en),
     .iFunc3(iEX.ctrl.func3),
     .iAddr(iEX.rd.value),
     .iData(iEX.rs.value),

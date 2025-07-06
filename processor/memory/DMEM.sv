@@ -12,7 +12,7 @@
  */
 `timescale 1ns/100ps
 module DMEM (
-    input logic iClk, nRst, iEn, iWrite,
+    input logic iEn, iWrite,
     input logic [2:0] iFunc3,
     input logic [31:0] iAddr, iData,
     output logic [31:0] oData,
@@ -28,8 +28,6 @@ assign mem_wb.addr = iAddr;
 assign mem_wb.we = iWrite;
 assign mem_wb.stb = iEn;
 assign mem_wb.cyc = iEn;
-assign mem_wb.iClk = iClk;
-assign mem_wb.iRst = ~nRst;
 
 // Combinational assignment for data width
 always_comb begin

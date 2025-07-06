@@ -20,7 +20,7 @@ WISHBONE_IF.slave mem_wb;
 logic [7:0] RAM[SIZE-1:0];
 
 always_ff @(posedge mem_wb.iClk, negedge mem_wb.iRst) begin
-    if(!mem_wb.iRst) begin
+    if(mem_wb.iRst) begin
         integer i;
         for(i = 0; i < SIZE; i++) begin
             RAM[i] <= 8'd0;
