@@ -24,27 +24,48 @@ ex_mem_t EX_ME;
 mem_wb_t ME_WB;
 
 // IF Signals
-logic IF_en, IF_PCS, IF_iStall, IF_oStall;
+logic IF_en, IF_rst, IF_PCS, IF_iStall, IF_oStall;
 logic [31:0] IF_iPC;
 
 // ID Signals
-logic ID_en, ID_iStall, ID_brTrue;
+logic ID_en, ID_rst, ID_iStall, ID_brTrue;
 logic [RegAddrWidth-1:0] ID_addrRs1, ID_addrRs2;
 logic [RegWidth-1:0] ID_rs1, ID_rs2;
 
 // EX Signals
-logic EX_en, EX_iStall;
+logic EX_en, EX_rst, EX_iStall;
 logic EX_FwExS1_en, EX_FwExS2_en;
 logic EX_FwMeS1_en, EX_FwMeS2_en;
-logic [31:0] EX_FwMe;
 
 // MEM Signals
-logic ME_en, ME_iStall, ME_oStall;
+logic ME_en, ME_rst, ME_iStall, ME_oStall;
+
+HazardUnit hu(
+    .iClk(iClk),
+    .nRst(nRst),
+    .iBrTrue(ID_brTrue),
+    .iIF_ID(IF_ID),
+    .iID_EX(ID_EX),
+    .iEX_ME(EX_ME),
+    .iME_WB(ME_WB),
+    .oStall_IF(IF_iStall),
+    .oStall_ID(ID_iStall),
+    .oStall_EX(EX_iStall),
+    .oStall_ME(ME_iStall),
+    .oFwExS1_en(EX_FwExS1_en),
+    .oFwExS2_en(EX_FwExS2_en),
+    .oFwMeS1_en(EX_FwMeS1_en),
+    .oFwMeS2_en(EX_FwMeS2_en),
+    .oRst_IF(IF_rst),
+    .oRst_ID(ID_rst),
+    .oRst_EX(EX_rst),
+    .oRst_ME(ME_rst)
+);
 
 IF insfet(
     .iClk(iClk),
     .iEn(IF_en),
-    .nRst(nRst),
+    .nRst(IF_rst),
     .iPCS_EXT(IF_PCS),
     .iStall(IF_iStall),
     .iPCS_EXT(IF_PCS),
@@ -55,7 +76,7 @@ IF insfet(
 ID insdec(
     .iClk(iClk),
     .iEn(ID_en),
-    .nRst(nRst),
+    .nRst(ID_rst),
     .iStall(ID_iStall),
     .iIF(IF_ID),
     .oEX(ID_EX),
@@ -69,7 +90,7 @@ ID insdec(
 EX ex(
     .iClk(iClk),
     .iEn(EX_en),
-    .nRst(nRst),
+    .nRst(EX_rst),
     .iStall(EX_iStall),
     .iID(ID_EX),
     .oMEM(EX_ME),
@@ -77,13 +98,13 @@ EX ex(
     .iFwExS2_en(EX_FwExS2_en),
     .iFwMeS1_en(EX_FwMeS1_en),
     .iFwMeS2_en(EX_FwMeS2_en),
-    .iFwMe(EX_FwMe)
+    .iFwMe(ME_WB.rd.value)
 );
 
 ME me(
     .iClk(iClk),
     .iEn(ME_en),
-    .nRst(nRst),
+    .nRst(ME_rst),
     .iStall(ME_iStall),
     .iEX(EX_ME),
     .oWB(ME_WB),

@@ -2,9 +2,9 @@
  * @file RAMBlock.sv
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
  * @brief Block of RAM within the FPGA
- * @version 0.1
+ * @version 0.2
  * @date Created: 2025-06-01
- * @modified Last Modified: 2025-06-01
+ * @modified Last Modified: 2025-07-06
  *
  * @copyright Copyright (c) 2025
  */
