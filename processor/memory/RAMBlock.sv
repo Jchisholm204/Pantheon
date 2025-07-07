@@ -23,7 +23,7 @@ always_ff @(posedge mem_wb.iClk, negedge mem_wb.iRst) begin
     if(mem_wb.iRst) begin
         integer i;
         for(i = 0; i < SIZE; i++) begin
-            RAM[i] <= 8'd0;
+            RAM[i] = 8'd0;
         end
     end else begin
         if(mem_wb.stb & mem_wb.cyc & mem_wb.we) begin
