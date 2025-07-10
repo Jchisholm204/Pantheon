@@ -39,19 +39,19 @@ module HazardUnit(
 
 // Forwarding Signals
 assign oFwExS1_en = iID_EX.rs1.addr == iEX_ME.rd.addr
-                    & iID.rs1.addr != '0
+                    & iID_EX.rs1.addr != '0
                     & iEX_ME.ctrl.ex_en;
 
 assign oFwExS2_en = iID_EX.rs2.addr == iEX_ME.rd.addr
-                    & iID.rs2.addr != '0
+                    & iID_EX.rs2.addr != '0
                     & iEX_ME.ctrl.ex_en;
 
 assign oFwMeS1_en = iID_EX.rs1.addr == iME_WB.rd.addr
-                    & iID.rs1.addr != '0
+                    & iID_EX.rs1.addr != '0
                     & iME_WB.ctrl.mem_en;
 
 assign oFwMeS2_en = iID_EX.rs1.addr == iME_WB.rd.addr
-                    & iID.rs2.addr != '0
+                    & iID_EX.rs2.addr != '0
                     & iME_WB.ctrl.mem_en;
 
 // Stall for ME

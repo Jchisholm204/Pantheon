@@ -86,7 +86,7 @@ class if_id_t(SuperStruct):
 
     @property
     def pc4(self):
-        self.read_bits(32, 63)
+        return self.read_bits(32, 63)
 
     @pc4.setter
     def pc4(self, value):
