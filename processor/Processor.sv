@@ -40,6 +40,9 @@ logic EX_FwMeS1_en, EX_FwMeS2_en;
 // MEM Signals
 logic ME_en, ME_rst, ME_iStall, ME_oStall;
 
+// Debugger Signals
+logic DBG_stall;
+
 HazardUnit hu(
     .iClk(iClk),
     .nRst(nRst),
@@ -48,6 +51,9 @@ HazardUnit hu(
     .iID_EX(ID_EX),
     .iEX_ME(EX_ME),
     .iME_WB(ME_WB),
+    .iStall_dbg(DBG_stall),
+    .iStall_IF(IF_oStall),
+    .iStall_ME(ME_oStall),
     .oStall_IF(IF_iStall),
     .oStall_ID(ID_iStall),
     .oStall_EX(EX_iStall),
@@ -70,8 +76,8 @@ IF insfet(
     .iEn(IF_en),
     .nRst(IF_rst),
     .iPCS_EXT(IF_PCS),
+    .iPC_EXT(IF_iPC),
     .iStall(IF_iStall),
-    .iPCS_EXT(IF_PCS),
     .oStall(IF_oStall),
     .oID(IF_ID)
 );
@@ -87,7 +93,8 @@ ID insdec(
     .iRs2(ID_rs2),
     .oAddrRs1(ID_addrRs1),
     .oAddrRs2(ID_addrRs2),
-    .oBrTrue(ID_brTrue)
+    .oBrTrue(ID_brTrue),
+    .oBrPc(IF_iPC)
 );
 
 EX ex(

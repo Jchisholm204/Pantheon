@@ -23,7 +23,8 @@ module ID (
     input logic [RegWidth-1:0] iRs1, iRs2,
     output logic [RegAddrWidth-1:0] oAddrRs1, oAddrRs2,
     // External Control Signals
-    output logic oBrTrue
+    output logic oBrTrue,
+    output logic [RegWidth-1:0] oBrPc
 );
 
 // Instruction Decode Signals
@@ -117,7 +118,8 @@ BranchOutcome bpred(
     .oBrTrue(brtrue)
 );
 
-assign oBrTrue = brtrue & OP_Branch;
+assign oBrTrue = (brtrue & OP_Branch) | OPF_J;
+assign oBrPc = OPF_J ? oEX.immediate : iID.pc4 + oEX.immediate;
 
 endmodule
 
