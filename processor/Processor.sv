@@ -62,6 +62,9 @@ HazardUnit hu(
     .oRst_ME(ME_rst)
 );
 
+
+// --- Pipeline Stages --- //
+
 IF insfet(
     .iClk(iClk),
     .iEn(IF_en),

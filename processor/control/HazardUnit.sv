@@ -11,6 +11,7 @@
 
 `timescale 1ns/100ps
 import pipeline_types::*;
+import rv32_isa::*;
 
 module HazardUnit(
     input logic iClk, nRst,
@@ -32,6 +33,42 @@ module HazardUnit(
     output logic oRst_EX,
     output logic oRst_ME
 );
+
+// Forwarding Signals
+assign oFwExS1_en = iID_EX.rs1.addr == iEX_ME.rd.addr
+                    & iID.rs1.addr != '0
+                    & iEX_ME.ctrl.ex_en;
+
+assign oFwExS2_en = iID_EX.rs2.addr == iEX_ME.rd.addr
+                    & iID.rs2.addr != '0
+                    & iEX_ME.ctrl.ex_en;
+
+assign oFwMeS1_en = iID_EX.rs1.addr == iME_WB.rd.addr
+                    & iID.rs1.addr != '0
+                    & iME_WB.ctrl.mem_en;
+
+assign oFwMeS2_en = iID_EX.rs1.addr == iME_WB.rd.addr
+                    & iID.rs2.addr != '0
+                    & iME_WB.ctrl.mem_en;
+
+// Stall for ME
+logic stallMeS1, stallMeS2, stallMe;
+assign stallMeS1 = iID_EX.rs1.addr == iEX_ME.rd.addr;
+assign stallMeS2 = iID_EX.rs2.addr == iEX_ME.rd.addr;
+assign stallMe = stallMeS1 | stallMeS2;
+
+// Stall Signals
+assign oStall_IF = stallMe;
+assign oStall_ID = stallMe;
+assign oStall_EX = stallMe;
+assign oStall_ME = 1'b0;
+
+// Reset Signals
+// Pipeline Flushing or on System Reset
+assign oRst_IF = nRst | iBrTrue;
+assign oRst_ID = nRst;
+assign oRst_EX = nRst;
+assign oRst_ME = nRst;
 
 
 endmodule
