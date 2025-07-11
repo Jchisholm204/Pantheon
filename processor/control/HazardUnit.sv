@@ -15,6 +15,7 @@ import rv32_isa::*;
 
 module HazardUnit(
     input logic iClk, nRst,
+    input logic nRst_dbg,
     input logic iBrTrue,
     input if_id_t iIF_ID,
     input id_ex_t iID_EX,
@@ -34,7 +35,11 @@ module HazardUnit(
     output logic oRst_IF,
     output logic oRst_ID,
     output logic oRst_EX,
-    output logic oRst_ME
+    output logic oRst_ME,
+    output logic oFlush_IF,
+    output logic oFlush_ID,
+    output logic oFlush_EX,
+    output logic oFlush_ME
 );
 
 // Forwarding Signals
@@ -71,10 +76,14 @@ assign oStall_ME = stallMu | iStall_dbg;
 
 // Reset Signals
 // Pipeline Flushing or on System Reset
-assign oRst_IF = nRst | iBrTrue;
-assign oRst_ID = nRst;
-assign oRst_EX = nRst;
-assign oRst_ME = nRst;
+assign oRst_IF = nRst | nRst_dbg;
+assign oRst_ID = nRst | nRst_dbg;
+assign oRst_EX = nRst | nRst_dbg;
+assign oRst_ME = nRst | nRst_dbg;
+assign oFlush_IF = oRst_IF | iBrTrue;
+assign oFlush_ID = oRst_ID;
+assign oFlush_EX = oRst_EX;
+assign oFlush_ME = oRst_ME;
 
 
 endmodule

@@ -139,6 +139,6 @@ class ex_mem_t(SuperStruct):
 
 class mem_wb_t(SuperStruct):
     def __init__(self, parent):
-        super().__init__(parent, 96)
+        super().__init__(parent, 59)
         self.ctrl = pipe_control_t(self, 0)
         self.rd = reg_transport_t(self, self.ctrl._width)
