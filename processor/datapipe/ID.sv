@@ -119,7 +119,7 @@ BranchOutcome bpred(
 );
 
 assign oBrTrue = (brtrue & OP_Branch) | OPF_J;
-assign oBrPc = OPF_J ? oEX.immediate : iID.pc4 + oEX.immediate;
+assign oBrPc = OPF_J ? oEX.immediate : iIF.pc4 + oEX.immediate;
 
 endmodule
 
