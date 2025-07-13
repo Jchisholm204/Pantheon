@@ -59,7 +59,7 @@ assign oFwMeS2_en = iID_EX.rs1.addr == iME_WB.rd.addr
                     & iID_EX.rs2.addr != '0
                     & iME_WB.ctrl.mem_en;
 
-// Stall for ME
+// Stall for ME (WAR Hazard)
 logic stallMeS1, stallMeS2, stallMe, stallMu;
 assign stallMeS1 = iID_EX.rs1.addr == iEX_ME.rd.addr;
 assign stallMeS2 = iID_EX.rs2.addr == iEX_ME.rd.addr;
@@ -75,11 +75,13 @@ assign oStall_EX = stallMe | stallMu | iStall_dbg;
 assign oStall_ME = stallMu | iStall_dbg;
 
 // Reset Signals
-// Pipeline Flushing or on System Reset
+// System Reset ONLY (not for pipeline flushing)
 assign oRst_IF = nRst | nRst_dbg;
 assign oRst_ID = nRst | nRst_dbg;
 assign oRst_EX = nRst | nRst_dbg;
 assign oRst_ME = nRst | nRst_dbg;
+
+// Flush Outputs - For Pipeline Flushing
 assign oFlush_IF = oRst_IF | iBrTrue;
 assign oFlush_ID = oRst_ID;
 assign oFlush_EX = oRst_EX;

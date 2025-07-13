@@ -14,8 +14,8 @@ import pipeline_types::if_id_t;
 
 module IF (
     input wire iClk, iEn, nRst, iFlush,
-    input wire iPCS_EXT, iStall,
-    input wire [31:0] iPC_EXT,
+    input wire iPCS_EXT, iStall, iDbg,
+    input wire [31:0] iPC_EXT, iDbg_ins,
     output logic oStall,
     // Pipeline Register
     output if_id_t oID
@@ -31,7 +31,8 @@ WISHBONE_IF wb_imem(
 PC pc(
     .iClk(iClk),
     .nRst(nRst),
-    .iStall(iStall),
+    // Stall the program counter when in debug mode
+    .iStall(iStall | iDbg),
     .iPC(iPC_EXT),
     .iEXT_S(iPCS_EXT),
     .oPC(PC),
@@ -39,7 +40,7 @@ PC pc(
 );
 
 IMEM wbi(
-    .iEn(iEn & ~iStall),
+    .iEn(iEn & ~iStall & ~iDbg),
     .iAddr(PC),
     .oData(ins_data),
     .oStall(oStall),
@@ -58,7 +59,7 @@ always_ff @(posedge iClk, negedge nRst) begin
     end else if(~iStall) begin
         oID.pc <= PC;
         oID.pc4 <= PC4;
-        oID.instruction <= ins_data;
+        oID.instruction <= iDbg ? iDbg_ins : ins_data;
     end
 end
 

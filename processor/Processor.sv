@@ -41,7 +41,8 @@ logic EX_FwMeS1_en, EX_FwMeS2_en;
 logic ME_en, ME_rst, ME_flush, ME_iStall, ME_oStall;
 
 // Debugger Signals
-logic DBG_stall;
+logic DBG_stall, DBG_exec, DBG_req_init;
+logic [31:0] DBG_ins;
 
 HazardUnit hu(
     .iClk(iClk),
@@ -81,8 +82,10 @@ IF insfet(
     .nRst(IF_rst),
     .iFlush(IF_flush),
     .iPCS_EXT(IF_PCS),
-    .iPC_EXT(IF_iPC),
     .iStall(IF_iStall),
+    .iDbg(DBG_exec),
+    .iPC_EXT(IF_iPC),
+    .iDbg_ins(DBG_ins),
     .oStall(IF_oStall),
     .oID(IF_ID)
 );
