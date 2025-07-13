@@ -16,7 +16,7 @@ import pipeline_types::mem_wb_t;
 
 module ME(
     input logic iClk, iEn, nRst,
-    input logic iStall,
+    input logic iStall, iFlush,
     input ex_mem_t iEX,
     output mem_wb_t oWB,
     output logic oStall
@@ -46,7 +46,7 @@ RAMBlock cram(
 );
 
 always_ff @(posedge iClk, negedge nRst) begin : WB_ASSIGN
-    if(!nRst)
+    if(!nRst | iFlush)
         oWB = '0;
     else if(!iStall) begin
         oWB.ctrl = iEX.ctrl;

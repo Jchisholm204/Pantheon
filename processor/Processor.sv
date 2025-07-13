@@ -24,21 +24,21 @@ ex_mem_t EX_ME;
 mem_wb_t ME_WB;
 
 // IF Signals
-logic IF_en, IF_rst, IF_PCS, IF_iStall, IF_oStall;
+logic IF_en, IF_rst, IF_flush, IF_PCS, IF_iStall, IF_oStall;
 logic [31:0] IF_iPC;
 
 // ID Signals
-logic ID_en, ID_rst, ID_iStall, ID_brTrue;
+logic ID_en, ID_rst, ID_flush, ID_iStall, ID_brTrue;
 logic [RegAddrWidth-1:0] ID_addrRs1, ID_addrRs2;
 logic [RegWidth-1:0] ID_rs1, ID_rs2;
 
 // EX Signals
-logic EX_en, EX_rst, EX_iStall;
+logic EX_en, EX_rst, EX_flush, EX_iStall;
 logic EX_FwExS1_en, EX_FwExS2_en;
 logic EX_FwMeS1_en, EX_FwMeS2_en;
 
 // MEM Signals
-logic ME_en, ME_rst, ME_iStall, ME_oStall;
+logic ME_en, ME_rst, ME_flush, ME_iStall, ME_oStall;
 
 // Debugger Signals
 logic DBG_stall;
@@ -65,7 +65,11 @@ HazardUnit hu(
     .oRst_IF(IF_rst),
     .oRst_ID(ID_rst),
     .oRst_EX(EX_rst),
-    .oRst_ME(ME_rst)
+    .oRst_ME(ME_rst),
+    .oFlush_IF(IF_flush),
+    .oFlush_ID(ID_flush),
+    .oFlush_EX(EX_flush),
+    .oFlush_ME(ME_flush)
 );
 
 
@@ -75,6 +79,7 @@ IF insfet(
     .iClk(iClk),
     .iEn(IF_en),
     .nRst(IF_rst),
+    .iFlush(IF_flush),
     .iPCS_EXT(IF_PCS),
     .iPC_EXT(IF_iPC),
     .iStall(IF_iStall),
@@ -87,6 +92,7 @@ ID insdec(
     .iEn(ID_en),
     .nRst(ID_rst),
     .iStall(ID_iStall),
+    .iFlush(ID_flush),
     .iIF(IF_ID),
     .oEX(ID_EX),
     .iRs1(ID_rs1),
@@ -102,6 +108,7 @@ EX ex(
     .iEn(EX_en),
     .nRst(EX_rst),
     .iStall(EX_iStall),
+    .iFlush(EX_flush),
     .iID(ID_EX),
     .oMEM(EX_ME),
     .iFwExS1_en(EX_FwExS1_en),
@@ -116,6 +123,7 @@ ME me(
     .iEn(ME_en),
     .nRst(ME_rst),
     .iStall(ME_iStall),
+    .iFlush(ME_flush),
     .iEX(EX_ME),
     .oWB(ME_WB),
     .oStall(ME_oStall)

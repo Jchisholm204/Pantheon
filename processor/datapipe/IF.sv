@@ -13,7 +13,7 @@
 import pipeline_types::if_id_t;
 
 module IF (
-    input wire iClk, iEn, nRst,
+    input wire iClk, iEn, nRst, iFlush,
     input wire iPCS_EXT, iStall,
     input wire [31:0] iPC_EXT,
     output logic oStall,
@@ -51,7 +51,7 @@ ROMBlock insmem(
 );
 
 always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst) begin
+    if(!nRst | iFlush) begin
         oID.pc <= 32'd0;
         oID.pc4 <= 32'd0;
         oID.instruction <= 32'd0;

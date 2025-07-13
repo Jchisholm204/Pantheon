@@ -16,7 +16,8 @@ import pipeline_types::pipe_control_t;
 
 module ID (
     // Pipeline Signals
-    input wire iClk, iEn, nRst, iStall,
+    input logic iClk, iEn, nRst,
+    input logic iStall, iFlush,
     input if_id_t iIF,
     output id_ex_t oEX,
     // Register File Signals
@@ -83,7 +84,7 @@ assign imm_en = OPF_I | OPF_U | OPF_J | OPF_B | OPF_S;
 
 // Pipeline Control Outputs
 always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst) begin
+    if(!nRst | iFlush) begin
         oEX <= '0;
     end
     if(!iStall) begin

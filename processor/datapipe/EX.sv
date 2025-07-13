@@ -16,7 +16,8 @@ import pipeline_types::id_ex_t;
 import pipeline_types::ex_mem_t;
 
 module EX(
-    input logic iClk, iEn, nRst, iStall,
+    input logic iClk, iEn, nRst,
+    input logic iStall, iFlush,
     input id_ex_t iID,
     output ex_mem_t oMEM,
     input logic iFwExS1_en,
@@ -67,7 +68,7 @@ always_comb begin
 end
 
 always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst)
+    if(!nRst | iFlush)
         oMEM = '0;
     else if(!iStall) begin
         oMEM.ctrl = iID.ctrl;
