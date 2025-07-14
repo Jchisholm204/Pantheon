@@ -30,10 +30,17 @@ class TB:
         self.defines.update({key: value})
 
     def run_tests(self):
+        os.environ["MAKEFLAGS"] = f'-j{os.cpu_count()}'
         if self.sim == "icarus":
             build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
         else:
-            build_args = ["--trace", "-Wno-fatal", "--trace-structs", "--vpi"]
+            build_args = ["--trace",
+                          "-Wno-fatal",
+                          "--trace-structs",
+                          "--vpi",
+                          # "--output-split", "8",
+                          # "--threads", "1"
+                          ]
         runner = get_runner(self.sim)
         print(runner.build(
             verilog_sources=self.sources,
