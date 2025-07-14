@@ -11,7 +11,7 @@
 
 `timescale 1ns/100ps
 import pipeline_types::*;
-import reg_transport_t::reg_transport_t;
+import reg_transport::reg_transport_t;
 import rv32_isa::*;
 
 module Processor(

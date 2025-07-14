@@ -29,3 +29,17 @@ MEM_SOURCES = [
 WISHBONE_SOURCES = [
         "../wishbone/WISHBONE_IF.sv"
 ]
+
+PIPE_SOURCES = [
+    "datapipe/IF.sv",
+    "datapipe/ID.sv",
+    "datapipe/EX.sv",
+    "datapipe/ME.sv"
+]
+
+CTRL_SOURCES = [
+    "control/BranchOutcome.sv",
+    "control/HazardUnit.sv",
+    "control/PC.sv",
+    "control/decoder.sv",
+]
