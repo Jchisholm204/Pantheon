@@ -9,13 +9,11 @@ from rv32_isa import *
 
 async def setup_id(dut):
     clock = Clock(dut.iClk, 10, units='ns')
-    dut.iEn.value = 0
     dut.nRst.value = 0
     cocotb.start_soon(clock.start())
     await RisingEdge(dut.iClk)
     await RisingEdge(dut.iClk)
     dut.nRst.value = 1
-    dut.iEn.value = 1
     dut.iStall.value = 0
     await RisingEdge(dut.iClk)
 
