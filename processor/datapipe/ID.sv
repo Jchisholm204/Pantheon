@@ -16,7 +16,7 @@ import pipeline_types::pipe_control_t;
 
 module ID (
     // Pipeline Signals
-    input logic iClk, iEn, nRst,
+    input logic iClk, nRst,
     input logic iStall, iFlush,
     input if_id_t iIF,
     output id_ex_t oEX,

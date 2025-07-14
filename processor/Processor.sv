@@ -29,20 +29,20 @@ ex_mem_t EX_ME;
 mem_wb_t ME_WB;
 
 // IF Signals
-logic IF_en, IF_rst, IF_flush, IF_PCS, IF_iStall, IF_oStall;
+logic IF_rst, IF_flush, IF_PCS, IF_iStall, IF_oStall;
 logic [31:0] IF_iPC;
 
 // ID Signals
-logic ID_en, ID_rst, ID_flush, ID_iStall, ID_brTrue;
+logic ID_rst, ID_flush, ID_iStall, ID_brTrue;
 reg_transport_t ID_rs1, ID_rs2;
 
 // EX Signals
-logic EX_en, EX_rst, EX_flush, EX_iStall;
+logic EX_rst, EX_flush, EX_iStall;
 logic EX_FwExS1_en, EX_FwExS2_en;
 logic EX_FwMeS1_en, EX_FwMeS2_en;
 
 // MEM Signals
-logic ME_en, ME_rst, ME_flush, ME_iStall, ME_oStall;
+logic ME_rst, ME_flush, ME_iStall, ME_oStall;
 
 // Debugger Signals
 // logic DBG_halt, DBG_exec, DBG_req_init;
@@ -99,7 +99,7 @@ RegisterFile rf(
 
 IF insfet(
     .iClk(iClk),
-    .iEn(IF_en),
+    .iEn(1'b1),
     .nRst(IF_rst),
     .iFlush(IF_flush),
     .iPCS_EXT(IF_PCS),
@@ -113,7 +113,6 @@ IF insfet(
 
 ID insdec(
     .iClk(iClk),
-    .iEn(ID_en),
     .nRst(ID_rst),
     .iStall(ID_iStall),
     .iFlush(ID_flush),
@@ -129,7 +128,6 @@ ID insdec(
 
 EX ex(
     .iClk(iClk),
-    .iEn(EX_en),
     .nRst(EX_rst),
     .iStall(EX_iStall),
     .iFlush(EX_flush),
@@ -144,7 +142,6 @@ EX ex(
 
 ME me(
     .iClk(iClk),
-    .iEn(ME_en),
     .nRst(ME_rst),
     .iStall(ME_iStall),
     .iFlush(ME_flush),

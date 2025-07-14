@@ -16,7 +16,7 @@ import pipeline_types::id_ex_t;
 import pipeline_types::ex_mem_t;
 
 module EX(
-    input logic iClk, iEn, nRst,
+    input logic iClk, nRst,
     input logic iStall, iFlush,
     input id_ex_t iID,
     output ex_mem_t oMEM,

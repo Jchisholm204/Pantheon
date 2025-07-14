@@ -71,5 +71,5 @@ def test_pc_runner():
     tb.run_tests()
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     test_pc_runner()

@@ -61,10 +61,11 @@ assign oFwMeS2_en = iID_EX.rs1.addr == iME_WB.rd.addr
 
 // Stall for ME (WAR Hazard)
 logic stallMeS1, stallMeS2, stallMe, stallMu;
-assign stallMeS1 = iID_EX.rs1.addr == iEX_ME.rd.addr;
-assign stallMeS2 = iID_EX.rs2.addr == iEX_ME.rd.addr;
+assign stallMeS1 = iID_EX.rs1.addr == iEX_ME.rd.addr & iID_EX.rs1.addr != '0;
+assign stallMeS2 = iID_EX.rs2.addr == iEX_ME.rd.addr & iID_EX.rs2.addr != '0;
+// assign stallMeS2 = iID_EX.rs2.addr == iEX_ME.rd.addr;
 // Stall on load use hazard
-assign stallMe = stallMeS1 | stallMeS2;
+assign stallMe = (stallMeS1 | stallMeS2) & iEX_ME.ctrl.mem_en;
 // Stall pipe on Memory Unit busy
 assign stallMu = iStall_IF | iStall_ME;
 
@@ -82,10 +83,10 @@ assign oRst_EX = nRst | nRst_dbg;
 assign oRst_ME = nRst | nRst_dbg;
 
 // Flush Outputs - For Pipeline Flushing
-assign oFlush_IF = oRst_IF | iBrTrue;
-assign oFlush_ID = oRst_ID;
-assign oFlush_EX = oRst_EX;
-assign oFlush_ME = oRst_ME;
+assign oFlush_IF = ~oRst_IF | iBrTrue;
+assign oFlush_ID = ~oRst_ID;
+assign oFlush_EX = ~oRst_EX;
+assign oFlush_ME = ~oRst_ME;
 
 
 endmodule

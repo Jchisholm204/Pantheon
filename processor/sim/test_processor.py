@@ -7,6 +7,7 @@ import testbench
 from sources import ISA_SOURCES, TYPES_SOURCES, ALU_SOURCES
 from sources import MEM_SOURCES, WISHBONE_SOURCES, PIPE_SOURCES
 from sources import CTRL_SOURCES
+from test_if import setup_mem
 
 
 class Processor():
@@ -46,6 +47,9 @@ async def proc_basic(dut):
 
 def test_processor_runner():
     tb = testbench.TB("test_processor", "Processor")
+    fname = "testROM.hex"
+    setup_mem(fname).export()
+    tb.add_define("ROMFile", f'"../{fname}"')
     tb.add_sources(ISA_SOURCES)
     tb.add_sources(TYPES_SOURCES)
     tb.add_sources(ALU_SOURCES)

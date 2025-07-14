@@ -15,7 +15,7 @@ import pipeline_types::ex_mem_t;
 import pipeline_types::mem_wb_t;
 
 module ME(
-    input logic iClk, iEn, nRst,
+    input logic iClk, nRst,
     input logic iStall, iFlush,
     input ex_mem_t iEX,
     output mem_wb_t oWB,
@@ -28,7 +28,7 @@ WISHBONE_IF dmem_wb(
     .iClk(iClk),
     .iRst(~nRst)
 );
-assign mem_en = iEn & iEX.ctrl.mem_en & iEX.ctrl.valid;
+assign mem_en = iEX.ctrl.mem_en & iEX.ctrl.valid;
 
 DMEM dmem(
     .iEn(mem_en),
