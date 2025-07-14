@@ -126,6 +126,22 @@ async def regfile_test_forwarding(dut):
             f"Failed Forward Write on Reg {reg}, expected {testVal:#x}, got {regVal:#x}"
 
 
+@cocotb.test
+async def regfile_test_debug(dut):
+    await setup_test(dut)
+    iRd_dbg = reg_transport_t(dut.iRd_dbg)
+    for i in range(1, 31):
+        iRd_dbg.addr = i
+        iRd_dbg.value = i*22
+        dut.iWriteEn_dbg.value = 1
+        await RisingEdge(dut.iClk)
+    dut.iWriteEn_dbg.value = 0
+    for i in range(1, 31):
+        dut.iAddrRs3.value = i
+        await RisingEdge(dut.iClk)
+        assert dut.oRs3.value == i*22, "DBG Fail"
+
+
 def old_register_file_runner():
     sim = os.getenv("SIM", "icarus")
 
