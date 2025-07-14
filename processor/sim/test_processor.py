@@ -8,6 +8,8 @@ from sources import ISA_SOURCES, TYPES_SOURCES, ALU_SOURCES
 from sources import MEM_SOURCES, WISHBONE_SOURCES, PIPE_SOURCES
 from sources import CTRL_SOURCES
 from test_if import setup_mem
+from hex_creator import HexCreator
+from rv32_isa import *
 
 
 class Processor():
@@ -22,6 +24,7 @@ class Processor():
         self.dbg_ins: ModifiableObject = self.dut.DBG_ins
         self.dbg_rd = reg_transport_t(self.dut.DBG_rd)
         self.dbg_rs = reg_transport_t(self.dut.DBG_rs)
+        self._setup = False
 
     async def setup(self):
         self.clock = Clock(self.iClk, 10, units='ns')
@@ -30,6 +33,7 @@ class Processor():
         await RisingEdge(self.iClk)
         await RisingEdge(self.iClk)
         self.nRst.value = 1
+        self._setup = True
 
     async def wait(self, time=0, units='ns'):
         if time == 0:
@@ -37,12 +41,43 @@ class Processor():
         else:
             await Timer(time, units=units)
 
+    async def enter_dbg(self):
+        if self._setup is False:
+            await self.setup()
+        self.dbg_req_init.value = 1
+        await RisingEdge(self.iClk)
+        self.dbg_halt.value = 1
+
+    async def run_test(self, rom: HexCreator):
+        if self._setup is False:
+            await self.setup()
+        await RisingEdge(self.iClk)
+        await self.enter_dbg()
+        self.dbg_exec.value = 1
+        self.dbg_halt.value = 0
+        for ins in rom.get_ins():
+            self.dbg_ins.value = ins
+            await RisingEdge(self.iClk)
+        for _ in range(0, 4):
+            await RisingEdge(self.iClk)
+
+
+# @cocotb.test
+# async def proc_basic(dut):
+#     proc = Processor(dut)
+#     await proc.setup()
+#     await proc.wait(100, units='ns')
+
 
 @cocotb.test
-async def proc_basic(dut):
+async def proc_dbg(dut):
     proc = Processor(dut)
-    await proc.setup()
-    await proc.wait(100, units='ns')
+    hc = HexCreator()
+    hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
+    hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 20)
+    hc.add_Iins(OpAluI, 2, OpF3ADD, 0, 15)
+    hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
+    await proc.run_test(hc)
 
 
 def test_processor_runner():
