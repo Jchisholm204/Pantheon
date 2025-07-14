@@ -11,10 +11,15 @@
 
 `timescale 1ns/100ps
 import pipeline_types::*;
+import reg_transport_t::reg_transport_t;
 import rv32_isa::*;
 
 module Processor(
-    input logic iClk, nRst
+    input logic iClk, nRst,
+    input logic DBG_halt, DBG_exec, DBG_req_init,
+    input logic DBG_regWrite,
+    input logic [31:0] DBG_ins,
+    inout reg_transport_t DBG_rd, DBG_rs
 );
 
 // Pipeline Registers
@@ -29,8 +34,7 @@ logic [31:0] IF_iPC;
 
 // ID Signals
 logic ID_en, ID_rst, ID_flush, ID_iStall, ID_brTrue;
-logic [RegAddrWidth-1:0] ID_addrRs1, ID_addrRs2;
-logic [RegWidth-1:0] ID_rs1, ID_rs2;
+reg_transport_t ID_rs1, ID_rs2;
 
 // EX Signals
 logic EX_en, EX_rst, EX_flush, EX_iStall;
@@ -41,8 +45,11 @@ logic EX_FwMeS1_en, EX_FwMeS2_en;
 logic ME_en, ME_rst, ME_flush, ME_iStall, ME_oStall;
 
 // Debugger Signals
-logic DBG_stall, DBG_exec, DBG_req_init;
-logic [31:0] DBG_ins;
+// logic DBG_halt, DBG_exec, DBG_req_init;
+// logic [31:0] DBG_ins;
+// reg_transport_t DBG_rd, DBG_rs
+
+// -- Shared Modules -- //
 
 HazardUnit hu(
     .iClk(iClk),
@@ -52,7 +59,7 @@ HazardUnit hu(
     .iID_EX(ID_EX),
     .iEX_ME(EX_ME),
     .iME_WB(ME_WB),
-    .iStall_dbg(DBG_stall),
+    .iStall_dbg(DBG_halt),
     .iStall_IF(IF_oStall),
     .iStall_ME(ME_oStall),
     .oStall_IF(IF_iStall),
@@ -73,6 +80,20 @@ HazardUnit hu(
     .oFlush_ME(ME_flush)
 );
 
+RegisterFile rf(
+    .iClk(iClk),
+    .nRst(nRst),
+    .iWriteEn(ME_WB.ctrl.wb_en),
+    .iRd(ME_WB.rd),
+    .iWriteEn_dbg(DBG_regWrite & DBG_halt),
+    .iRd_dbg(DBG_rd),
+    .iAddrRs1(ID_rs1.addr),
+    .iAddrRs2(ID_rs2.addr),
+    .iAddrRs3(DBG_rs.addr),
+    .oRs1(ID_rs1.value),
+    .oRs2(ID_rs2.value),
+    .oRs3(DBG_rs.value)
+);
 
 // --- Pipeline Stages --- //
 
@@ -98,10 +119,10 @@ ID insdec(
     .iFlush(ID_flush),
     .iIF(IF_ID),
     .oEX(ID_EX),
-    .iRs1(ID_rs1),
-    .iRs2(ID_rs2),
-    .oAddrRs1(ID_addrRs1),
-    .oAddrRs2(ID_addrRs2),
+    .iRs1(ID_rs1.value),
+    .iRs2(ID_rs2.value),
+    .oAddrRs1(ID_rs1.addr),
+    .oAddrRs2(ID_rs2.addr),
     .oBrTrue(ID_brTrue),
     .oBrPc(IF_iPC)
 );
