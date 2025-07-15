@@ -79,12 +79,13 @@ async def proc_dbg(dut):
     hc = HexCreator()
     hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
     hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 10)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
     hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     await proc.run_test(hc)
+    pass
 
 
 def test_processor_runner():

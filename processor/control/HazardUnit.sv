@@ -52,12 +52,12 @@ assign oFwExS2_en = iID_EX.rs2.addr == iEX_ME.rd.addr
                     & iEX_ME.ctrl.ex_en;
 
 assign oFwMeS1_en = iID_EX.rs1.addr == iME_WB.rd.addr
-                    & iID_EX.rs1.addr != '0
-                    & iME_WB.ctrl.mem_en;
+                    & iID_EX.rs1.addr != '0;
+                    // & iME_WB.ctrl.mem_en;
 
-assign oFwMeS2_en = iID_EX.rs1.addr == iME_WB.rd.addr
-                    & iID_EX.rs2.addr != '0
-                    & iME_WB.ctrl.mem_en;
+assign oFwMeS2_en = iID_EX.rs2.addr == iME_WB.rd.addr
+                    & iID_EX.rs2.addr != '0;
+                    // & iME_WB.ctrl.mem_en;
 
 // Stall for ME (WAR Hazard)
 logic stallMeS1, stallMeS2, stallMe, stallMu;

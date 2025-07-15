@@ -29,7 +29,6 @@ module ID (
 );
 
 // Instruction Decode Signals
-logic [RegAddrWidth-1:0] dec_rs1, dec_rs2;
 logic [RegAddrWidth-1:0] dec_rd;
 logic [6:0] dec_opcode, dec_func7;
 logic [2:0] dec_func3;
@@ -39,8 +38,8 @@ logic [RegWidth-1:0] dec_immI, dec_immU, dec_immJ,
 decoder dec(
     .iINS(iIF.instruction),
     .oOpCode(dec_opcode),
-    .oRS1(dec_rs1),
-    .oRS2(dec_rs2),
+    .oRS1(oAddrRs1),
+    .oRS2(oAddrRs2),
     .oRD(dec_rd),
     .oFunc3(dec_func3),
     .oFunc7(dec_func7),
@@ -96,12 +95,12 @@ always_ff @(posedge iClk, negedge nRst) begin
         oEX.ctrl.opcode <= dec_opcode;
         oEX.ctrl.func3  <= dec_func3;
         oEX.ctrl.func7  <= dec_func7;
-        oEX.rs1.value <= rs1_en ? iRs1    : {RegWidth{1'b0}};
-        oEX.rs1.addr  <= rs1_en ? dec_rs1 : {RegAddrWidth{1'b0}};
-        oEX.rs2.value <= rs2_en ? iRs2    : {RegWidth{1'b0}};
-        oEX.rs2.addr  <= rs2_en ? dec_rs2 : {RegAddrWidth{1'b0}};
-        oEX.rd_addr   <= rd_en  ? dec_rd  : {RegAddrWidth{1'b0}};
-        oEX.immediate <= OPF_I ? dec_immI :
+        oEX.rs1.value <= rs1_en ? iRs1     : {RegWidth{1'b0}};
+        oEX.rs1.addr  <= rs1_en ? oAddrRs1 : {RegAddrWidth{1'b0}};
+        oEX.rs2.value <= rs2_en ? iRs2     : {RegWidth{1'b0}};
+        oEX.rs2.addr  <= rs2_en ? oAddrRs2 : {RegAddrWidth{1'b0}};
+        oEX.rd_addr   <= rd_en  ? dec_rd   : {RegAddrWidth{1'b0}};
+        oEX.immediate <= OPF_I ? dec_immI  :
             OPF_U ? dec_immU :
             OPF_B ? dec_immB :
             OPF_J ? dec_immJ :
