@@ -53,8 +53,9 @@ always_comb begin
             mem_wb.data_read[23:16] = 8'd0;
             mem_wb.data_read[31:24] = 8'd0;
         end
-        mem_wb.ack = 1'b1;
     end
+    else if(mem_wb.stb & mem_wb.cyc)
+        mem_wb.ack = 1'b1;
     else begin
         mem_wb.data_read = 32'd0;
         mem_wb.ack = 1'b0;
