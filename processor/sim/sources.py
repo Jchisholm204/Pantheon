@@ -27,7 +27,7 @@ MEM_SOURCES = [
 ]
 
 WISHBONE_SOURCES = [
-        "../wishbone/WISHBONE_IF.sv"
+        "../interfaces/WISHBONE_IF.sv"
 ]
 
 PIPE_SOURCES = [
@@ -42,4 +42,8 @@ CTRL_SOURCES = [
     "control/HazardUnit.sv",
     "control/PC.sv",
     "control/decoder.sv",
+]
+
+INTERFACE_SOURCES = [
+    "../interfaces/WISHBONE_IF.sv"
 ]

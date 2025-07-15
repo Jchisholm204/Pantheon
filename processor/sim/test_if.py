@@ -5,6 +5,7 @@ import testbench
 from hex_creator import HexCreator
 from rv32_isa import *
 from pipeline_types import if_id_t
+from sources import INTERFACE_SOURCES
 
 
 def setup_mem(fname="testROM.hex"):
@@ -38,7 +39,7 @@ def test_if_runner():
     tb.add_source("types/pipeline_types.sv")
     tb.add_source("control/PC.sv")
     tb.add_source("ALU/CLA.sv")
-    tb.add_source("../wishbone/WISHBONE_IF.sv")
+    tb.add_sources(INTERFACE_SOURCES)
     tb.add_source("memory/ROMBlock.sv")
     tb.add_source("memory/IMEM.sv")
     tb.add_source("datapipe/IF.sv")
