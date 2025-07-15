@@ -77,10 +77,10 @@ assign oStall_ME = stallMu | iStall_dbg;
 
 // Reset Signals
 // System Reset ONLY (not for pipeline flushing)
-assign oRst_IF = nRst | nRst_dbg;
-assign oRst_ID = nRst | nRst_dbg;
-assign oRst_EX = nRst | nRst_dbg;
-assign oRst_ME = nRst | nRst_dbg;
+assign oRst_IF = nRst & nRst_dbg;
+assign oRst_ID = nRst & nRst_dbg;
+assign oRst_EX = nRst & nRst_dbg;
+assign oRst_ME = nRst & nRst_dbg;
 
 // Flush Outputs - For Pipeline Flushing
 assign oFlush_IF = ~oRst_IF | iBrTrue;

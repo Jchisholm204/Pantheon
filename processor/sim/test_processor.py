@@ -17,6 +17,7 @@ class Processor():
         self.dut = dut
         self.iClk: ModifiableObject = self.dut.iClk
         self.nRst: ModifiableObject = self.dut.nRst
+        self.dbg_nRst: ModifiableObject = self.dut.DBG_nRst
         self.dbg_halt: ModifiableObject = self.dut.DBG_halt
         self.dbg_exec: ModifiableObject = self.dut.DBG_exec
         self.dbg_req_init: ModifiableObject = self.dut.DBG_req_init
@@ -47,6 +48,9 @@ class Processor():
         self.dbg_req_init.value = 1
         await RisingEdge(self.iClk)
         self.dbg_halt.value = 1
+        self.dbg_nRst.value = 0
+        await RisingEdge(self.iClk)
+        self.dbg_nRst.value = 1
 
     async def run_test(self, rom: HexCreator):
         if self._setup is False:
@@ -74,9 +78,12 @@ async def proc_dbg(dut):
     proc = Processor(dut)
     hc = HexCreator()
     hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
-    hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 20)
-    hc.add_Iins(OpAluI, 2, OpF3ADD, 0, 15)
+    hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 10)
+    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     await proc.run_test(hc)
 
 

@@ -16,6 +16,7 @@ import rv32_isa::*;
 
 module Processor(
     input logic iClk, nRst,
+    input logic DBG_nRst,
     input logic DBG_halt, DBG_exec, DBG_req_init,
     input logic DBG_regWrite,
     input logic [31:0] DBG_ins,
@@ -54,6 +55,7 @@ logic ME_rst, ME_flush, ME_iStall, ME_oStall;
 HazardUnit hu(
     .iClk(iClk),
     .nRst(nRst),
+    .nRst_dbg(DBG_nRst),
     .iBrTrue(ID_brTrue),
     .iIF_ID(IF_ID),
     .iID_EX(ID_EX),
