@@ -68,13 +68,6 @@ class Processor():
             await RisingEdge(self.iClk)
 
 
-# @cocotb.test
-# async def proc_basic(dut):
-#     proc = Processor(dut)
-#     await proc.setup()
-#     await proc.wait(100, units='ns')
-
-
 # For debugging purposes only.. not actual testing
 @cocotb.test
 async def proc_dbg(dut):
@@ -120,13 +113,7 @@ async def proc_load_store(dut):
     proc = Processor(dut)
     hc = HexCreator()
     hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     hc.add_Sins(OpStore, OpF3SW, 0, 1, 10)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
-    # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     hc.add_Iins(OpLoad, 2, OpF3LW, 0, 10)
     await proc.run_test(hc)
     print("dut.rf")
@@ -134,7 +121,22 @@ async def proc_load_store(dut):
     print(dut.rf.reg_outs[1].value.integer)
     assert proc.rf[1].value == 15, "Fail Addi R1"
     assert proc.rf[2].value == 15, "Fail Load R2"
-    # assert to_signed32(proc.rf[3].value) == -10, "Fail Sub R3=R1-R2"
+    pass
+
+
+@cocotb.test
+async def proc_branch(dut):
+    proc = Processor(dut)
+    hc = HexCreator()
+    hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
+    hc.add_Sins(OpStore, OpF3SW, 0, 1, 10)
+    hc.add_Iins(OpLoad, 2, OpF3LW, 0, 10)
+    await proc.run_test(hc)
+    print("dut.rf")
+    print(type(dut.rf.reg_outs))
+    print(dut.rf.reg_outs[1].value.integer)
+    assert proc.rf[1].value == 15, "Fail Addi R1"
+    assert proc.rf[2].value == 15, "Fail Load R2"
     pass
 
 
