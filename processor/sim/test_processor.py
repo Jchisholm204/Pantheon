@@ -1,5 +1,5 @@
 import cocotb
-from cocotb.handle import ModifiableObject
+from cocotb.handle import ModifiableObject, NonHierarchyIndexableObject
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.clock import Clock
 from reg_transport_t import reg_transport_t
@@ -9,6 +9,7 @@ from sources import MEM_SOURCES, WISHBONE_SOURCES, PIPE_SOURCES
 from sources import CTRL_SOURCES
 from test_if import setup_mem
 from hex_creator import HexCreator
+from test_bitwise import to_signed32
 from rv32_isa import *
 
 
@@ -25,6 +26,7 @@ class Processor():
         self.dbg_ins: ModifiableObject = self.dut.DBG_ins
         self.dbg_rd = reg_transport_t(self.dut.DBG_rd)
         self.dbg_rs = reg_transport_t(self.dut.DBG_rs)
+        self.rf: NonHierarchyIndexableObject = self.dut.rf.reg_outs
         self._setup = False
 
     async def setup(self):
@@ -85,6 +87,29 @@ async def proc_dbg(dut):
     hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
     # hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     await proc.run_test(hc)
+    print("dut.rf")
+    print(type(dut.rf.reg_outs))
+    print(dut.rf.reg_outs[1].value.integer)
+    assert proc.rf[1].value == 15, "Fail Load R1"
+    assert proc.rf[2].value == 25, "Fail Addi R2"
+    assert to_signed32(proc.rf[3].value) == -10, "Fail Sub R3=R1-R2"
+    pass
+
+
+@cocotb.test
+async def proc_addi_sub(dut):
+    proc = Processor(dut)
+    hc = HexCreator()
+    hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
+    hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 10)
+    hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
+    await proc.run_test(hc)
+    print("dut.rf")
+    print(type(dut.rf.reg_outs))
+    print(dut.rf.reg_outs[1].value.integer)
+    assert proc.rf[1].value == 15, "Fail Load R1"
+    assert proc.rf[2].value == 25, "Fail Addi R2"
+    assert to_signed32(proc.rf[3].value) == -10, "Fail Sub R3=R1-R2"
     pass
 
 
