@@ -6,6 +6,7 @@ from cocotb.runner import get_runner
 from pathlib import Path
 from testbench import TB
 from reg_transport_t import reg_transport_t
+from sources import TYPES_SOURCES, ISA_SOURCES
 
 
 async def setup_test(dut):
@@ -178,8 +179,8 @@ def old_register_file_runner():
 
 def test_RF_runner():
     tb = TB("test_register_file", "RegisterFile")
-    tb.add_source("rv32_isa")
-    tb.add_source("types/reg_transport.sv")
+    tb.add_sources(ISA_SOURCES)
+    tb.add_sources(TYPES_SOURCES)
     tb.add_source("memory/Register.sv")
     tb.add_source("memory/RegisterFile.sv")
     tb.run_tests()

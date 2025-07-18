@@ -5,7 +5,7 @@ import testbench
 from pipeline_types import if_id_t, id_ex_t
 from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
 from rv32_isa import *
-
+from sources import TYPES_SOURCES, CTRL_SOURCES, ISA_SOURCES
 
 async def setup_id(dut):
     clock = Clock(dut.iClk, 10, units='ns')
@@ -20,11 +20,9 @@ async def setup_id(dut):
 
 def test_id_runner():
     tb = testbench.TB("test_id", "ID")
-    tb.add_source("rv32_isa.sv")
-    tb.add_source("types/reg_transport.sv")
-    tb.add_source("types/pipeline_types.sv")
-    tb.add_source("control/decoder.sv")
-    tb.add_source("control/BranchOutcome.sv")
+    tb.add_sources(ISA_SOURCES)
+    tb.add_sources(TYPES_SOURCES)
+    tb.add_sources(CTRL_SOURCES)
     tb.add_source("datapipe/ID.sv")
     tb.run_tests()
 

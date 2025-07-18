@@ -40,6 +40,9 @@ class TB:
                           "--vpi",
                           # "--output-split", "8",
                           # "--threads", "1"
+                          "-I../processor",
+                          "-I../processor/types",
+                          "-I../interfaces"
                           ]
         runner = get_runner(self.sim)
         print(runner.build(

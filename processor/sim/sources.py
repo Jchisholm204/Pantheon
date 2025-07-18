@@ -1,11 +1,11 @@
 
 ISA_SOURCES = [
-    "rv32_isa.sv"
+    "rv32_isa.svh"
 ]
 
 TYPES_SOURCES = [
-    "types/reg_transport.sv",
-    "types/pipeline_types.sv"
+    "types/reg_transport.svh",
+    "types/pipeline_types.svh"
 ]
 
 ALU_SOURCES = [

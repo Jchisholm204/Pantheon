@@ -7,6 +7,7 @@ from pathlib import Path
 import rv32_isa
 import test_shift
 import testbench
+import sources
 
 
 @cocotb.test()
@@ -120,13 +121,8 @@ async def alu_rem_test(dut):
 
 def test_alu_runner():
     tb = testbench.TB("test_alu", "ALU")
-    tb.add_source("rv32_isa.sv")
-    tb.add_source("ALU/CLA.sv")
-    tb.add_source("ALU/BitWise.sv")
-    tb.add_source("ALU/DIV32.sv")
-    tb.add_source("ALU/MUL32.sv")
-    tb.add_source("ALU/SHIFT.sv")
-    tb.add_source("ALU/ALU.sv")
+    tb.add_sources(sources.ISA_SOURCES)
+    tb.add_sources(sources.ALU_SOURCES)
     tb.run_tests()
 
 

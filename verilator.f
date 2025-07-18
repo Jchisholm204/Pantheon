@@ -1,0 +1,10 @@
+--Wall
+--timing
+--trace-fst
+--trace-structs
+--x-assign unique
+--x-initial unique
+-Iprocessor
+-Iprocessor/types
+-Iinterfaces
+-Isim/include

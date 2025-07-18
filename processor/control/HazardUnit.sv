@@ -10,7 +10,10 @@
  */
 
 `timescale 1ns/100ps
-import pipeline_types::*;
+import pipeline_types::if_id_t;
+import pipeline_types::id_ex_t;
+import pipeline_types::ex_mem_t;
+import pipeline_types::mem_wb_t;
 import rv32_isa::*;
 
 module HazardUnit(
@@ -87,7 +90,6 @@ assign oFlush_IF = ~oRst_IF | iBrTrue;
 assign oFlush_ID = ~oRst_ID;
 assign oFlush_EX = ~oRst_EX;
 assign oFlush_ME = ~oRst_ME;
-
 
 endmodule
 
