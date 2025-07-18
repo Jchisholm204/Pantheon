@@ -1,7 +1,7 @@
 /**
  * @file HazardUnit.sv
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
- * @brief 
+ * @brief
  * @version 0.1
  * @date Created: 2025-07-06
  * @modified Last Modified: 2025-07-06

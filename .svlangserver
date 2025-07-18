@@ -1,0 +1,22 @@
+{
+  "includeIndexing": [
+    "display/**/*.v",
+    "interfaces/**/*.sv",
+    "processor/**/*.sv"
+  ],
+  "excludeIndexing": [
+    "processor/sim/**"
+  ],
+  "includePaths": [
+    "interfaces",
+    "processor/ALU",
+    "processor/control",
+    "processor/datapipe",
+    "processor/memory",
+    "processor/types"
+  ],
+  "defines": [],
+  "formatCommand": "",
+  "linting": true
+}
+

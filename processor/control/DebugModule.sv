@@ -1,7 +1,7 @@
 /**
  * @file DebugModule.sv
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
- * @brief 
+ * @brief
  * @version 0.1
  * @date Created: 2025-07-15
  * @modified Last Modified: 2025-07-15
@@ -11,6 +11,12 @@
 
 `timescale 1ns/100ps
 import reg_transport::reg_transport_t;
+import debug_types::dmcontrol_t;
+import debug_types::dmstatus_t;
+import debug_types::abstractcs_t;
+import debug_types::command_t;
+import debug_types::sbcs_t;
+
 module DebugModule(
     input logic iClk, nRst,
     output logic onRst,
@@ -91,13 +97,14 @@ assign dmstatus[3:0] = 4'd3;
 // Debug Module Control Signals (dmcontrol)
 logic dmcontrol_haltreq, dmcontrol_resumereq;
 
-// DPC Logic 
+// DPC Logic
 always_ff @(posedge iClk, negedge nRst) begin
     if(!nRst) begin
         dpc <= 32'd0;
         data0 <= 32'd0;
         data1 <= 32'd0;
         dmcontrol <= 32'd0;
+        dmi.nRst <= 1'b0;
     end
 end
 

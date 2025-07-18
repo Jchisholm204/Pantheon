@@ -113,7 +113,6 @@ class id_ex_t(SuperStruct):
     @property
     def immediate(self):
         return self.read_bits(self._base, self._base+31)
-        # return self.read_bits(0, 31)
 
     @immediate.setter
     def immediate(self, value):
