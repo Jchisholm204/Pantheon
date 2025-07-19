@@ -6,7 +6,7 @@ import testbench
 from hex_creator import HexCreator
 from rv32_isa import *
 from pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
-from sources import TYPES_SOURCES, ISA_SOURCES, INTERFACE_SOURCES
+from sources import TYPES_SOURCES, ISA_SOURCES, INTERFACE_SOURCES, MEM_SOURCES
 
 
 class HazardUnit():
@@ -120,11 +120,13 @@ async def dbg_mod_scratch(dut):
 
 
 def test_debugmodule_runner():
-    tb = testbench.TB("test_debugmodule", "DebugModule")
+    tb = testbench.TB("test_debugmodule", "DebugModuleTest")
     tb.add_sources(ISA_SOURCES)
     tb.add_sources(TYPES_SOURCES)
     tb.add_sources(INTERFACE_SOURCES)
+    tb.add_sources(MEM_SOURCES)
     tb.add_source("control/DebugModule.sv")
+    tb.add_source("sim/DebugModuleTest.sv")
     tb.run_tests()
 
 

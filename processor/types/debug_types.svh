@@ -21,7 +21,7 @@ localparam logic [31:0] sbcs_wmask = 32'h001F1000;
 typedef struct packed {
     logic active;
     logic reset;
-    logic clrresethalreq;
+    logic clrresethaltreq;
     logic setresethaltreq;
     logic clrkeepalive;
     logic setkeepalive;
@@ -75,7 +75,34 @@ typedef struct packed {
 
 typedef struct packed {
     logic [7:0] cmdtype;
-    logic [23:0] control;
+    logic zero1;
+    logic [2:0] aarsize;
+    logic aarpostincrement;
+    logic transfer;
+    logic write;
+    logic [15:0] regno;
+} command_access_reg_t;
+
+typedef struct packed {
+    logic [7:0] cmdtype;
+    logic [23:0] zero24;
+} command_quick_access_t;
+
+typedef struct packed {
+    logic [7:0] cmdtype;
+    logic aamvirtual;
+    logic [2:0] aamsize;
+    logic aampostincrement;
+    logic [1:0] zero2;
+    logic write;
+    logic [1:0] target_specific;
+    logic [13:0] zero14;
+} command_access_mem_t;
+
+typedef union packed {
+    command_access_reg_t acc_reg;
+    command_quick_access_t qa;
+    command_access_mem_t acc_mem;
 } command_t;
 
 typedef struct packed {

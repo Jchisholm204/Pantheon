@@ -20,7 +20,7 @@ interface DBG_IF();
 
     logic dm_access_valid;
     logic dm_write;
-    logic [7:0] dm_addr;
+    logic [6:0] dm_addr;
     logic [31:0] dm_wdata;
     logic [31:0] dm_rdata;
 

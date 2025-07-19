@@ -22,22 +22,25 @@ module DebugModule(
     output logic oDbgReq,
     output logic oResume,
     inout reg_transport_t rd,
-    inout reg_transport_t rs
-    // DBG_IF.processor dmi
+    output logic oRegWrite,
+    inout reg_transport_t rs,
+    DBG_IF.processor dmi
 );
-DBG_IF dmi();
+// DBG_IF dmi();
 
-localparam logic [7:0] dmAddr_data0 = 8'h04;
-localparam logic [7:0] dmAddr_data1 = 8'h05;
-localparam logic [7:0] dmAddr_control = 8'h10;
-localparam logic [7:0] dmAddr_status = 8'h11;
-localparam logic [7:0] dmAddr_abstractics = 8'h16;
-localparam logic [7:0] dmAddr_command = 8'h17;
-localparam logic [7:0] dmAddr_progbuf0 = 8'h20;
-localparam logic [7:0] dmAddr_progbuf1 = 8'h21;
-localparam logic [7:0] dmAddr_sbcs = 8'h38;
-localparam logic [7:0] dmAddr_sbaddress0 = 8'h39;
-localparam logic [7:0] dmAddr_sbdata0 = 8'h3c;
+localparam logic [7:0] dmAddr_data0 = 7'h04;
+localparam logic [7:0] dmAddr_data1 = 7'h05;
+localparam logic [7:0] dmAddr_control = 7'h10;
+localparam logic [7:0] dmAddr_status = 7'h11;
+localparam logic [7:0] dmAddr_abstractics = 7'h16;
+localparam logic [7:0] dmAddr_command = 7'h17;
+localparam logic [7:0] dmAddr_progbuf0 = 7'h20;
+localparam logic [7:0] dmAddr_progbuf1 = 7'h21;
+localparam logic [7:0] dmAddr_sbcs = 7'h38;
+localparam logic [7:0] dmAddr_sbaddress0 = 7'h39;
+localparam logic [7:0] dmAddr_sbdata0 = 7'h3c;
+
+logic abstract_executing;
 
 logic [31:0] data0;
 logic [31:0] data1;
@@ -45,23 +48,14 @@ logic [31:0] data1;
 dmcontrol_t dmcontrol;
 logic dmcontrol_active;
 logic dmcontrol_reset;
-logic dmcontrol_clrresethaltreq;
-logic dmcontrol_setresethaltreq;
 logic dmcontrol_clrkeepalive;
 logic dmcontrol_setkeepalive;
-logic [9:0] dmcontrol_heartselhi;
-logic [9:0] dmcontrol_heartsello;
-logic dmcontrol_hasel;
 logic dmcontrol_ackunavail;
 logic dmcontrol_ackhavereset;
-logic dmcontrol_heartreset;
 logic dmcontrol_resumereq;
 logic dmcontrol_haltreq;
 
 dmstatus_t dmstatus;
-logic dmstatus_resetpending;
-logic dmstatus_stickyunavail;
-logic dmstatus_impebreak;
 logic dmstatus_allhavereset;
 logic dmstatus_anyhavereset;
 logic dmstatus_allresumeack;
@@ -74,18 +68,11 @@ logic dmstatus_allrunning;
 logic dmstatus_anyrunning;
 logic dmstatus_allhalted;
 logic dmstatus_anyhalted;
-logic dmstatus_authenticated;
-logic dmstatus_authbusy;
-logic dmstatus_hasresethaltreq;
-logic dmstatus_confstrptrvalid;
-logic [3:0] dmstatus_version;
 
 abstractcs_t abstractcs;
-logic [4:0] abstractcs_progbufsize;
 logic abstractcs_busy;
 logic abstractcs_relaxedpriv;
 logic [2:0] abstractcs_cmderr;
-logic [3:0] abstractcs_datacount;
 
 command_t command;
 logic [31:0] progbuf0;
@@ -99,7 +86,6 @@ logic [2:0] sbcs_access;
 logic sbcs_autoincrement;
 logic sbcs_readondata;
 logic [2:0] sbcs_error;
-logic [6:0] sbcs_size;
 
 logic [31:0] sbaddress0;
 logic [31:0] sbdata0;
@@ -110,18 +96,28 @@ assign dmi_wdata = dmi.dm_wdata;
 
 // Writes from debugger to internal module
 always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst) begin
+    if(!nRst | !dmcontrol_active) begin
         data0 <= 32'd0;
         data1 <= 32'd0;
-        dmcontrol <= 32'd0;
+        dmcontrol_haltreq <= 1'b0;
+        dmcontrol_resumereq <= 1'b0;
+        dmcontrol_ackhavereset <= 1'b0;
+        dmcontrol_setkeepalive <= 1'b0;
+        dmcontrol_clrkeepalive <= 1'b0;
+        dmcontrol_reset <= 1'b0;
+        // Debugger self reset logic
+        if(dmi.dm_write & dmi.dm_addr == dmAddr_control)
+            dmcontrol_active <= dmi_wdata.dmcontrol.active;
+        else
+            dmcontrol_active <= 1'b0;
         abstractcs_relaxedpriv <= 1'b0;
         abstractcs_cmderr <= 3'd0;
         progbuf0 <= 32'd0;
         progbuf1 <= 32'd0;
         sbcs_readonaddr <= 1'b0;
-        sbcs_readondata <= 1'b0;
         sbcs_access <= 3'd0;
         sbcs_autoincrement <= 1'b0;
+        sbcs_readondata <= 1'b0;
         sbcs_error <= 3'd0;
         sbaddress0 <= 32'd0;
         sbdata0 <= 32'd0;
@@ -130,11 +126,28 @@ always_ff @(posedge iClk, negedge nRst) begin
             data0 <= dmi.dm_wdata;
         if(dmi.dm_addr == dmAddr_data1)
             data1 <= dmi.dm_wdata;
-        if(dmi.dm_addr == dmAddr_control)
-            dmcontrol <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_control) begin
+            dmcontrol_haltreq <= dmi_wdata.dmcontrol.haltreq;
+            if(dmi_wdata.dmcontrol.resumereq) begin
+                dmcontrol_resumereq <= 1'b1;
+                dmstatus_allresumeack <= 1'b0;
+                dmstatus_anyresumeack <= 1'b0;
+            end
+            if(dmi_wdata.dmcontrol.ackhavereset & ~abstract_executing) begin
+                dmcontrol_ackhavereset <= 1'b1;
+            end
+            dmcontrol_setkeepalive <= dmi_wdata.dmcontrol.setkeepalive;
+            dmcontrol_clrkeepalive <= dmi_wdata.dmcontrol.clrkeepalive;
+            dmcontrol_reset <= dmi_wdata.dmcontrol.reset;
+            dmcontrol_active <= dmi_wdata.dmcontrol.active;
+        end
         if(dmi.dm_addr == dmAddr_abstractics) begin
             abstractcs_relaxedpriv <= dmi_wdata.abstractcs.relaxedpriv;
             abstractcs_cmderr <= abstractcs_cmderr & ~dmi_wdata.abstractcs.cmderr;
+        end
+        if(dmi.dm_addr == dmAddr_command) begin
+            command <= dmi.dm_wdata;
+            abstract_executing <= 1'b1;
         end
         if(dmi.dm_addr == dmAddr_progbuf0)
             progbuf0 <= dmi.dm_wdata;
@@ -187,8 +200,23 @@ end
 
 // Assign out values to structs for read out
 always_comb begin
+    dmcontrol.active = dmcontrol_active;
+    dmcontrol.reset = dmcontrol_reset;
+    dmcontrol.clrresethaltreq = 1'b0;
+    dmcontrol.setresethaltreq = 1'b0;
+    dmcontrol.clrkeepalive = dmcontrol_clrkeepalive;
+    dmcontrol.setkeepalive = dmcontrol_setkeepalive;
+    dmcontrol.heartselhi = 10'd0;
+    dmcontrol.heartsello = 10'd0;
+    dmcontrol.hasel = 1'b0;
+    dmcontrol.ackunavail = dmcontrol_ackunavail;
+    dmcontrol.ackhavereset = dmcontrol_ackhavereset;
+    dmcontrol.heartreset = 1'b0;
+    dmcontrol.resumereq = dmcontrol_resumereq;
+    dmcontrol.haltreq = dmcontrol_haltreq;
+
     dmstatus.zero7 = 7'd0;
-    dmstatus.resetpending = 1'b0;
+    dmstatus.resetpending = dmcontrol_reset;
     dmstatus.stickyunavail = 1'b0;
     dmstatus.impebreak = 1'b1;
     dmstatus.zero2 = 2'd0;
