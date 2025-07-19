@@ -12,6 +12,12 @@
 `timescale 1ns/100ps
 package debug_types;
 
+localparam logic [31:0] dmstatus_wmask = 32'h00000000;
+localparam logic [31:0] dmcontrol_wmask = 32'hFFFFFFFF;
+localparam logic [31:0] abstractcs_wmask = 32'h00000800;
+localparam logic [31:0] command_wmask = 32'hFFFFFFFF;
+localparam logic [31:0] sbcs_wmask = 32'h001F1000;
+
 typedef struct packed {
     logic active;
     logic reset;
@@ -19,8 +25,8 @@ typedef struct packed {
     logic setresethaltreq;
     logic clrkeepalive;
     logic setkeepalive;
-    logic heartselhi;
-    logic heartsello;
+    logic [9:0] heartselhi;
+    logic [9:0] heartsello;
     logic hasel;
     logic ackunavail;
     logic ackhavereset;
@@ -62,7 +68,7 @@ typedef struct packed {
     logic [10:0] zero11;
     logic busy;
     logic relaxedpriv;
-    logic cmderr;
+    logic [2:0] cmderr;
     logic [3:0] zero4;
     logic [3:0] datacount;
 } abstractcs_t;
@@ -78,17 +84,25 @@ typedef struct packed {
     logic busyerror;
     logic busy;
     logic readonaddr;
-    logic access;
+    logic [2:0] access;
     logic autoincrement;
     logic readondata;
-    logic error;
-    logic size;
+    logic [2:0] error;
+    logic [6:0] size;
     logic access128;
     logic access64;
     logic access32;
     logic access16;
     logic access8;
 } sbcs_t;
+
+typedef union packed {
+    dmcontrol_t dmcontrol;
+    dmstatus_t dmstatus;
+    abstractcs_t abstractcs;
+    command_t command;
+    sbcs_t sbcs;
+} debug_type_t;
 
 endpackage
 

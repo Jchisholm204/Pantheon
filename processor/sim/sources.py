@@ -5,7 +5,8 @@ ISA_SOURCES = [
 
 TYPES_SOURCES = [
     "types/reg_transport.svh",
-    "types/pipeline_types.svh"
+    "types/pipeline_types.svh",
+    "types/debug_types.svh"
 ]
 
 ALU_SOURCES = [
@@ -45,5 +46,6 @@ CTRL_SOURCES = [
 ]
 
 INTERFACE_SOURCES = [
-    "../interfaces/WISHBONE_IF.sv"
+    "../interfaces/WISHBONE_IF.sv",
+    "../interfaces/DBG_IF.sv"
 ]

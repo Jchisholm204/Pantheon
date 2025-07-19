@@ -10,12 +10,10 @@
  */
 
 `timescale 1ns/100ps
+// `include "debug_types.svh"
+// `include "reg_transport.svh"
 import reg_transport::reg_transport_t;
-import debug_types::dmcontrol_t;
-import debug_types::dmstatus_t;
-import debug_types::abstractcs_t;
-import debug_types::command_t;
-import debug_types::sbcs_t;
+import debug_types::*;
 
 module DebugModule(
     input logic iClk, nRst,
@@ -24,88 +22,218 @@ module DebugModule(
     output logic oDbgReq,
     output logic oResume,
     inout reg_transport_t rd,
-    inout reg_transport_t rs,
-    input logic [31:0] iPC,
-    output logic [31:0] oPC,
-    dmi
+    inout reg_transport_t rs
+    // DBG_IF.processor dmi
 );
-DBG_IF.processor dmi;
+DBG_IF dmi();
 
-logic [31:0] dpc;
+localparam logic [7:0] dmAddr_data0 = 8'h04;
+localparam logic [7:0] dmAddr_data1 = 8'h05;
+localparam logic [7:0] dmAddr_control = 8'h10;
+localparam logic [7:0] dmAddr_status = 8'h11;
+localparam logic [7:0] dmAddr_abstractics = 8'h16;
+localparam logic [7:0] dmAddr_command = 8'h17;
+localparam logic [7:0] dmAddr_progbuf0 = 8'h20;
+localparam logic [7:0] dmAddr_progbuf1 = 8'h21;
+localparam logic [7:0] dmAddr_sbcs = 8'h38;
+localparam logic [7:0] dmAddr_sbaddress0 = 8'h39;
+localparam logic [7:0] dmAddr_sbdata0 = 8'h3c;
+
 logic [31:0] data0;
 logic [31:0] data1;
-logic [31:0] dmcontrol;
-logic [31:0] dmstatus;
-logic [31:0] abstractcs;
-logic [31:0] command;
+
+dmcontrol_t dmcontrol;
+logic dmcontrol_active;
+logic dmcontrol_reset;
+logic dmcontrol_clrresethaltreq;
+logic dmcontrol_setresethaltreq;
+logic dmcontrol_clrkeepalive;
+logic dmcontrol_setkeepalive;
+logic [9:0] dmcontrol_heartselhi;
+logic [9:0] dmcontrol_heartsello;
+logic dmcontrol_hasel;
+logic dmcontrol_ackunavail;
+logic dmcontrol_ackhavereset;
+logic dmcontrol_heartreset;
+logic dmcontrol_resumereq;
+logic dmcontrol_haltreq;
+
+dmstatus_t dmstatus;
+logic dmstatus_resetpending;
+logic dmstatus_stickyunavail;
+logic dmstatus_impebreak;
+logic dmstatus_allhavereset;
+logic dmstatus_anyhavereset;
+logic dmstatus_allresumeack;
+logic dmstatus_anyresumeack;
+logic dmstatus_allnonexistent;
+logic dmstatus_anynonexistent;
+logic dmstatus_allunavail;
+logic dmstatus_anyunavail;
+logic dmstatus_allrunning;
+logic dmstatus_anyrunning;
+logic dmstatus_allhalted;
+logic dmstatus_anyhalted;
+logic dmstatus_authenticated;
+logic dmstatus_authbusy;
+logic dmstatus_hasresethaltreq;
+logic dmstatus_confstrptrvalid;
+logic [3:0] dmstatus_version;
+
+abstractcs_t abstractcs;
+logic [4:0] abstractcs_progbufsize;
+logic abstractcs_busy;
+logic abstractcs_relaxedpriv;
+logic [2:0] abstractcs_cmderr;
+logic [3:0] abstractcs_datacount;
+
+command_t command;
 logic [31:0] progbuf0;
 logic [31:0] progbuf1;
-logic [31:0] sbcs;
+
+sbcs_t sbcs;
+logic sbcs_busyerror;
+logic sbcs_busy;
+logic sbcs_readonaddr;
+logic [2:0] sbcs_access;
+logic sbcs_autoincrement;
+logic sbcs_readondata;
+logic [2:0] sbcs_error;
+logic [6:0] sbcs_size;
+
 logic [31:0] sbaddress0;
 logic [31:0] sbdata0;
 
+debug_type_t dmi_wdata;
+assign dmi_wdata = dmi.dm_wdata;
 
-// DM Status Signals
-logic dmstatus_reset, dmstatus_resumeack;
-logic dmstatus_allnonexistent, dmstatus_anynonexistent;
-logic dmstatus_allunavail, dmstatus_anyunavail;
-logic dmstatus_running, dmstatus_halted;
-assign dmstatus[31:25] = 7'd0;
-// NDM Reset Pending (0 = Unimplimented)
-assign dmstatus[24] = 1'b0;
-// Sticky Unavail (Unavail bits are sticky when 1)
-assign dmstatus[23] = 1'b0;
-// Implicit Break at end of program buffer
-assign dmstatus[22] = 1'b1;
-// Zero
-assign dmstatus[21:20] = 2'b0;
-// All hearts have been reset
-assign dmstatus[19] = dmstatus_reset;
-// Any heart has been reset
-assign dmstatus[18] = dmstatus_reset;
-// All hearts have resumed
-assign dmstatus[17] = dmstatus_resumeack;
-// Any heart has resumed
-assign dmstatus[16] = dmstatus_resumeack;
-// All hearts selected do not exist
-assign dmstatus[15] = dmstatus_anynonexistent;
-// one of the hearts selected does not exist
-assign dmstatus[14] = dmstatus_anynonexistent;
-// All hearts selected are Unavail
-assign dmstatus[13] = dmstatus_allunavail;
-// Any hearts selected are Unavail
-assign dmstatus[12] = dmstatus_anyunavail;
-// All Hearts are running
-assign dmstatus[11] = dmstatus_running;
-// Any heart is running
-assign dmstatus[10] = dmstatus_running;
-// All hearts are halted
-assign dmstatus[9] = dmstatus_halted;
-// Any heart is halted
-assign dmstatus[8] = dmstatus_halted;
-// Debugger is authenticated
-assign dmstatus[7] = 1'b1;
-// Debugger Authenticator busy
-assign dmstatus[6] = 1'b0;
-// Halt on reset supported
-assign dmstatus[5] = 1'b0;
-// confstrptrvalid is valid
-assign dmstatus[4] = 1'b0;
-// Specification Version
-assign dmstatus[3:0] = 4'd3;
 
-// Debug Module Control Signals (dmcontrol)
-logic dmcontrol_haltreq, dmcontrol_resumereq;
-
-// DPC Logic
+// Writes from debugger to internal module
 always_ff @(posedge iClk, negedge nRst) begin
     if(!nRst) begin
-        dpc <= 32'd0;
         data0 <= 32'd0;
         data1 <= 32'd0;
         dmcontrol <= 32'd0;
-        dmi.nRst <= 1'b0;
+        abstractcs_relaxedpriv <= 1'b0;
+        abstractcs_cmderr <= 3'd0;
+        progbuf0 <= 32'd0;
+        progbuf1 <= 32'd0;
+        sbcs_readonaddr <= 1'b0;
+        sbcs_readondata <= 1'b0;
+        sbcs_access <= 3'd0;
+        sbcs_autoincrement <= 1'b0;
+        sbcs_error <= 3'd0;
+        sbaddress0 <= 32'd0;
+        sbdata0 <= 32'd0;
+    end else if(dmi.dm_write) begin
+        if(dmi.dm_addr == dmAddr_data0)
+            data0 <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_data1)
+            data1 <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_control)
+            dmcontrol <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_abstractics) begin
+            abstractcs_relaxedpriv <= dmi_wdata.abstractcs.relaxedpriv;
+            abstractcs_cmderr <= abstractcs_cmderr & ~dmi_wdata.abstractcs.cmderr;
+        end
+        if(dmi.dm_addr == dmAddr_progbuf0)
+            progbuf0 <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_progbuf1)
+            progbuf1 <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_sbcs) begin
+            sbcs_readonaddr <= dmi_wdata.sbcs.readonaddr;
+            sbcs_access <= dmi_wdata.sbcs.access;
+            sbcs_autoincrement <= dmi_wdata.sbcs.autoincrement;
+            sbcs_readondata <= dmi_wdata.sbcs.readondata;
+            if(|dmi_wdata.sbcs.error)
+                sbcs_error <= 3'd0;
+        end
+        if(dmi.dm_addr == dmAddr_sbaddress0)
+            sbaddress0 <= dmi.dm_wdata;
+        if(dmi.dm_addr == dmAddr_sbdata0)
+            sbdata0 <= dmi.dm_wdata;
     end
+end
+
+// Debugger Read from internal registers
+always_comb begin
+    if(dmi.dm_write)
+        dmi.dm_rdata = 32'd0;
+    else if(dmi.dm_addr == dmAddr_data0)
+        dmi.dm_rdata = data0;
+    else if(dmi.dm_addr == dmAddr_data1)
+        dmi.dm_rdata = data1;
+    else if(dmi.dm_addr == dmAddr_control)
+        dmi.dm_rdata = dmcontrol;
+    else if(dmi.dm_addr == dmAddr_status)
+        dmi.dm_rdata = dmstatus;
+    else if(dmi.dm_addr == dmAddr_abstractics)
+        dmi.dm_rdata = abstractcs;
+    else if(dmi.dm_addr == dmAddr_command)
+        dmi.dm_rdata = command;
+    else if(dmi.dm_addr == dmAddr_progbuf0)
+        dmi.dm_rdata = progbuf0;
+    else if(dmi.dm_addr == dmAddr_progbuf1)
+        dmi.dm_rdata = progbuf1;
+    else if(dmi.dm_addr == dmAddr_sbcs)
+        dmi.dm_rdata = sbcs;
+    else if(dmi.dm_addr == dmAddr_sbaddress0)
+        dmi.dm_rdata = sbaddress0;
+    else if(dmi.dm_addr == dmAddr_sbdata0)
+        dmi.dm_rdata = sbdata0;
+    else
+        dmi.dm_rdata = 32'd0;
+end
+
+// Assign out values to structs for read out
+always_comb begin
+    dmstatus.zero7 = 7'd0;
+    dmstatus.resetpending = 1'b0;
+    dmstatus.stickyunavail = 1'b0;
+    dmstatus.impebreak = 1'b1;
+    dmstatus.zero2 = 2'd0;
+    dmstatus.allhavereset = dmstatus_allhavereset;
+    dmstatus.anyhavereset = dmstatus_anyhavereset;
+    dmstatus.allresumeack = dmstatus_allresumeack;
+    dmstatus.anyresumeack = dmstatus_anyresumeack;
+    dmstatus.allnonexistent = dmstatus_allnonexistent;
+    dmstatus.anynonexistent = dmstatus_anynonexistent;
+    dmstatus.allunavail = dmstatus_allunavail;
+    dmstatus.anyunavail = dmstatus_anyunavail;
+    dmstatus.allrunning = dmstatus_allrunning;
+    dmstatus.anyrunning = dmstatus_anyrunning;
+    dmstatus.allhalted = dmstatus_allhalted;
+    dmstatus.anyhalted = dmstatus_anyhalted;
+    dmstatus.authenticated = 1'b1;
+    dmstatus.authbusy = 1'b0;
+    dmstatus.hasresethaltreq = 1'b0;
+    dmstatus.confstrptrvalid = 1'b0;
+    dmstatus.version = 4'd3;
+
+    abstractcs.zero3 = 3'd0;
+    abstractcs.progbufsize = 5'd2;
+    abstractcs.zero11 = 11'd0;
+    abstractcs.busy = abstractcs_busy;
+    abstractcs.relaxedpriv = abstractcs_relaxedpriv;
+    abstractcs.cmderr = abstractcs_cmderr;
+    abstractcs.zero4 = 4'd0;
+    abstractcs.datacount = 4'd2;
+
+    sbcs.version = 3'd1;
+    sbcs.zero6 = 6'd0;
+    sbcs.busyerror = sbcs_busyerror;
+    sbcs.busy = sbcs_busy;
+    sbcs.readonaddr = sbcs_readonaddr;
+    sbcs.access = sbcs_access;
+    sbcs.autoincrement = sbcs_autoincrement;
+    sbcs.readondata = sbcs_readondata;
+    sbcs.error = sbcs_error;
+    sbcs.size = 7'd32;
+    sbcs.access128 = 1'b0;
+    sbcs.access64 = 1'b0;
+    sbcs.access32 = 1'b1;
+    sbcs.access16 = 1'b1;
+    sbcs.access8 = 1'b1;
 end
 
 endmodule
