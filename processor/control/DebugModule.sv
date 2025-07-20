@@ -29,19 +29,32 @@ module DebugModule(
 );
 // DBG_IF dmi();
 
-localparam logic [7:0] dmAddr_data0 = 7'h04;
-localparam logic [7:0] dmAddr_data1 = 7'h05;
-localparam logic [7:0] dmAddr_control = 7'h10;
-localparam logic [7:0] dmAddr_status = 7'h11;
-localparam logic [7:0] dmAddr_abstractics = 7'h16;
-localparam logic [7:0] dmAddr_command = 7'h17;
-localparam logic [7:0] dmAddr_progbuf0 = 7'h20;
-localparam logic [7:0] dmAddr_progbuf1 = 7'h21;
-localparam logic [7:0] dmAddr_sbcs = 7'h38;
-localparam logic [7:0] dmAddr_sbaddress0 = 7'h39;
-localparam logic [7:0] dmAddr_sbdata0 = 7'h3c;
+localparam logic [6:0] dmAddr_data0 = 7'h04;
+localparam logic [6:0] dmAddr_data1 = 7'h05;
+localparam logic [6:0] dmAddr_control = 7'h10;
+localparam logic [6:0] dmAddr_status = 7'h11;
+localparam logic [6:0] dmAddr_abstractics = 7'h16;
+localparam logic [6:0] dmAddr_command = 7'h17;
+localparam logic [6:0] dmAddr_progbuf0 = 7'h20;
+localparam logic [6:0] dmAddr_progbuf1 = 7'h21;
+localparam logic [6:0] dmAddr_sbcs = 7'h38;
+localparam logic [6:0] dmAddr_sbaddress0 = 7'h39;
+localparam logic [6:0] dmAddr_sbdata0 = 7'h3c;
 
-logic abstract_executing;
+// Access Register Command
+localparam logic [7:0] dmCmd_ARC = 8'd0;
+// Quick Access Command
+localparam logic [7:0] dmCmd_QA = 8'd1;
+// Access Memory Command
+localparam logic [7:0] dmCmd_AMC = 8'd2;
+
+localparam logic [2:0] cmderr_none = 3'd0;
+localparam logic [2:0] cmderr_busy = 3'd1;
+localparam logic [2:0] cmderr_nosupport = 3'd2;
+localparam logic [2:0] cmderr_exception = 3'd3;
+localparam logic [2:0] cmderr_exefail = 3'd4;
+localparam logic [2:0] cmderr_buserr = 3'd5;
+localparam logic [2:0] cmderr_other = 3'd7;
 
 logic [31:0] data0;
 logic [31:0] data1;
@@ -95,8 +108,8 @@ debug_type_t dmi_wdata;
 assign dmi_wdata = dmi.dm_wdata;
 
 
-// Writes from debugger to internal module
 always_ff @(posedge iClk, negedge nRst) begin
+    // Writes from debugger to internal module
     if(!nRst | !dmcontrol_active) begin
         data0 <= 32'd0;
         data1 <= 32'd0;
@@ -134,7 +147,7 @@ always_ff @(posedge iClk, negedge nRst) begin
                 dmstatus_allresumeack <= 1'b0;
                 dmstatus_anyresumeack <= 1'b0;
             end
-            if(dmi_wdata.dmcontrol.ackhavereset & ~abstract_executing) begin
+            if(dmi_wdata.dmcontrol.ackhavereset & ~abstractcs_busy) begin
                 dmcontrol_ackhavereset <= 1'b1;
             end
             dmcontrol_setkeepalive <= dmi_wdata.dmcontrol.setkeepalive;
@@ -148,7 +161,7 @@ always_ff @(posedge iClk, negedge nRst) begin
         end
         if(dmi.dm_addr == dmAddr_command) begin
             command <= dmi.dm_wdata;
-            abstract_executing <= 1'b1;
+            abstractcs_busy <= 1'b1;
         end
         if(dmi.dm_addr == dmAddr_progbuf0)
             progbuf0 <= dmi.dm_wdata;
@@ -166,6 +179,35 @@ always_ff @(posedge iClk, negedge nRst) begin
             sbaddress0 <= dmi.dm_wdata;
         if(dmi.dm_addr == dmAddr_sbdata0)
             sbdata0 <= dmi.dm_wdata;
+    end
+
+    // Command Processing
+    if(abstractcs_busy) begin
+        if(command[7:0] == dmCmd_ARC) begin
+            // Size check the access
+            if(command.acc_reg.aarsize != 3'd2)
+                abstractcs_cmderr <= cmderr_buserr;
+            // Process Access Register Command
+            else if (command.acc_reg.transfer) begin
+                // Access General Purpose Regs
+                if(command.acc_reg.regno[15:8] == 8'h10) begin
+                    dbac_rf.addr <= command.acc_reg.regno[7:0];
+                    if(command.acc_reg.write) begin
+                        dbac_rf.write_en <= 1'b1;
+                        dbac_rf.read_en <= 1'b0;
+                        if(dbac_rf.write_ack)
+                            abstractcs_busy <= 1'b0;
+                    end else begin
+                        dbac_rf.write_en <= 1'b0;
+                        dbac_rf.read_en <= 1'b1;
+                        if(dbac_rf.read_ack) begin
+                            data0 <= dbac_rf.rdata;
+                            abstractcs_busy <= 1'b0;
+                        end
+                    end
+                end
+            end
+        end
     end
 end
 

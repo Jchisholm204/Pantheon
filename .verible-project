@@ -1,8 +1,0 @@
---include_dir=display
---include_dir=interfaces
---include_dir=processor
---include_dir=processor/ALU
---include_dir=processor/control
---include_dir=processor/datapipe
---include_dir=processor/memory
---include_dir=processor/types

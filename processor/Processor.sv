@@ -10,6 +10,9 @@
  */
 
 `timescale 1ns/100ps
+`include "pipeline_types.svh"
+`include "reg_transport.svh"
+`include "rv32_isa.svh"
 import pipeline_types::*;
 import reg_transport::reg_transport_t;
 import rv32_isa::*;
