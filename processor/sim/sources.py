@@ -47,5 +47,6 @@ CTRL_SOURCES = [
 
 INTERFACE_SOURCES = [
     "../interfaces/WISHBONE_IF.sv",
-    "../interfaces/DBG_IF.sv"
+    "../interfaces/DBG_IF.sv",
+    "../interfaces/BBUS_IF.sv"
 ]

@@ -87,14 +87,10 @@ RegisterFile rf(
     .nRst(nRst),
     .iWriteEn(ME_WB.ctrl.wb_en),
     .iRd(ME_WB.rd),
-    .iWriteEn_dbg(DBG_regWrite & DBG_halt),
-    .iRd_dbg(DBG_rd),
     .iAddrRs1(ID_rs1.addr),
     .iAddrRs2(ID_rs2.addr),
-    .iAddrRs3(DBG_rs.addr),
     .oRs1(ID_rs1.value),
-    .oRs2(ID_rs2.value),
-    .oRs3(DBG_rs.value)
+    .oRs2(ID_rs2.value)
 );
 
 // --- Pipeline Stages --- //

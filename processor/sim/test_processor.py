@@ -145,6 +145,7 @@ def test_processor_runner():
     fname = "testROM.hex"
     setup_mem(fname).export()
     tb.add_define("ROMFile", f'"../{fname}"')
+    tb.add_define("RF_TOP", 1)
     tb.add_sources(ISA_SOURCES)
     tb.add_sources(TYPES_SOURCES)
     tb.add_sources(ALU_SOURCES)

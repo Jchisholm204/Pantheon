@@ -21,9 +21,10 @@ module DebugModule(
     output logic oHalt,
     output logic oDbgReq,
     output logic oResume,
-    inout reg_transport_t rd,
-    output logic oRegWrite,
-    inout reg_transport_t rs,
+    // Debug Access to Processor Memory
+    BBUS_IF.master dbac_rf,
+    BBUS_IF.master dbac_csr,
+    // Debugger Module Interface
     DBG_IF.processor dmi
 );
 // DBG_IF dmi();

@@ -11,6 +11,8 @@
 
 `timescale 1ns/100ps
 import reg_transport::reg_transport_t;
+import rv32_isa::RegWidth;
+import rv32_isa::RegAddrWidth;
 module DebugModuleTest(
     input logic iClk, nRst,
     output logic halted,
@@ -27,7 +29,10 @@ module DebugModuleTest(
     input logic [31:0] dm_wdata
 );
 
+// Interfaces
 DBG_IF dmi();
+BBUS_IF #(.ADDR_WIDTH(RegAddrWidth), .DATA_WIDTH(RegWidth)) rf_dbg_acc();
+BBUS_IF #(.ADDR_WIDTH(RegAddrWidth), .DATA_WIDTH(RegWidth)) csr_dbg_acc();
 
 assign halted = dmi.halted;
 assign running = dmi.running;
@@ -51,9 +56,8 @@ DebugModule dm(
     .oHalt(),
     .oDbgReq(),
     .oResume(),
-    .rd(rd),
-    .oRegWrite(),
-    .rs(rs),
+    .dbac_rf(rf_dbg_acc),
+    .dbac_csr(rf_dbg_acc),
     .dmi(dmi)
 );
 
@@ -62,10 +66,7 @@ RegisterFile rf(
     .nRst(nRst),
     .iWriteEn(1'b0),
     .iRd(),
-    .iWriteEn_dbg(dm.oRegWrite),
-    .iRd_dbg(rd),
-    .iAddrRs3(rs.addr),
-    .oRs3(rs.value)
+    .dbg_acc(rf_dbg_acc)
 );
 
 endmodule
