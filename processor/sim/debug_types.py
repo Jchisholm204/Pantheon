@@ -283,3 +283,305 @@ class dmstatus_t(SuperStruct):
 class abstractcs_t(SuperStruct):
     def __init__(self, parent, offset=0):
         super().__init__(parent, 32, offset)
+
+    @property
+    def datacount(self):
+        return self.read_bits(0, 3)
+
+    @datacount.setter
+    def datacount(self, value):
+        self.write_bits(0, 3, value)
+
+    @property
+    def cmderr(self):
+        return self.read_bits(8, 10)
+
+    @cmderr.setter
+    def cmderr(self, value):
+        self.write_bits(8, 10, value)
+
+    @property
+    def relaxedpriv(self):
+        return self.read_bits(11, 11)
+
+    @relaxedpriv.setter
+    def relaxedpriv(self, value):
+        self.write_bits(11, 11, value)
+
+    @property
+    def busy(self):
+        return self.read_bits(12, 12)
+
+    @busy.setter
+    def busy(self, value):
+        self.write_bits(12, 12, value)
+
+    @property
+    def progbufsize(self):
+        return self.read_bits(24, 28)
+
+    @progbufsize.setter
+    def progbufsize(self, value):
+        self.write_bits(24, 28, value)
+
+
+class command_access_reg_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+
+    @property
+    def regno(self):
+        return self.read_bits(0, 15)
+
+    @regno.setter
+    def regno(self, value):
+        self.write_bits(0, 15, value)
+
+    @property
+    def write_en(self):
+        return self.read_bits(16, 16)
+
+    @write_en.setter
+    def write_en(self, value):
+        self.write_bits(16, 16, value)
+
+    @property
+    def transfer(self):
+        return self.read_bits(17, 17)
+
+    @transfer.setter
+    def transfer(self, value):
+        self.write_bits(17, 17, value)
+
+    @property
+    def postexec(self):
+        return self.read_bits(18, 18)
+
+    @postexec.setter
+    def postexec(self, value):
+        self.write_bits(18, 18, value)
+
+    @property
+    def aarpostincrement(self):
+        return self.read_bits(19, 19)
+
+    @aarpostincrement.setter
+    def aarpostincrement(self, value):
+        self.write_bits(19, 19, value)
+
+    @property
+    def aarsize(self):
+        return self.read_bits(20, 22)
+
+    @aarsize.setter
+    def aarsize(self, value):
+        self.write_bits(20, 22, value)
+
+    @property
+    def cmdtype(self):
+        return self.read_bits(24, 31)
+
+    @cmdtype.setter
+    def cmdtype(self, value):
+        self.write_bits(24, 31)
+
+
+class command_quick_access_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+
+    @property
+    def cmdtype(self):
+        return self.read_bits(24, 31)
+
+    @cmdtype.setter
+    def cmdtype(self, value):
+        self.write_bits(24, 31)
+
+
+class command_access_mem_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+
+    @property
+    def target_specific(self):
+        return self.read_bits(14, 15)
+
+    @target_specific.setter
+    def target_specific(self, value):
+        self.write_bits(14, 15, value)
+
+    @property
+    def write_en(self):
+        return self.read_bits(16, 16)
+
+    @write_en.setter
+    def write_en(self, value):
+        self.write_bits(16, 16, value)
+
+    @property
+    def aampostincrement(self):
+        return self.read_bits(19, 19)
+
+    @aampostincrement.setter
+    def aampostincrement(self, value):
+        self.write_bits(19, 19, value)
+
+    @property
+    def aamsize(self):
+        return self.read_bits(20, 22)
+
+    @aamsize.setter
+    def aamsize(self, value):
+        self.write_bits(20, 22, value)
+
+    @property
+    def aamvirtual(self):
+        return self.read_bits(23, 23)
+
+    @aamvirtual.setter
+    def aamvirtual(self, value):
+        self.write_bits(23, 23, value)
+
+    @property
+    def cmdtype(self):
+        return self.read_bits(24, 31)
+
+    @cmdtype.setter
+    def cmdtype(self, value):
+        self.write_bits(24, 31, value)
+
+
+class command_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+        self.acc_reg = command_access_reg_t(self)
+        self.qa = command_quick_access_t(self)
+        self.acc_mem = command_access_mem_t(self)
+
+
+class sbcs_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+
+    @property
+    def access8(self):
+        return self.read_bits(0, 0)
+
+    @access8.setter
+    def access8(self, value):
+        self.write_bits(0, 0, value)
+
+    @property
+    def access16(self):
+        return self.read_bits(1, 1)
+
+    @access16.setter
+    def access16(self, value):
+        self.write_bits(1, 1, value)
+
+    @property
+    def access32(self):
+        return self.read_bits(2, 2)
+
+    @access32.setter
+    def access32(self, value):
+        self.write_bits(2, 2, value)
+
+    @property
+    def access64(self):
+        return self.read_bits(3, 3)
+
+    @access64.setter
+    def access64(self, value):
+        self.write_bits(3, 3, value)
+
+    @property
+    def access128(self):
+        return self.read_bits(4, 4)
+
+    @access128.setter
+    def access128(self, value):
+        self.write_bits(4, 4, value)
+
+    @property
+    def size(self):
+        return self.read_bits(5, 11)
+
+    @size.setter
+    def size(self, value):
+        self.write_bits(15, 11)
+
+    @property
+    def error(self):
+        return self.read_bits(12, 14)
+
+    @error.setter
+    def error(self, value):
+        self.write_bits(12, 14, value)
+
+    @property
+    def readondata(self):
+        return self.read_bits(15, 15)
+
+    @readondata.setter
+    def readondata(self, value):
+        self.write_bits(15, 15, value)
+
+    @property
+    def autoincrement(self):
+        return self.read_bits(16, 16)
+
+    @autoincrement.setter
+    def autoincrement(self, value):
+        self.write_bits(16, 16, value)
+
+    @property
+    def access(self):
+        return self.read_bits(17, 19)
+
+    @access.setter
+    def access(self, value):
+        self.write_bits(17, 19, value)
+
+    @property
+    def readonaddr(self):
+        return self.read_bits(20, 20)
+
+    @readonaddr.setter
+    def readonaddr(self, value):
+        self.write_bits(20, 20, value)
+
+    @property
+    def busy(self):
+        return self.read_bits(21, 21)
+
+    @busy.setter
+    def busy(self, value):
+        self.write_bits(21, 21, value)
+
+    @property
+    def busyerror(self):
+        return self.read_bits(22, 22)
+
+    @busyerror.setter
+    def busyerror(self, value):
+        self.write_bits(22, 22, value)
+
+    @property
+    def version(self):
+        return self.read_bits(29, 31)
+
+    @version.setter
+    def version(self, value):
+        self.write_bits(29, 31, value)
+
+
+class debug_type_t(SuperStruct):
+    def __init__(self, parent, offset=0):
+        super().__init__(parent, 32, offset)
+        self.dmcontrol = dmcontrol_t(self)
+        self.dmstatus = dmstatus_t(self)
+        self.abstractcs = abstractcs_t(self)
+        self.command = command_t(self)
+        self.sbcs = sbcs_t(self)
