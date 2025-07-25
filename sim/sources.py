@@ -1,52 +1,52 @@
 
 ISA_SOURCES = [
-    "rv32_isa.svh"
+    "processor/rv32_isa.svh"
 ]
 
 TYPES_SOURCES = [
-    "types/reg_transport.svh",
-    "types/pipeline_types.svh",
-    "types/debug_types.svh"
+    "processor/types/reg_transport.svh",
+    "processor/types/pipeline_types.svh",
+    "processor/types/debug_types.svh"
 ]
 
 ALU_SOURCES = [
-    "ALU/CLA.sv",
-    "ALU/BitWise.sv",
-    "ALU/DIV32.sv",
-    "ALU/MUL32.sv",
-    "ALU/SHIFT.sv",
-    "ALU/ALU.sv"
+    "processor/ALU/CLA.sv",
+    "processor/ALU/BitWise.sv",
+    "processor/ALU/DIV32.sv",
+    "processor/ALU/MUL32.sv",
+    "processor/ALU/SHIFT.sv",
+    "processor/ALU/ALU.sv"
 ]
 
 MEM_SOURCES = [
-    "memory/DMEM.sv",
-    "memory/IMEM.sv",
-    "memory/RAMBlock.sv",
-    "memory/ROMBlock.sv",
-    "memory/Register.sv",
-    "memory/RegisterFile.sv"
+    "processor/memory/DMEM.sv",
+    "processor/memory/IMEM.sv",
+    "processor/memory/RAMBlock.sv",
+    "processor/memory/ROMBlock.sv",
+    "processor/memory/Register.sv",
+    "processor/memory/RegisterFile.sv"
 ]
 
 WISHBONE_SOURCES = [
-        "../interfaces/WISHBONE_IF.sv"
+        "processor/../interfaces/WISHBONE_IF.sv"
 ]
 
 PIPE_SOURCES = [
-    "datapipe/IF.sv",
-    "datapipe/ID.sv",
-    "datapipe/EX.sv",
-    "datapipe/ME.sv"
+    "processor/datapipe/IF.sv",
+    "processor/datapipe/ID.sv",
+    "processor/datapipe/EX.sv",
+    "processor/datapipe/ME.sv"
 ]
 
 CTRL_SOURCES = [
-    "control/BranchOutcome.sv",
-    "control/HazardUnit.sv",
-    "control/PC.sv",
-    "control/decoder.sv",
+    "processor/control/BranchOutcome.sv",
+    "processor/control/HazardUnit.sv",
+    "processor/control/PC.sv",
+    "processor/control/decoder.sv",
 ]
 
 INTERFACE_SOURCES = [
-    "../interfaces/WISHBONE_IF.sv",
-    "../interfaces/DBG_IF.sv",
-    "../interfaces/BBUS_IF.sv"
+    "processor/../interfaces/WISHBONE_IF.sv",
+    "processor/../interfaces/DBG_IF.sv",
+    "processor/../interfaces/BBUS_IF.sv"
 ]
