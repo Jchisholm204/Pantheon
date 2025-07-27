@@ -1,14 +1,13 @@
 import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
-import testbench
-from pipeline_types import ex_mem_t, mem_wb_t
-from pipeline_types import pipe_control_t
-from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
+import util.testbench as testbench
+from incl.pipeline_types import ex_mem_t, mem_wb_t
+from incl.pipeline_types import pipe_control_t
+from util.sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
 from rv32_isa import *
-from sources import ISA_SOURCES, TYPES_SOURCES, WISHBONE_SOURCES, MEM_SOURCES
-import random
-from test_bitwise import to_signed32
+from util.sources import Sources
+from util.representation import to_signed32
 
 N_TEST = 10
 
@@ -24,12 +23,12 @@ async def setup_me(dut):
 
 
 def test_me_runner():
-    tb = testbench.TB("test_me", "ME")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_sources(WISHBONE_SOURCES)
-    tb.add_sources(MEM_SOURCES)
-    tb.add_source("datapipe/ME.sv")
+    tb = testbench.TB("test_proc_me", "ME")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.WISHBONE())
+    tb.add_sources(Sources.MEM())
+    tb.add_source("processor/datapipe/ME.sv")
     tb.run_tests()
 
 

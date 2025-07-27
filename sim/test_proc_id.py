@@ -1,11 +1,11 @@
 import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
-import testbench
-from pipeline_types import if_id_t, id_ex_t
-from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
+import util.testbench as testbench
+from incl.pipeline_types import if_id_t, id_ex_t
+from util.sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
 from rv32_isa import *
-from sources import TYPES_SOURCES, CTRL_SOURCES, ISA_SOURCES
+from util.sources import Sources
 
 async def setup_id(dut):
     clock = Clock(dut.iClk, 10, units='ns')
@@ -19,11 +19,11 @@ async def setup_id(dut):
 
 
 def test_id_runner():
-    tb = testbench.TB("test_id", "ID")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_sources(CTRL_SOURCES)
-    tb.add_source("datapipe/ID.sv")
+    tb = testbench.TB("test_proc_id", "ID")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.CTRL())
+    tb.add_source("processor/datapipe/ID.sv")
     tb.run_tests()
 
 

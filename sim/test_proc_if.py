@@ -32,16 +32,15 @@ async def setup_if(dut):
 def test_if_runner():
     fname = "testROM.hex"
     setup_mem(fname).export()
-    tb = testbench.TB("test_if", "IF")
+    tb = testbench.TB("test_proc_if", "IF")
     tb.add_define("ROMFile", f'"../{fname}"')
-    tb.add_sources(Sources.ISA)
-    tb.add_sources(Sources.TYPES)
-    tb.add_source("control/PC.sv")
-    tb.add_source("ALU/CLA.sv")
-    tb.add_sources(Sources.INTERFACES)
-    tb.add_source("memory/ROMBlock.sv")
-    tb.add_source("memory/IMEM.sv")
-    tb.add_source("datapipe/IF.sv")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_source("processor/control/PC.sv")
+    tb.add_source("processor/ALU/CLA.sv")
+    tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.MEM())
+    tb.add_source("processor/datapipe/IF.sv")
     tb.run_tests()
 
 
