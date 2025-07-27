@@ -1,8 +1,9 @@
 import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
-import testbench
-from sources import ISA_SOURCES
+import sys
+import util.testbench as testbench
+from util.sources import Sources
 
 
 async def setup_pc(dut):
@@ -64,11 +65,12 @@ async def pc_adder_out(dut):
 
 
 def test_pc_runner():
-    tb = testbench.TB("test_pc", "PC")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_source("control/PC.sv")
-    tb.add_source("ALU/CLA.sv")
+    tb = testbench.TB("test_if_pc", "PC")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.ALU())
+    tb.add_source("processor/control/PC.sv")
     tb.add_param("START_ADDR", 0)
+    print(tb.sources)
     tb.run_tests()
 
 

@@ -1,12 +1,12 @@
 import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.clock import Clock
-import testbench
-from pipeline_types import id_ex_t, ex_mem_t
-from pipeline_types import pipe_control_t
-from sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
+import util.testbench as testbench
+from incl.pipeline_types import id_ex_t, ex_mem_t
+from incl.pipeline_types import pipe_control_t
+from util.sample_mem import mem_sample_add, mem_sample_alu, mem_sample_mem
 from rv32_isa import *
-from sources import ISA_SOURCES, TYPES_SOURCES, ALU_SOURCES
+from util.sources import Sources
 import random
 
 
@@ -22,11 +22,11 @@ async def setup_ex(dut):
 
 
 def test_ex_runner():
-    tb = testbench.TB("test_ex", "EX")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_sources(ALU_SOURCES)
-    tb.add_source("datapipe/EX.sv")
+    tb = testbench.TB("test_proc_ex", "EX")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.ALU())
+    tb.add_source("processor/datapipe/EX.sv")
     tb.run_tests()
 
 

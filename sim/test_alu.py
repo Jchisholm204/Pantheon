@@ -5,9 +5,9 @@ from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
 import rv32_isa
-import test_shift
-import testbench
-import sources
+import test_alu_shift as test_shift
+import util.testbench as testbench
+from util.sources import Sources
 
 
 @cocotb.test()
@@ -121,10 +121,14 @@ async def alu_rem_test(dut):
 
 def test_alu_runner():
     tb = testbench.TB("test_alu", "ALU")
-    tb.add_sources(sources.ISA_SOURCES)
-    tb.add_sources(sources.ALU_SOURCES)
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.PROC())
+    tb.add_sources(Sources.ALU())
+    print(tb.sources)
     tb.run_tests()
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     test_alu_runner()

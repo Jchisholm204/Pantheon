@@ -1,4 +1,4 @@
-from SuperStruct import SuperStruct
+from incl.SuperStruct import SuperStruct
 from cocotb.handle import ModifiableObject
 
 

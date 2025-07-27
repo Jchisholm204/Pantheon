@@ -1,12 +1,12 @@
 /**
  * @file WISHBONE_IF.sv
  * @author Jacob Chisholm (https://Jchisholm204.github.io)
- * @brief 
+ * @brief
  * @version 0.1
  * @date Created: 2025-05-31
  * @modified Last Modified: 2025-05-31
  *
- * 
+ *
  * All wishbone signals must be active high
  * Port sizes must be 8, 16, 32, or 64 bit
  *  Default port size is 32 bit

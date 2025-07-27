@@ -1,15 +1,13 @@
 import cocotb
+import util.testbench as testbench
+from util.sources import Sources
 from cocotb.handle import ModifiableObject, NonHierarchyIndexableObject
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.clock import Clock
-from reg_transport_t import reg_transport_t
-import testbench
-from sources import ISA_SOURCES, TYPES_SOURCES, ALU_SOURCES
-from sources import MEM_SOURCES, WISHBONE_SOURCES, PIPE_SOURCES
-from sources import CTRL_SOURCES
-from test_if import setup_mem
-from hex_creator import HexCreator
-from test_bitwise import to_signed32
+from incl.reg_transport_t import reg_transport_t
+from util.hex_creator import HexCreator
+from util.representation import to_signed32
+from test_proc_if import setup_mem
 from rv32_isa import *
 
 
@@ -66,7 +64,6 @@ class Processor():
             await RisingEdge(self.iClk)
         for _ in range(0, 4):
             await RisingEdge(self.iClk)
-
 
 # For debugging purposes only.. not actual testing
 @cocotb.test
@@ -146,15 +143,14 @@ def test_processor_runner():
     setup_mem(fname).export()
     tb.add_define("ROMFile", f'"../{fname}"')
     tb.add_define("RF_TOP", 1)
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_sources(ALU_SOURCES)
-    tb.add_sources(MEM_SOURCES)
-    tb.add_sources(WISHBONE_SOURCES)
-    tb.add_sources(CTRL_SOURCES)
-    tb.add_sources(PIPE_SOURCES)
-    tb.add_source("control/HazardUnit.sv")
-    tb.add_source("Processor.sv")
+    # for x in Sources.CTRL:
+    #     print(x)
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.PROC())
+    for s in tb.sources:
+        print(s)
     tb.run_tests()
 
 

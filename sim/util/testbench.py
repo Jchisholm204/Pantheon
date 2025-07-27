@@ -4,6 +4,7 @@ from cocotb.runner import get_runner
 from pathlib import Path
 import shutil
 import inspect
+from util.sources import Sources, SourceFiles
 
 
 class TB:
@@ -11,7 +12,7 @@ class TB:
         self.test_module = test_module
         self.hdl_toplevel = hdl_toplevel
         self.sim = os.getenv("SIM", sim)
-        self.basepath = Path(__file__).resolve().parent.parent
+        self.basepath = Sources.get_basepath()
         self.sources = []
         self.parameters = {}
         self.defines = {}
@@ -19,7 +20,11 @@ class TB:
     def add_source(self, source: str):
         self.sources += [self.basepath / source]
 
-    def add_sources(self, sources):
+    def add_sources(self, sources: [list, SourceFiles]):
+        # if isinstance(sources, SourceFiles):
+        #     for source in sources:
+        #         self.sources += [source]
+        # else:
         for source in sources:
             self.add_source(source)
 
@@ -40,9 +45,9 @@ class TB:
                           "--vpi",
                           # "--output-split", "8",
                           # "--threads", "1"
-                          "-I../processor",
-                          "-I../processor/types",
-                          "-I../interfaces"
+                          "-I../include",
+                          "-I../include/types",
+                          "-I../include/interfaces"
                           ]
         runner = get_runner(self.sim)
         print(runner.build(

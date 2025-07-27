@@ -4,9 +4,9 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge
 from cocotb.runner import get_runner
 from pathlib import Path
-from testbench import TB
-from reg_transport_t import reg_transport_t
-from sources import TYPES_SOURCES, ISA_SOURCES
+from util.testbench import TB
+from incl.reg_transport_t import reg_transport_t
+from util.sources import Sources
 
 
 async def setup_test(dut):
@@ -143,47 +143,15 @@ async def regfile_test_forwarding(dut):
 #         assert dut.oRs3.value == i*22, "DBG Fail"
 
 
-def old_register_file_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [
-            proj_path / "rv32_isa.sv",
-            proj_path / "register_file.sv",
-            ]
-    # sources = list((proj_path).glob("*.sv"))
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-            verilog_sources=sources,
-            hdl_toplevel="register_file",
-            clean=False,
-            waves=False,
-            always=True,
-            # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
-            build_args=build_args
-            )
-    runner.test(
-            hdl_toplevel="register_file",
-            test_module="test_register_file",
-            plusargs=["-fst"],
-            waves=True
-            )
-
-
 def test_RF_runner():
     tb = TB("test_register_file", "RegisterFile")
     tb.add_define("RF_TOP", 1)
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_source("memory/Register.sv")
-    tb.add_source("memory/RegisterFile.sv")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_source("processor/memory/Register.sv")
+    tb.add_source("processor/memory/RegisterFile.sv")
+    for s in tb.sources:
+        print(s)
     tb.run_tests()
 
 
