@@ -4,13 +4,7 @@ import random
 from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
-
-
-def to_signed32(n):
-    """Convert unsigned 32-bit int to signed 32-bit."""
-    n = n & 0xFFFFFFFF
-    return n if n < 0x80000000 else n - 0x100000000
-
+from util.representation import to_signed32 as to_signed32
 
 @cocotb.test()
 async def and_test_specific(dut):

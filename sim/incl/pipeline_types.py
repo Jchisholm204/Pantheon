@@ -1,6 +1,6 @@
-from SuperStruct import SuperStruct
+from incl.SuperStruct import SuperStruct
 from cocotb.handle import ModifiableObject
-from reg_transport_t import reg_transport_t
+from incl.reg_transport_t import reg_transport_t
 
 
 class pipe_control_t(SuperStruct):

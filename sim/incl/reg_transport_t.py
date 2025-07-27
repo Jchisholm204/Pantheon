@@ -1,5 +1,5 @@
 from cocotb.handle import ModifiableObject
-from SuperStruct import SuperStruct
+from incl.SuperStruct import SuperStruct
 
 
 class reg_transport_t(SuperStruct):

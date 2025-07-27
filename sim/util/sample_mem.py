@@ -1,4 +1,4 @@
-from hex_creator import HexCreator
+from util.hex_creator import HexCreator
 from rv32_isa import *
 
 
