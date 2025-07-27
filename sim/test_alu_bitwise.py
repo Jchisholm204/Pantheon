@@ -5,6 +5,7 @@ from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
 from util.representation import to_signed32 as to_signed32
+import util.testbench as testbench
 
 @cocotb.test()
 async def and_test_specific(dut):
@@ -112,33 +113,8 @@ async def xor_test_random(dut):
 
 
 def test_bitwise_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [proj_path / "ALU/BitWise.sv"]
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["--trace", "-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-        verilog_sources=sources,
-        hdl_toplevel="BitWise",
-        clean=False,
-        waves=True,
-        # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
-        build_args=build_args,
-        always=True,
-    )
-    runner.test(
-        hdl_toplevel="BitWise",
-        test_module="test_bitwise",
-        plusargs=["-fst"],
-        waves=True
-    )
+    tb = testbench.TB("test_alu_bitwise", "BitWise")
+    tb.add_source("processor/ALU/BitWise.sv")
 
 
 if __name__ == "__main__":

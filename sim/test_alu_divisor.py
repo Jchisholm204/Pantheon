@@ -4,6 +4,7 @@ import random
 from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
+import util.testbench as testbench
 
 
 @cocotb.test()
@@ -94,32 +95,8 @@ async def div32_small(dut):
 
 
 def test_div32_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [proj_path / "ALU/DIV32.sv"]
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["--trace", "-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-        verilog_sources=sources,
-        hdl_toplevel="DIV32",
-        clean=False,
-        waves=True,
-        build_args=build_args,
-        always=True,
-    )
-    runner.test(
-        hdl_toplevel="DIV32",
-        test_module="test_divisor",
-        plusargs=["-fst"],
-        waves=True
-    )
+    tb = testbench.TB("test_alu_divisor", "DIV32")
+    tb.add_source("processor/ALU/DIV32.sv")
 
 
 if __name__ == "__main__":

@@ -121,8 +121,10 @@ async def alu_rem_test(dut):
 
 def test_alu_runner():
     tb = testbench.TB("test_alu", "ALU")
-    tb.add_sources(Sources.PROC())
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
     tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.PROC())
     tb.add_sources(Sources.ALU())
     print(tb.sources)
     tb.run_tests()

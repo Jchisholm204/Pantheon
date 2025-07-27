@@ -62,7 +62,7 @@ def test_debugmodule_runner():
     tb.add_sources(Sources.INTERFACES())
     tb.add_sources(Sources.MEM())
     tb.add_source("processor/control/DebugModule.sv")
-    tb.add_source("sim/DebugModuleTest.sv")
+    tb.add_source("sim/wrappers/DebugModuleTest.sv")
     tb.run_tests()
 
 

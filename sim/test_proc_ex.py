@@ -22,7 +22,7 @@ async def setup_ex(dut):
 
 
 def test_ex_runner():
-    tb = testbench.TB("test_ex", "EX")
+    tb = testbench.TB("test_proc_ex", "EX")
     tb.add_sources(Sources.ISA())
     tb.add_sources(Sources.TYPES())
     tb.add_sources(Sources.ALU())

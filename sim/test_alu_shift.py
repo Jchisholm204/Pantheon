@@ -94,8 +94,8 @@ async def left_logic_test(dut):
 
 
 def test_shift_runner():
-    tb = testbench.TB("test_shift", "SHIFT")
-    tb.add_source("ALU/SHIFT.sv")
+    tb = testbench.TB("test_alu_shift", "SHIFT")
+    tb.add_source("processor/ALU/SHIFT.sv")
     tb.run_tests()
 
 

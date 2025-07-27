@@ -4,6 +4,7 @@ import random
 from cocotb.triggers import Timer
 from cocotb.runner import get_runner
 from pathlib import Path
+import util.testbench as testbench
 
 
 @cocotb.test()
@@ -50,33 +51,8 @@ async def cla_add_tests(dut):
 
 
 def test_cla_runner():
-    sim = os.getenv("SIM", "icarus")
-
-    proj_path = Path(__file__).resolve().parent.parent
-
-    sources = [proj_path / "ALU/CLA.sv"]
-
-    if sim == "icarus":
-        build_args = ["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"]
-    else:
-        build_args = ["--trace", "-Wno-fatal"]
-
-    runner = get_runner(sim)
-    runner.build(
-        verilog_sources=sources,
-        hdl_toplevel="CLA",
-        clean=False,
-        waves=True,
-        # build_args=["-DICARUS_TRACE_ARRAYS", "-DICARUS_FST"],
-        build_args=build_args,
-        always=True,
-    )
-    runner.test(
-        hdl_toplevel="CLA",
-        test_module="test_cla",
-        plusargs=["-fst"],
-        waves=True
-    )
+    tb = testbench.TB("test_alu_cla", "CLA")
+    tb.add_source("processor/ALU/CLA.sv")
 
 
 if __name__ == "__main__":

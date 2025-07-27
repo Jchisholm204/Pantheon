@@ -2,10 +2,10 @@ import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.clock import Clock
 from cocotb.handle import ModifiableObject
-import testbench
-from hex_creator import HexCreator
+import util.testbench as testbench
+from util.hex_creator import HexCreator
 from rv32_isa import *
-from pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
+from incl.pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
 from util.sources import Sources
 
 
