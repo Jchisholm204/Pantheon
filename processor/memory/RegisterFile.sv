@@ -25,9 +25,9 @@ module RegisterFile #(
     input logic [addr_width-1:0] iAddrRs1,
     input logic [addr_width-1:0] iAddrRs2,
     output logic [reg_width-1:0] oRs1,
-    output logic [reg_width-1:0] oRs2,
+    output logic [reg_width-1:0] oRs2
     `ifndef RF_TOP
-    BBUS_IF.slave dbg_acc
+    ,BBUS_IF.slave dbg_acc
     `endif
 );
 

@@ -66,10 +66,9 @@ async def pc_adder_out(dut):
 
 def test_pc_runner():
     tb = testbench.TB("test_if_pc", "PC")
-    # tb.add_sources(Sources.ISA())
-    # tb.add_source("processor/rv32_isa.svh")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.ALU())
     tb.add_source("processor/control/PC.sv")
-    tb.add_source("processor/ALU/CLA.sv")
     tb.add_param("START_ADDR", 0)
     print(tb.sources)
     tb.run_tests()

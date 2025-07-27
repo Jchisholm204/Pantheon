@@ -12,7 +12,7 @@ class TB:
         self.test_module = test_module
         self.hdl_toplevel = hdl_toplevel
         self.sim = os.getenv("SIM", sim)
-        self.basepath = Path(__file__).resolve().parent.parent
+        self.basepath = Sources.get_basepath()
         self.sources = []
         self.parameters = {}
         self.defines = {}
@@ -45,9 +45,9 @@ class TB:
                           "--vpi",
                           # "--output-split", "8",
                           # "--threads", "1"
-                          "-I../processor",
-                          "-I../processor/types",
-                          "-I../interfaces"
+                          "-I../include",
+                          "-I../include/types",
+                          "-I../include/interfaces"
                           ]
         runner = get_runner(self.sim)
         print(runner.build(

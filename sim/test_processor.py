@@ -4,7 +4,7 @@ from util.sources import Sources
 from cocotb.handle import ModifiableObject, NonHierarchyIndexableObject
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.clock import Clock
-import incl.reg_transport_t as reg_transport_t
+from incl.reg_transport_t import reg_transport_t
 from util.hex_creator import HexCreator
 from util.representation import to_signed32
 from test_proc_if import setup_mem
@@ -145,8 +145,13 @@ def test_processor_runner():
     tb.add_define("RF_TOP", 1)
     # for x in Sources.CTRL:
     #     print(x)
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.TYPES())
     tb.add_sources(Sources.PROC())
-    # tb.run_tests()
+    for s in tb.sources:
+        print(s)
+    tb.run_tests()
 
 
 if __name__ == "__main__":

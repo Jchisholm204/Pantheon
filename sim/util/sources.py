@@ -35,7 +35,11 @@ class Sources:
 
     def TYPES() -> SourceFiles:
         basepath = Sources.get_path("include/types")
-        return Sources.get_sourceFiles(basepath)
+        sources = SourceFiles()
+        sources += [basepath / "reg_transport.svh"]
+        sources += [basepath / "pipeline_types.svh"]
+        sources += [basepath / "debug_types.svh"]
+        return sources
 
     def ISA() -> list:
         return ["processor/rv32_isa.svh"]
