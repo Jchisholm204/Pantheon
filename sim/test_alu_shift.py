@@ -1,7 +1,7 @@
 import cocotb
 import random
 from cocotb.triggers import Timer
-import testbench
+import util.testbench as testbench
 
 
 def to_signed32(n):

@@ -4,6 +4,7 @@ from cocotb.runner import get_runner
 from pathlib import Path
 import shutil
 import inspect
+from util.sources import Sources, SourceFiles
 
 
 class TB:
@@ -19,7 +20,11 @@ class TB:
     def add_source(self, source: str):
         self.sources += [self.basepath / source]
 
-    def add_sources(self, sources):
+    def add_sources(self, sources: [list, SourceFiles]):
+        # if isinstance(sources, SourceFiles):
+        #     for source in sources:
+        #         self.sources += [source]
+        # else:
         for source in sources:
             self.add_source(source)
 

@@ -143,14 +143,9 @@ def test_processor_runner():
     setup_mem(fname).export()
     tb.add_define("ROMFile", f'"../{fname}"')
     tb.add_define("RF_TOP", 1)
-    print(Sources.CTRL)
-    basepath = Sources.get_path("include/types")
-    ls = Sources.get_sourceFiles(basepath)
-    print(ls)
-    print(list(Sources.TYPES))
     # for x in Sources.CTRL:
     #     print(x)
-    # tb.add_sources(Sources.PROC)
+    tb.add_sources(Sources.PROC())
     # tb.run_tests()
 
 

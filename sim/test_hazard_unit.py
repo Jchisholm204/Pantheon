@@ -6,7 +6,7 @@ import testbench
 from hex_creator import HexCreator
 from rv32_isa import *
 from pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
-from sources import TYPES_SOURCES, ISA_SOURCES
+from util.sources import Sources
 
 
 class HazardUnit():
@@ -312,9 +312,9 @@ async def check_forward_me(dut):
 
 def test_hazard_unit_runner():
     tb = testbench.TB("test_hazard_unit", "HazardUnit")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_source("control/HazardUnit.sv")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_source("processor/control/HazardUnit.sv")
     tb.run_tests()
 
 

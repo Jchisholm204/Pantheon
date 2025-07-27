@@ -2,11 +2,11 @@ import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.clock import Clock
 from cocotb.handle import ModifiableObject
-import testbench
-from hex_creator import HexCreator
+import util.testbench as testbench
+from util.hex_creator import HexCreator
 from rv32_isa import *
-from pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
-from sources import TYPES_SOURCES, ISA_SOURCES, INTERFACE_SOURCES, MEM_SOURCES
+from incl.pipeline_types import if_id_t, id_ex_t, ex_mem_t, mem_wb_t
+from util.sources import Sources
 
 
 class DebugModule():
@@ -57,11 +57,11 @@ async def dbg_mod_scratch(dut):
 
 def test_debugmodule_runner():
     tb = testbench.TB("test_debugmodule", "DebugModuleTest")
-    tb.add_sources(ISA_SOURCES)
-    tb.add_sources(TYPES_SOURCES)
-    tb.add_sources(INTERFACE_SOURCES)
-    tb.add_sources(MEM_SOURCES)
-    tb.add_source("control/DebugModule.sv")
+    tb.add_sources(Sources.ISA())
+    tb.add_sources(Sources.TYPES())
+    tb.add_sources(Sources.INTERFACES())
+    tb.add_sources(Sources.MEM())
+    tb.add_source("processor/control/DebugModule.sv")
     tb.add_source("sim/DebugModuleTest.sv")
     tb.run_tests()
 
