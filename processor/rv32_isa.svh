@@ -12,6 +12,8 @@
 `timescale 1ns/100ps
 package rv32_isa;
 
+// ----- Base ISA -----
+
 localparam logic [6:0] OpAluR    = 7'b0110011;
 localparam logic [6:0] OpAluI    = 7'b0010011;
 localparam logic [6:0] OpStore   = 7'b0100011;
@@ -20,7 +22,7 @@ localparam logic [6:0] OpMscMem  = 7'b0001111;
 localparam logic [6:0] OpJal     = 7'b1101111;
 localparam logic [6:0] OpJalR    = 7'b1100111;
 localparam logic [6:0] OpBranch  = 7'b1100011;
-localparam logic [6:0] OpSysCall = 7'b1110011;
+localparam logic [6:0] OpSystem  = 7'b1110011;
 localparam logic [6:0] OpLUI     = 7'b0110111;
 localparam logic [6:0] OpAUIPC   = 7'b0110111;
 
@@ -78,7 +80,7 @@ localparam logic [2:0] OpF3BLT  = 3'b100;
 localparam logic [2:0] OpF3BGE  = 3'b101;
 localparam logic [2:0] OpF3BLTU = 3'b110;
 localparam logic [2:0] OpF3BGEU = 3'b111;
-// Function 3 - SysCall Instructions
+// Function 3 - System Instructions
 localparam logic [2:0] OpF3ECALL  = 3'b000;
 localparam logic [2:0] OpF3EBREAK = 3'b000;
 localparam logic [2:0] OpF3CSRRW  = 3'b001;
@@ -99,5 +101,13 @@ localparam logic [2:0] OpF3REMU   = 3'b111;
 
 localparam int RegAddrWidth = 5;
 localparam int RegWidth = 32;
+
+// ----- Privileged ISA -----
+
+typedef enum logic [1:0] {
+    User = 2'b00,
+    Supervisor = 2'b01,
+    Machine = 2'b11
+} privilegelevel_e;
 
 endpackage
