@@ -87,9 +87,9 @@ always_comb begin : dmstatus
     // Processor Running
     dmstatus_d.anyrunning = iRunning;
     dmstatus_d.allrunning = iRunning;
-    // Processor Halted
-    dmstatus_d.anyhalted = dmcontrol_q.haltreq & ~iRunning;
-    dmstatus_d.allhalted = dmcontrol_q.haltreq & ~iRunning;
+    // Processor Halted = not running
+    dmstatus_d.anyhalted = ~iRunning;
+    dmstatus_d.allhalted = ~iRunning;
     dmstatus_d.authenticated = 1'b1;
     dmstatus_d.authbusy = 1'b0;
     dmstatus_d.hasresethaltreq = 1'b1;
