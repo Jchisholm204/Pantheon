@@ -20,6 +20,7 @@ interface DBG_IF();
 
     logic dm_access_valid;
     logic dm_write;
+    logic dm_read;
     logic [6:0] dm_addr;
     logic [31:0] dm_wdata;
     logic [31:0] dm_rdata;
@@ -27,7 +28,7 @@ interface DBG_IF();
     modport processor (
         input enter_debug, req_halt, req_resume, step,
         output halted, running, stalled,
-        input dm_write, dm_addr, dm_wdata,
+        input dm_write, dm_read, dm_addr, dm_wdata,
         output dm_rdata, dm_access_valid
     );
 
@@ -35,7 +36,7 @@ interface DBG_IF();
         input halted, running, stalled,
         output enter_debug, req_halt, req_resume, step,
         input dm_rdata, dm_access_valid,
-        output dm_write, dm_addr, dm_wdata
+        output dm_write, dm_read, dm_addr, dm_wdata
     );
 
 endinterface

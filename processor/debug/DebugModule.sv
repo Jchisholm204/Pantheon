@@ -17,8 +17,8 @@ import debug_types::*;
 
 module DebugModule(
     input  logic iClk, iRst_n,
-    input  logic iHaltReq,
-    output logic oRst_n,
+    input  logic iRunning,
+    output logic oSysRst_n,
     output logic oPipeRst_n,
     output logic oHaltReq,
     output logic oDbgReq,
@@ -52,15 +52,56 @@ logic [31:0] sbaddress0_q;
 logic [31:0] sbdata0_d;
 logic [31:0] sbdata0_q;
 
+// Split the dmi_wdata type into w_* fields
 debug_type_t dmi_wdata;
+dmcontrol_t w_dmcontrol;
+dmstatus_t w_dmstatus;
+abstractcs_t w_abstractcs;
+sbcs_t w_sbcs;
 assign dmi_wdata = dmi.dm_wdata;
+assign w_dmcontrol = dmi_wdata.dmcontrol;
+assign w_dmstatus = dmi_wdata.dmstatus;
+assign w_abstractcs = dmi_wdata.abstractcs;
+assign w_sbcs = dmi_wdata.sbcs;
 
-always_comb begin : status
-    dmstatus_d.version = debug::dmv_1_00;
-    dmstatus_d.confstrptrvalid = 1'b0;
-    dmstatus_d.hasresethaltreq = 1'b1;
-    dmstatus_d.authbusy = 1'b0;
+always_comb begin : dmstatus
+    dmstatus_d.zero7 = '0;
+    dmstatus_d.resetpending = dmcontrol_q.reset;
+    dmstatus_d.stickyunavail = '0;
+    dmstatus_d.impebreak = 1'b1;
+    dmstatus_d.zero2 = '0;
+    // 1 when reset until acked
+    dmstatus_d.anyhavereset = ~dmcontrol_q.ackhavereset
+        & (dmcontrol_q.reset | dmstatus_q.anyhavereset);
+    dmstatus_d.allhavereset = ~dmcontrol_q.ackhavereset
+        & (dmcontrol_q.reset | dmstatus_q.allhavereset);
+    // Set resume ack when halt request is gone, resume request
+    //  is issued, and the processor is running.
+    dmstatus_d.anyresumeack = ~dmcontrol_q.haltreq
+        & dmcontrol_q.resumereq & iRunning;
+    dmstatus_d.allresumeack = ~dmcontrol_q.haltreq
+        & dmcontrol_q.resumereq & iRunning;
+    // Heart selection invalid feedback to DM
+    dmstatus_d.anynonexistent = dmcontrol_q.heartselhi != '0 & dmcontrol_q.heartsello != 10'd1;
+    dmstatus_d.allnonexistent = dmcontrol_q.heartselhi != '0 & dmcontrol_q.heartsello != 10'd1;
+    // Processor Running
+    dmstatus_d.anyrunning = iRunning;
+    dmstatus_d.allrunning = iRunning;
+    // Processor Halted
+    dmstatus_d.anyhalted = dmcontrol_q.haltreq & ~iRunning;
+    dmstatus_d.allhalted = dmcontrol_q.haltreq & ~iRunning;
     dmstatus_d.authenticated = 1'b1;
+    dmstatus_d.authbusy = 1'b0;
+    dmstatus_d.hasresethaltreq = 1'b1;
+    dmstatus_d.confstrptrvalid = 1'b0;
+    dmstatus_d.version = debug::dmv_1_00;
+end
+
+always_comb begin : dmcontrol
+    // Handle Writes
+    if(dmi.dm_write && dmi.dm_access_valid && dmi.dm_addr == debug::control) begin
+        
+    end
 end
 
 always_ff @(posedge iClk, negedge iRst_n) begin:ff
