@@ -15,7 +15,7 @@
 import reg_transport::reg_transport_t;
 import debug_types::*;
 
-module DebugModule(
+module DebugModule_legacy(
     input logic iClk, nRst,
     output logic onRst,
     output logic oHalt,

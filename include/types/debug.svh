@@ -27,21 +27,21 @@ typedef enum logic [7:0] {
 } dcsr_e;
 
 typedef enum logic [2:0] {
-    err_none = 3'd0,
+    cerr_none = 3'd0,
     // Debug Unit is busy
-    err_busy = 3'd1,
+    cerr_busy = 3'd1,
     // Command is not supported
-    err_nosupport = 3'd2,
+    cerr_nosupport = 3'd2,
     // Exception occurred while executing a command
-    err_exception = 3'd3,
+    cerr_exception = 3'd3,
     // The heart was not in the required state to execute the command
-    err_haltresume = 3'd4,
+    cerr_haltresume = 3'd4,
     // Bus Error (Alignment, Size, Timeout)
-    err_buserr = 3'd5,
+    cerr_buserr = 3'd5,
     // Reserved
-    err_reserved = 3'd6,
+    cerr_reserved = 3'd6,
     // Command Failed for other reason
-    err_other = 3'd7
+    cerr_other = 3'd7
 } cmderr_e;
 
 typedef enum logic [7:0] {
