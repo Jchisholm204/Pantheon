@@ -90,10 +90,14 @@ always_comb begin : dmstatus
     // Processor Halted = not running
     dmstatus_d.anyhalted = ~iRunning;
     dmstatus_d.allhalted = ~iRunning;
+    // Authentication module not present
     dmstatus_d.authenticated = 1'b1;
     dmstatus_d.authbusy = 1'b0;
+    // The DM preserves and issues halt after heart reset
     dmstatus_d.hasresethaltreq = 1'b1;
+    // not used..
     dmstatus_d.confstrptrvalid = 1'b0;
+    // Version 1.00 of the RV Specification
     dmstatus_d.version = debug::dmv_1_00;
 end
 
