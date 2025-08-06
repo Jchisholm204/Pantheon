@@ -64,6 +64,9 @@ assign w_dmstatus = dmi_wdata.dmstatus;
 assign w_abstractcs = dmi_wdata.abstractcs;
 assign w_sbcs = dmi_wdata.sbcs;
 
+// Internal logic signals
+logic haltreset_d, haltreset_q;
+
 always_comb begin : dmstatus
     dmstatus_d.zero7 = '0;
     dmstatus_d.resetpending = dmcontrol_q.reset;
@@ -82,8 +85,12 @@ always_comb begin : dmstatus
     dmstatus_d.allresumeack = ~dmcontrol_q.haltreq
         & dmcontrol_q.resumereq & iRunning;
     // Heart selection invalid feedback to DM
-    dmstatus_d.anynonexistent = dmcontrol_q.heartselhi != '0 & dmcontrol_q.heartsello != 10'd1;
-    dmstatus_d.allnonexistent = dmcontrol_q.heartselhi != '0 & dmcontrol_q.heartsello != 10'd1;
+    dmstatus_d.anynonexistent = dmcontrol_q.heartselhi != '0
+        & dmcontrol_q.heartsello != 10'd1
+        & ~dmcontrol_q.ackunavail;
+    dmstatus_d.allnonexistent = dmcontrol_q.heartselhi != '0
+        & dmcontrol_q.heartsello != 10'd1
+        & ~dmcontrol_q.ackunavail;
     // Processor Running
     dmstatus_d.anyrunning = iRunning;
     dmstatus_d.allrunning = iRunning;
@@ -101,14 +108,58 @@ always_comb begin : dmstatus
     dmstatus_d.version = debug::dmv_1_00;
 end
 
-always_comb begin : dmcontrol
+always_comb begin : dmi_bridge
     // Handle Writes
-    if(dmi.dm_write && dmi.dm_access_valid && dmi.dm_addr == debug::control) begin
-        
+    if(dmi.dm_write && dmi.dm_access_valid) begin
+        unique case (dmi.dm_addr)
+            debug::data0:
+                data0_d = dmi.dm_wdata;
+            debug::data1:
+                data1_d = dmi.dm_wdata;
+            debug::control: begin
+                dmcontrol_d.active = w_dmcontrol.active;
+                dmcontrol_d.reset = w_dmcontrol.rest;
+                dmcontrol_d.clrresethaltreq = w_dmcontrol.clrresethaltreq;
+                dmcontrol_d.setresethaltreq = w_dmcontrol.setresethaltreq;
+                dmcontrol_d.clrkeepalive = w_dmcontrol.clrkeepalive;
+                dmcontrol_d.setkeepalive = w_dmcontrol.setkeepalive;
+                dmcontrol_d.heartselhi = w_dmcontrol.heartselhi;
+                dmcontrol_d.heartsello = w_dmcontrol.heartsello;
+                dmcontrol_d.hasel = w_dmcontrol.hasel;
+                dmcontrol_d.ackunavail = w_dmcontrol.ackunavail;
+                dmcontrol_d.ackhavereset = w_dmcontrol.ackhavereset;
+                dmcontrol_d.heartreset = w_dmcontrol.heartreset;
+                dmcontrol_d.resumereq = w_dmcontrol.resumereq;
+                dmcontrol_d.haltreq = w_dmcontrol.haltreq;
+            end
+            debug::status: begin end
+            debug::abstractcs: begin
+                abstractcs_d.relaxedpriv = w_abstractcs.relaxedpriv;
+                abstractcs_d.cmderr = abstractcs_q.cmderr & ~w_abstractcs.cmderr;
+            end
+            debug::command:
+                command_d = dmi.dm_wdata;
+            debug::progbuf0:
+                progbuf0 = dmi.dm_wdata;
+            debug::progbuf1:
+                progbuf1 = dmi.dm_wdata;
+            debug::sbcs: begin
+                sbcs_d.busyerror = sbcs_q.busyerror & ~w_sbcs.busyerror;
+                sbcs_d.readonaddr = w_sbcs.readonaddr;
+                sbcs_d.access = w_sbcs.access;
+                sbcs_d.autoincrement = w_sbcs.autoincrement;
+                sbcs_d.readondata = w_sbcs.readondata;
+                sbcs_d.error = sbcs_q.error & ~w_sbcs.error;
+            end
+            debug::sbaddress0:
+                sbaddress0_d = dmi.dm_wdata;
+            debug::sbdata0:
+                sbdata0_d = dmi.dm_wdata;
+        endcase
     end
 end
 
-always_ff @(posedge iClk, negedge iRst_n) begin:ff
+always_ff @(posedge iClk, negedge iRst_n) begin : ff_logic
     if(!iRst_n) begin : ereset
         data0_q <= '0;
         data1_q <= '0;

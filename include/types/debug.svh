@@ -22,7 +22,7 @@ typedef enum logic [7:0] {
     progbuf0 = 8'h20,
     progbuf1 = 8'h21,
     sbcs = 8'h38,
-    sbaddress = 8'h39,
+    sbaddress0 = 8'h39,
     sbdata0 = 8'h3c
 } dcsr_e;
 
