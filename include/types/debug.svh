@@ -101,6 +101,12 @@ typedef enum logic [3:0] {
     dmv_custom = 4'd15
 } dmversion_e;
 
+typedef enum logic [2:0] {
+    arrs_32 = 3'd2,
+    arrs_64 = 3'd3,
+    arrs_128 = 3'd4
+} aarsize_e;
+
 typedef struct packed {
     // R/W, reset signal for the debug module
     logic active;

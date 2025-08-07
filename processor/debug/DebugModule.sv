@@ -35,6 +35,11 @@ logic [31:0] data0_q;
 logic [31:0] data1_d;
 logic [31:0] data1_q;
 
+logic [31:0] progbuf0_d;
+logic [31:0] progbuf0_q;
+logic [31:0] progbuf1_d;
+logic [31:0] progbuf1_q;
+
 dmcontrol_t dmcontrol_d;
 dmcontrol_t dmcontrol_q;
 dmstatus_t dmstatus_d;
@@ -106,7 +111,45 @@ always_comb begin : dmstatus
     dmstatus_d.confstrptrvalid = 1'b0;
     // Version 1.00 of the RV Specification
     dmstatus_d.version = debug::dmv_1_00;
-end
+end : dmstatus
+
+always_comb begin : abstract_command
+    // abstractcs constants
+    abstractcs_d.zero3 = '0;
+    abstractcs_d.progbufsize = 'd2;
+    abstractcs_d.zero11 = '0;
+    abstractcs_d.datacount = 'd2;
+
+    // command execution
+    // Abstractcs busy is used as trigger
+    if(abstractcs_q.busy)
+    unique case(command_q.qa.cmdtype)
+        debug::ct_reg_access: begin
+            // Check that the access size is only 32 bits
+            if(command_q.acc_reg.aarsize != debug::arrs_32) begin
+                abstractcs_d.error = cerr_buserr;
+                abstractcs_d.busy = 1'b0;
+            end
+            if(command_q.acc_reg.aarpostincrement)
+                command_d.acc_reg.regno = command_q.acc_reg.regno + 'd1;
+            if(command_q.acc_reg.transfer) begin
+                if(command_q.acc_reg.write) begin
+
+                    dbac_rf.
+                end
+            end
+        end
+        debug::ct_quick_access: begin
+    
+        end
+        debug::ct_access_mem: begin
+    
+        end
+        default: begin
+            
+        end
+    endcase
+end : abstract_command
 
 always_comb begin : dmi_bridge
     // Handle Writes
@@ -137,12 +180,19 @@ always_comb begin : dmi_bridge
                 abstractcs_d.relaxedpriv = w_abstractcs.relaxedpriv;
                 abstractcs_d.cmderr = abstractcs_q.cmderr & ~w_abstractcs.cmderr;
             end
-            debug::command:
-                command_d = dmi.dm_wdata;
+            debug::command: begin
+                // Only load a command when one is not in progress
+                if(!abstractcs_q.busy) begin
+                    command_d = dmi.dm_wdata;
+                    abstractcs_d.busy = 1'b1;
+                // Assert busy error if command load while in progress
+                end else
+                    abstractcs_d.cmderr = debug::cerr_busy;
+            end
             debug::progbuf0:
-                progbuf0 = dmi.dm_wdata;
+                progbuf0_d = dmi.dm_wdata;
             debug::progbuf1:
-                progbuf1 = dmi.dm_wdata;
+                progbuf1_d = dmi.dm_wdata;
             debug::sbcs: begin
                 sbcs_d.busyerror = sbcs_q.busyerror & ~w_sbcs.busyerror;
                 sbcs_d.readonaddr = w_sbcs.readonaddr;
@@ -156,6 +206,36 @@ always_comb begin : dmi_bridge
             debug::sbdata0:
                 sbdata0_d = dmi.dm_wdata;
         endcase
+    end
+
+    // DMI Reads
+    if(dmi.dm_access_valid && dmi.dm_read) begin
+        unique case(dmi.dm_addr)
+            debug::data0:
+                dmi.dm_rdata = data0_q;
+            debug::data1:
+                dmi.dm_rdata = data1_q;
+            debug::control:
+                dmi.dm_rdata = dmcontrol_q;
+            debug::status:
+                dmi.dm_rdata = dmstatus_q;
+            debug::abstractcs:
+                dmi.dm_rdata = abstractcs_q;
+            debug::command:
+                dmi.dm_rdata = command_q;
+            debug::progbuf0:
+                dmi.dm_rdata = progbuf0_q;
+            debug::progbuf1:
+                dmi.dm_rdata = progbuf1_q;
+            debug::sbcs:
+                dmi.dm_rdata = sbcs_q;
+            debug::sbaddress0:
+                dmi.dm_rdata = sbaddress0_q;
+            debug::sbdata0:
+                dmi.dm_rdata = sbdata0_q;
+        endcase
+    end else begin
+        dmi.dm_rdata = '0;
     end
 end
 
@@ -199,7 +279,7 @@ always_ff @(posedge iClk, negedge iRst_n) begin : ff_logic
             sbdata0_q <= sbdata0_d;
         end : norm_op
     end : active
-end : ff
+end : ff_logic
 
 endmodule : DebugModule
 
