@@ -10,10 +10,10 @@
  */
 
 `timescale 1ns/100ps
-// `include "debug_types.svh"
-// `include "reg_transport.svh"
+`include "debug.svh"
+`include "reg_transport.svh"
 import reg_transport::reg_transport_t;
-import debug_types::*;
+import debug::*;
 
 module DebugModule(
     input  logic iClk, iRst_n,
@@ -134,7 +134,6 @@ always_comb begin : abstract_command
                 command_d.acc_reg.regno = command_q.acc_reg.regno + 'd1;
             if(command_q.acc_reg.transfer) begin
                 if(command_q.acc_reg.write) begin
-
                     dbac_rf.
                 end
             end

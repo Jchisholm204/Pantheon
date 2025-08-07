@@ -1,2 +1,2 @@
 [general]
-include = ["**/*.sv", "**/*.svh"]
+include = ["**/*.sv", "**/*.svh", "include"]

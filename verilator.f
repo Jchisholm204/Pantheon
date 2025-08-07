@@ -4,8 +4,9 @@
 --trace-structs
 --x-assign unique
 --x-initial unique
--Iprocessor
--Iprocessor/types
+-Iinclude
+-Iinclude/types
+-Iinclude/interfaces
 -Iinterfaces
 -Isim/include
 
@@ -16,3 +17,5 @@
 ./processor/control/HazardUnit.sv
 ./processor/control/DebugModule.sv
 ./processor/control/BranchOutcome.sv
+./processor/debug/DCSRs.sv
+./processor/debug/DebugModule.sv

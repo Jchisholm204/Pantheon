@@ -107,6 +107,7 @@ typedef enum logic [2:0] {
     arrs_128 = 3'd4
 } aarsize_e;
 
+
 typedef struct packed {
     // R/W, reset signal for the debug module
     logic active;
