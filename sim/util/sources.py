@@ -24,13 +24,14 @@ class Sources:
         base += f"/{folder_name}"
         return Path(base)
 
-    def get_sourceFiles(path: [Path, str], pattern="*") -> SourceFiles:
+    def get_sourceFiles(path: [Path, str], pattern=["*.sv", "*.svh"]) -> SourceFiles:
         if isinstance(path, str):
             path = Path(path)
-        path = path.rglob(pattern)
         ls = SourceFiles()
-        for x in path:
-            ls.append(str(x))
+        for pat in pattern:
+            files = path.rglob(pat)
+            for x in files:
+                ls.append(str(x))
         return ls
 
     def TYPES() -> SourceFiles:
@@ -38,7 +39,7 @@ class Sources:
         sources = SourceFiles()
         sources += [basepath / "reg_transport.svh"]
         sources += [basepath / "pipeline_types.svh"]
-        sources += [basepath / "debug_types.svh"]
+        sources += [basepath / "debug.svh"]
         return sources
 
     def ISA() -> list:
@@ -69,6 +70,6 @@ class Sources:
 
     def PROC() -> SourceFiles:
         basepath = Sources.get_path("processor")
-        sl = Sources.get_sourceFiles(basepath, "*.sv")
-        sl += Sources.get_sourceFiles(basepath, "*.svh")
+        sl = Sources.get_sourceFiles(basepath, ["*.sv", "*.svh"])
+        # sl += Sources.get_sourceFiles(basepath, "*.svh")
         return sl
