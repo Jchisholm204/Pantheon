@@ -90,7 +90,6 @@ RegisterFile rf(
 
 IF insfet(
     .iClk(iClk),
-    .iEn(1'b1),
     .nRst(IF_rst),
     .iFlush(IF_flush),
     .iStall(IF_iStall),

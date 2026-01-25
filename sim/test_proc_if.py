@@ -10,7 +10,6 @@ from util.sources import Sources
 
 async def setup_if(dut):
     clock = Clock(dut.iClk, 10, units='ns')
-    dut.iEn.value = 1
     dut.nRst.value = 0
     dut.iFlush.value = 0
     dut.iStall.value = 0

@@ -14,7 +14,7 @@ import pipeline_types::if_id_t;
 
 module IF (
     // Standard Module Inputs
-    input wire iClk, iEn, nRst, iFlush, iStall,
+    input wire iClk, nRst, iFlush, iStall,
     // PC Input (from branch unit)
     input wire iPCS_EXT,
     input wire [31:0] iPC_EXT,
