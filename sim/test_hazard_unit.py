@@ -14,13 +14,11 @@ class HazardUnit():
         self.dut = dut
         self.iClk: ModifiableObject = self.dut.iClk
         self.nRst: ModifiableObject = self.dut.nRst
-        self.nRst_dbg: ModifiableObject = self.dut.nRst_dbg
         self.iBrTrue: ModifiableObject = self.dut.iBrTrue
         self.iIF_ID = if_id_t(dut.iIF_ID)
         self.iID_EX = id_ex_t(dut.iID_EX)
         self.iEX_ME = ex_mem_t(dut.iEX_ME)
         self.iME_WB = mem_wb_t(dut.iME_WB)
-        self.iStall_dbg: ModifiableObject = self.dut.iStall_dbg
         self.iStall_IF: ModifiableObject = self.dut.iStall_IF
         self.iStall_ME: ModifiableObject = self.dut.iStall_ME
         self.oStall_IF: ModifiableObject = self.dut.oStall_IF
@@ -43,28 +41,10 @@ class HazardUnit():
     async def setup(self):
         self.clock = Clock(self.iClk, 10, units='ns')
         self.nRst.value = 0
-        self.nRst_dbg.value = 0
         cocotb.start_soon(self.clock.start())
         await RisingEdge(self.iClk)
         await RisingEdge(self.iClk)
         self.nRst.value = 1
-        self.nRst_dbg.value = 1
-
-    async def check_rst_dbg(self):
-        if self.nRst_dbg.value == 0:
-            assert self.oRst_IF == 0, "HU DBG Rst Fail, oRst_IF"
-            assert self.oRst_ID == 0, "HU DBG Rst Fail, oRst_ID"
-            assert self.oRst_EX == 0, "HU DBG Rst Fail, oRst_EX"
-            assert self.oRst_ME == 0, "HU DBG Rst Fail, oRst_ME"
-        pass
-
-    async def check_stall_dbg(self):
-        if self.iStall_dbg.value == 1:
-            assert self.oStall_IF == 1, "HU DBG Stall Fail, oStall_IF"
-            assert self.oStall_ID == 1, "HU DBG Stall Fail, oStall_ID"
-            assert self.oStall_EX == 1, "HU DBG Stall Fail, oStall_EX"
-            assert self.oStall_ME == 1, "HU DBG Stall Fail, oStall_ME"
-        pass
 
     async def check_stall_IF(self):
         if self.iStall_IF.value == 1:
@@ -112,16 +92,6 @@ class HazardUnit():
             if self.iID_EX.rs2 != 0 & self.iME_WB.ctrl.mem_en:
                 assert self.oFwMeS2_en.value == 1, "HU FW Fail, oFwMeS2_en"
         pass
-
-
-@cocotb.test
-async def check_stall_dbg(dut):
-    hu = HazardUnit(dut)
-    hu.iStall_dbg.value = 0
-    await hu.check_stall_dbg()
-    hu.iStall_dbg.value = 1
-    await hu.check_stall_dbg()
-    pass
 
 
 @cocotb.test
