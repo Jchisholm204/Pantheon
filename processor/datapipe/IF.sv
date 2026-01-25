@@ -25,19 +25,18 @@ module IF (
     output if_id_t oID
 );
 
-wire [31:0] PC, PC4;
+wire [31:0] oPC, oPC4;
 
-assign oIM_addr = PC;
+assign oIM_addr = oPC;
 
 PC pc(
     .iClk(iClk),
     .nRst(nRst),
-    // Stall the program counter when in debug mode
     .iStall(iStall),
     .iPC(iPC_EXT),
     .iEXT_S(iPCS_EXT),
-    .oPC(PC),
-    .oPC4(PC4)
+    .oPC(oPC),
+    .oPC4(oPC4)
 );
 
 always_ff @(posedge iClk, negedge nRst) begin
@@ -46,8 +45,8 @@ always_ff @(posedge iClk, negedge nRst) begin
         oID.pc4 <= 32'd0;
         oID.instruction <= 32'd0;
     end else if(~iStall) begin
-        oID.pc <= PC;
-        oID.pc4 <= PC4;
+        oID.pc <= oPC;
+        oID.pc4 <= oPC4;
         oID.instruction <= iIM_data;
     end
 end

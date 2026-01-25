@@ -18,13 +18,11 @@ import rv32_isa::*;
 
 module HazardUnit(
     input logic iClk, nRst,
-    input logic nRst_dbg,
     input logic iBrTrue,
     input if_id_t iIF_ID,
     input id_ex_t iID_EX,
     input ex_mem_t iEX_ME,
     input mem_wb_t iME_WB,
-    input logic iStall_dbg,
     input logic iStall_IF,
     input logic iStall_ME,
     output logic oStall_IF,
@@ -73,17 +71,17 @@ assign stallMe = (stallMeS1 | stallMeS2) & iEX_ME.ctrl.mem_en;
 assign stallMu = iStall_IF | iStall_ME;
 
 // Stall Signals
-assign oStall_IF = stallMe | stallMu | iStall_dbg;
-assign oStall_ID = stallMe | stallMu | iStall_dbg;
-assign oStall_EX = stallMe | stallMu | iStall_dbg;
-assign oStall_ME = stallMu | iStall_dbg;
+assign oStall_IF = stallMe | stallMu;
+assign oStall_ID = stallMe | stallMu;
+assign oStall_EX = stallMe | stallMu;
+assign oStall_ME = stallMu;
 
 // Reset Signals
 // System Reset ONLY (not for pipeline flushing)
-assign oRst_IF = nRst & nRst_dbg;
-assign oRst_ID = nRst & nRst_dbg;
-assign oRst_EX = nRst & nRst_dbg;
-assign oRst_ME = nRst & nRst_dbg;
+assign oRst_IF = nRst;
+assign oRst_ID = nRst;
+assign oRst_EX = nRst;
+assign oRst_ME = nRst;
 
 // Flush Outputs - For Pipeline Flushing
 assign oFlush_IF = ~oRst_IF | iBrTrue;

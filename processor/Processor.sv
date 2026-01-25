@@ -19,8 +19,8 @@ import rv32_isa::*;
 
 module Processor(
     input logic iClk, nRst,
-    input logic [31:0] iInsData,
-    output logic [31:0] oInsAddr
+    input logic [31:0] iIF_ins,
+    output logic [31:0] oIF_addr
 );
 
 // Pipeline Registers
@@ -50,13 +50,11 @@ logic ME_rst, ME_flush, ME_iStall, ME_oStall;
 HazardUnit hu(
     .iClk(iClk),
     .nRst(nRst),
-    .nRst_dbg(DBG_nRst),
     .iBrTrue(ID_brTrue),
     .iIF_ID(IF_ID),
     .iID_EX(ID_EX),
     .iEX_ME(EX_ME),
     .iME_WB(ME_WB),
-    .iStall_dbg(DBG_halt),
     .iStall_IF(IF_oStall),
     .iStall_ME(ME_oStall),
     .oStall_IF(IF_iStall),
@@ -95,12 +93,11 @@ IF insfet(
     .iEn(1'b1),
     .nRst(IF_rst),
     .iFlush(IF_flush),
-    .iPCS_EXT(IF_PCS),
     .iStall(IF_iStall),
-    .iDbg(DBG_exec),
+    .iPCS_EXT(IF_PCS),
     .iPC_EXT(IF_iPC),
-    .iDbg_ins(DBG_ins),
-    .oStall(IF_oStall),
+    .iIM_data(iIF_ins),
+    .oIM_addr(oIF_addr),
     .oID(IF_ID)
 );
 
