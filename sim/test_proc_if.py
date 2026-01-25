@@ -8,8 +8,6 @@ from incl.pipeline_types import if_id_t
 from util.sources import Sources
 
 
-
-
 async def setup_if(dut):
     clock = Clock(dut.iClk, 10, units='ns')
     dut.iEn.value = 1
@@ -40,6 +38,7 @@ def test_if_runner():
 if __name__ == "__main__":
     test_if_runner()
 
+
 async def ins_memory(dut, mem: HexCreator):
     while True:
         await RisingEdge(dut.iClk)
@@ -53,6 +52,7 @@ async def ins_memory(dut, mem: HexCreator):
             dut.iIM_data.value = 0
         else:
             dut.iIM_data.value = mem.instructions[int(addr)]
+
 
 @cocotb.test()
 async def if_pcinc(dut):
