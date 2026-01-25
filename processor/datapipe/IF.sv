@@ -11,6 +11,7 @@
 
 `timescale 1ns/100ps
 import pipeline_types::if_id_t;
+import rv32_isa::*;
 
 module IF (
     // Standard Module Inputs
@@ -19,8 +20,10 @@ module IF (
     input wire iPCS_EXT,
     input wire [31:0] iPC_EXT,
     // Instruction Memory Wires
-    input wire [31:0] iIM_data,
-    output wire [31:0] oIM_addr,
+    input logic [31:0] iIM_data,
+    input logic iIM_rdy,
+    output logic [31:0] oIM_addr,
+    output logic oIM_rd,
     // Pipeline Register
     output if_id_t oID
 );
@@ -28,11 +31,12 @@ module IF (
 wire [31:0] oPC, oPC4;
 
 assign oIM_addr = oPC;
+assign oIM_rd = nRst & ~iStall;
 
 PC pc(
     .iClk(iClk),
     .nRst(nRst),
-    .iStall(iStall),
+    .iStall(iStall | ~iIM_rdy),
     .iPC(iPC_EXT),
     .iEXT_S(iPCS_EXT),
     .oPC(oPC),
@@ -40,11 +44,15 @@ PC pc(
 );
 
 always_ff @(posedge iClk, negedge nRst) begin
-    if(!nRst | iFlush) begin
+    if(!nRst) begin
         oID.pc <= 32'd0;
         oID.pc4 <= 32'd0;
-        oID.instruction <= 32'd0;
-    end else if(~iStall) begin
+    end else if(iFlush | ~iIM_rdy | iStall | iPCS_EXT) begin
+        oID.pc <= oPC;
+        oID.pc4 <= oPC4;
+        // Insert a NOP (addi r0, r0, 0) as a pipeline stall
+        oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
+    end else begin
         oID.pc <= oPC;
         oID.pc4 <= oPC4;
         oID.instruction <= iIM_data;

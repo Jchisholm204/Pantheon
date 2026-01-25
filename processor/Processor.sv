@@ -19,8 +19,20 @@ import rv32_isa::*;
 
 module Processor(
     input logic iClk, nRst,
-    input logic [31:0] iIF_ins,
-    output logic [31:0] oIF_addr
+    // Instruction Memory Signals
+    input logic [31:0] iIM_data,
+    input logic iIM_rdy,
+    output logic [31:0] oIM_addr,
+    output logic oIM_rd,
+    // Data Memory Signals
+    inout logic [31:0] iDM_data,
+    input logic iDM_rdy,
+    output logic oDM_rw,
+    output logic oDM_en,
+    output logic [31:0] oDM_addr
+    // Debug Signals
+    // input logic iDMI_en,
+    // output logic oDMI_rdy
 );
 
 // Pipeline Registers
