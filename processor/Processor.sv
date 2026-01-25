@@ -19,11 +19,8 @@ import rv32_isa::*;
 
 module Processor(
     input logic iClk, nRst,
-    input logic DBG_nRst,
-    input logic DBG_halt, DBG_exec, DBG_req_init,
-    input logic DBG_regWrite,
-    input logic [31:0] DBG_ins,
-    inout reg_transport_t DBG_rd, DBG_rs
+    input logic [31:0] iInsData,
+    output logic [31:0] oInsAddr
 );
 
 // Pipeline Registers
@@ -47,11 +44,6 @@ logic EX_FwMeS1_en, EX_FwMeS2_en;
 
 // MEM Signals
 logic ME_rst, ME_flush, ME_iStall, ME_oStall;
-
-// Debugger Signals
-// logic DBG_halt, DBG_exec, DBG_req_init;
-// logic [31:0] DBG_ins;
-// reg_transport_t DBG_rd, DBG_rs
 
 // -- Shared Modules -- //
 
