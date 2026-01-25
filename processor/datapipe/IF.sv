@@ -13,42 +13,30 @@
 import pipeline_types::if_id_t;
 
 module IF (
-    input wire iClk, iEn, nRst, iFlush,
-    input wire iPCS_EXT, iStall, iDbg,
-    input wire [31:0] iPC_EXT, iDbg_ins,
-    output logic oStall,
+    // Standard Module Inputs
+    input wire iClk, iEn, nRst, iFlush, iStall,
+    // PC Input (from branch unit)
+    input wire iPCS_EXT,
+    input wire [31:0] iPC_EXT,
+    // Instruction Memory Wires
+    input wire [31:0] iIM_data,
+    output wire [31:0] oIM_addr,
     // Pipeline Register
     output if_id_t oID
 );
 
-wire [31:0] PC, PC4, ins_data;
+wire [31:0] oPC, oPC4;
 
-WISHBONE_IF wb_imem(
-    .iClk(iClk),
-    .iRst(~nRst)
-);
+assign oIM_addr = oPC;
 
 PC pc(
     .iClk(iClk),
     .nRst(nRst),
-    // Stall the program counter when in debug mode
-    .iStall(iStall | iDbg),
+    .iStall(iStall),
     .iPC(iPC_EXT),
     .iEXT_S(iPCS_EXT),
-    .oPC(PC),
-    .oPC4(PC4)
-);
-
-IMEM wbi(
-    .iEn(iEn & ~iStall & ~iDbg),
-    .iAddr(PC),
-    .oData(ins_data),
-    .oStall(oStall),
-    .mem_wb(wb_imem)
-);
-
-ROMBlock insmem(
-    .mem_wb(wb_imem)
+    .oPC(oPC),
+    .oPC4(oPC4)
 );
 
 always_ff @(posedge iClk, negedge nRst) begin
@@ -57,9 +45,9 @@ always_ff @(posedge iClk, negedge nRst) begin
         oID.pc4 <= 32'd0;
         oID.instruction <= 32'd0;
     end else if(~iStall) begin
-        oID.pc <= PC;
-        oID.pc4 <= PC4;
-        oID.instruction <= iDbg ? iDbg_ins : ins_data;
+        oID.pc <= oPC;
+        oID.pc4 <= oPC4;
+        oID.instruction <= iIM_data;
     end
 end
 

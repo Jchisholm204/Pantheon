@@ -53,6 +53,7 @@ async def cla_add_tests(dut):
 def test_cla_runner():
     tb = testbench.TB("test_alu_cla", "CLA")
     tb.add_source("processor/ALU/CLA.sv")
+    tb.run_tests()
 
 
 if __name__ == "__main__":

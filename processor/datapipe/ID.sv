@@ -61,7 +61,7 @@ assign OP_Load    = dec_opcode == OpLoad;
 assign OP_JAL     = dec_opcode == OpJal;
 assign OP_JALR    = dec_opcode == OpJalR;
 assign OP_Branch  = dec_opcode == OpBranch;
-assign OP_SysCall = dec_opcode == OpSysCall;
+assign OP_SysCall = dec_opcode == OpSystem;
 assign OP_LUI     = dec_opcode == OpLUI;
 assign OP_AUIPC   = dec_opcode == OpAUIPC;
 

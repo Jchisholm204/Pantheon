@@ -44,21 +44,28 @@ class TB:
                           "--trace-structs",
                           "--vpi",
                           # "--output-split", "8",
-                          # "--threads", "1"
+                          # "--threads", "8 "
+                          # "--threads-dpi", "all "
                           "-I../include",
                           "-I../include/types",
                           "-I../include/interfaces"
                           ]
         runner = get_runner(self.sim)
+        sim_build = os.path.join(os.getcwd(), "sim_build")
+        waveform_path = os.path.join(os.getcwd(), "waveforms")
+        if not os.path.exists(waveform_path):
+            os.mkdir(waveform_path)
+        # sim_build = f"{self.basepath}/build_{self.test_module}"
         print(runner.build(
             verilog_sources=self.sources,
             hdl_toplevel=self.hdl_toplevel,
-            clean=False,
+            clean=True,
             waves=True,
             build_args=build_args,
             always=True,
             parameters=self.parameters,
-            defines=self.defines
+            defines=self.defines,
+            build_dir=sim_build
         ))
         print(runner.test(
             hdl_toplevel=self.hdl_toplevel,
@@ -66,9 +73,10 @@ class TB:
             plusargs=["-fst", "--trace-structs", "--vpi"],
             waves=True,
         ))
-        sim_build = os.path.join(os.getcwd(), "sim_build")
         try:
-            os.rename(os.path.join(sim_build, "dump.vcd"), os.path.join(sim_build, f"{self.hdl_toplevel}.vcd"))
-            print(f"[+] Renamed Waveform dump.vcd -> {self.hdl_toplevel}.vcd")
+            os.rename(os.path.join(sim_build, "dump.vcd"),
+                      os.path.join(waveform_path, f"{self.hdl_toplevel}.vcd"))
+            print(
+                f"[+] Renamed Waveform dump.vcd -> waveforms/{self.hdl_toplevel}.vcd")
         except FileExistsError:
             print("[!] No dump.vcd file found")

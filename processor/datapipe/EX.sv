@@ -42,17 +42,17 @@ ALU alu(
 );
 
 always_comb begin
-    if(iFwMeS1_en)
-        EX_A = iFwMe;
-    else if(iFwExS1_en)
+    if(iFwExS1_en)
         EX_A = oMEM.rd.value;
+    else if(iFwExS1_en)
+        EX_A = iFwMe;
     else
         EX_A = iID.rs1.value;
 
-    if(iFwMeS2_en)
-        EX_B = iFwMe;
-    else if(iFwExS2_en)
+    if(iFwExS2_en)
         EX_B = oMEM.rd.value;
+    else if(iFwMeS2_en)
+        EX_B = iFwMe;
     else
         EX_B = iID.rs2.value;
 
