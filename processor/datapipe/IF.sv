@@ -30,18 +30,19 @@ module IF #(
     output if_id_t oID
 );
 
+// Fetch Address and memory out
+assign oIM_addr = iPCS_EXT ? iPC_EXT : pc_fetch;
+assign oIM_rd = nRst & ~iStall;
 
-
-// Program Counter Logic
-logic [31:0] pc_current, pc_next, pc_fetch;
-logic ins_stall;
-
+logic [31:0] pc_current, pc_next, pc_fetch, pc_adder_in;
 // Unused wires for CLA
 wire unused_neg, unused_overflow, unused_carry, unused_zero;
 
+assign pc_adder_in = iPCS_EXT ? iPC_EXT : pc_fetch;
+
 CLA pc_adder (
     .iX(32'd4),
-    .iY(pc_fetch),
+    .iY(pc_adder_in),
     .iCarry(1'b0),
     .oS(pc_next),
     .oNegative(unused_neg),
@@ -51,41 +52,35 @@ CLA pc_adder (
 );
 
 always_ff @(posedge iClk, negedge nRst) begin
-// Active Low Reset Signal
+    // Active Low Reset Signal
     if (!nRst) begin
-        pc_current <= START_ADDR;
         pc_fetch <= START_ADDR;
     end else begin
-      // PC External Load Select (Stall is active high)
+        // PC External Load Select (Stall is active high)
         if (!iStall) begin
-            pc_current <= iPCS_EXT ? iPC_EXT : pc_fetch;
-            pc_fetch <= iPCS_EXT ? iPC_EXT : pc_next;
+            pc_fetch <= pc_next;
+            pc_current <= iPCS_EXT ? pc_adder_in : pc_fetch;
         end
     end
 end
-
-// END Program Counter Logic
-
-assign oIM_addr = pc_fetch;
-assign oIM_rd = nRst & ~iStall;
-assign ins_stall = pc_current == pc_fetch;
 
 always_ff @(posedge iClk, negedge nRst) begin
     if(!nRst) begin
         oID.pc <= 32'd0;
         oID.pc4 <= 32'd0;
         oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
-    end else if(iFlush | ~iIM_rdy | iStall | iPCS_EXT | ins_stall) begin
-        // oID.pc <= pc_fetch;
-        // oID.pc4 <= pc_next;
-        oID.pc <= pc_fetch;
+        oID.valid <= 1'b0;
+    end else if(iFlush | ~iIM_rdy | iStall | iPCS_EXT) begin
+        oID.pc <= iPC_EXT;
         oID.pc4 <= pc_next;
         // Insert a NOP (addi r0, r0, 0) as a pipeline stall
         oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
+        oID.valid <= 1'b0;
     end else begin
         oID.pc <= pc_current;
         oID.pc4 <= pc_fetch;
         oID.instruction <= iIM_data;
+        oID.valid <= 1'b1;
     end
 end
 

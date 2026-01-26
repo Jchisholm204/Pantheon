@@ -32,6 +32,7 @@ typedef struct packed {
     logic [31:0] pc;
     logic [31:0] pc4;
     logic [31:0] instruction;
+    logic valid;
 } if_id_t;
 
 typedef struct packed {

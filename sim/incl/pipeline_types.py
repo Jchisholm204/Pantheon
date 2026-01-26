@@ -100,6 +100,14 @@ class if_id_t(SuperStruct):
     def instruction(self, value):
         self.write_bits(64, 95, value)
 
+    @property
+    def valid(self):
+        return self.read_bits(96, 96)
+
+    @valid.setter
+    def valid(self, value):
+        self.write_bits(96, 96, value)
+
 
 class id_ex_t(SuperStruct):
     def __init__(self, parent, input=False):
