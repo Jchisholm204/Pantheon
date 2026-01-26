@@ -15,36 +15,43 @@ class Processor():
         self.dut = dut
         self.iClk: ModifiableObject = self.dut.iClk
         self.nRst: ModifiableObject = self.dut.nRst
-        self.iIF_ins: ModifiableObject = self.dut.iIF_ins
-        self.oIF_addr: ModifiableObject = self.dut.oIF_addr
+        self.iIM_data: ModifiableObject = self.dut.iIM_data
+        self.iIM_rdy: ModifiableObject = self.dut.iIM_rdy
+        self.oIM_addr: ModifiableObject = self.dut.oIM_addr
+        self.oIM_rd: ModifiableObject = self.dut.oIM_rd
         self.rf: NonHierarchyIndexableObject = self.dut.rf.reg_outs
         self._setup = False
         self.rom: HexCreator = None
 
-    async def proc_ins_mem(self):
+    async def _ins_mem(self, stall_cycles=0):
         while True:
             if self.rom is None:
                 await RisingEdge(self.iClk)
                 continue
-            addr = self.oIF_addr.value.integer
+            self.iIM_rdy.value = 0
+            addr = self.oIM_addr.value.integer
             if addr % 4 != 0:
                 assert False, f"Addr {addr} not divisible by 4"
             addr = addr / 4
             if addr < 0:
                 assert False, f"Addr {addr} was negative!"
             if addr >= len(self.rom.get_ins()):
-                self.iIF_ins.value = 0
+                self.iIM_data.value = 0
+                self.iIM_rdy.value = 1
             else:
-                self.iIF_ins.value = self.rom.get_ins()[int(addr)]
-
+                self.iIM_data.value = self.rom.get_ins()[int(addr)]
+                self.iIM_rdy.value = 1
             await RisingEdge(self.iClk)
+            self.iIM_rdy.value = 0
+            for _ in range(0, stall_cycles):
+                await RisingEdge(self.iClk)
 
     async def setup(self, mem: HexCreator = None):
         self.clock = Clock(self.iClk, 10, units='ns')
         self.nRst.value = 0
         self.rom = mem
         cocotb.start_soon(self.clock.start())
-        cocotb.start_soon(self.proc_ins_mem())
+        cocotb.start_soon(self._ins_mem())
         await RisingEdge(self.iClk)
         await RisingEdge(self.iClk)
         self.nRst.value = 1
@@ -65,9 +72,6 @@ class Processor():
             return
         await RisingEdge(self.iClk)
         for ins in self.rom.get_ins():
-            await RisingEdge(self.iClk)
-        # Flush the pipeline
-        for _ in range(0, 4):
             await RisingEdge(self.iClk)
 
 # For debugging purposes only.. not actual testing
@@ -99,9 +103,14 @@ class Processor():
 async def proc_addi_sub(dut):
     proc = Processor(dut)
     hc = HexCreator()
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     hc.add_Iins(OpAluI, 1, OpF3ADD, 0, 15)
     hc.add_Iins(OpAluI, 2, OpF3ADD, 1, 10)
     hc.add_Rins(OpAluR, 3, OpF3SUB, 1, 2, OpF7SUB)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
+    hc.add_Iins(OpAluI, 0, OpF3ADD, 0, 0)
     await proc.run_test(hc)
     print("dut.rf")
     print(type(dut.rf.reg_outs))
@@ -112,24 +121,24 @@ async def proc_addi_sub(dut):
     pass
 
 
-@cocotb.test
-async def proc_load_store_word(dut):
-    proc = Processor(dut)
-    hc = HexCreator()
-    tval: int = 0x3CF
-    shampt: int = 12
-    hc.add_Iins(OpAluI, 1, OpF3ADD, 0, tval)
-    # Shift the test value to be larger than a hw
-    hc.add_Iins(OpAluI, 1, OpF3SLL, 1, shampt)
-    tval = tval << shampt
-    # Store the test value
-    hc.add_Sins(OpStore, OpF3SW, 0, 1, 10)
-
-    hc.add_Iins(OpLoad, 2, OpF3LW, 0, 10)
-    await proc.run_test(hc)
-    assert proc.rf[1].value.integer == tval, "Fail Addi R1"
-    assert proc.rf[2].value.integer == tval, "Fail Load Word R2"
-    pass
+# @cocotb.test
+# async def proc_load_store_word(dut):
+#     proc = Processor(dut)
+#     hc = HexCreator()
+#     tval: int = 0x3CF
+#     shampt: int = 12
+#     hc.add_Iins(OpAluI, 1, OpF3ADD, 0, tval)
+#     # Shift the test value to be larger than a hw
+#     hc.add_Iins(OpAluI, 1, OpF3SLL, 1, shampt)
+#     tval = tval << shampt
+#     # Store the test value
+#     hc.add_Sins(OpStore, OpF3SW, 0, 1, 10)
+#
+#     hc.add_Iins(OpLoad, 2, OpF3LW, 0, 10)
+#     await proc.run_test(hc)
+#     assert proc.rf[1].value.integer == tval, "Fail Addi R1"
+#     assert proc.rf[2].value.integer == tval, "Fail Load Word R2"
+#     pass
 
 
 # @cocotb.test

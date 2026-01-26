@@ -101,14 +101,20 @@ RegisterFile rf(
 // --- Pipeline Stages --- //
 
 IF insfet(
+    // Standard Module Inputs
     .iClk(iClk),
     .nRst(IF_rst),
     .iFlush(IF_flush),
     .iStall(IF_iStall),
+    // PC External Load Input
     .iPCS_EXT(IF_PCS),
     .iPC_EXT(IF_iPC),
-    .iIM_data(iIF_ins),
-    .oIM_addr(oIF_addr),
+    // Instrcution Memory Wires
+    .iIM_data(iIM_data),
+    .iIM_rdy(iIM_rdy),
+    .oIM_addr(oIM_addr),
+    .oIM_rd(oIM_rd),
+    // Pipeline Register Output
     .oID(IF_ID)
 );
 
