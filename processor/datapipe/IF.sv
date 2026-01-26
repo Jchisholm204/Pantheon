@@ -55,6 +55,7 @@ always_ff @(posedge iClk, negedge nRst) begin
     // Active Low Reset Signal
     if (!nRst) begin
         pc_fetch <= START_ADDR;
+        pc_current <= START_ADDR;
     end else begin
         // PC External Load Select (Stall is active high)
         if (!iStall) begin
@@ -70,12 +71,14 @@ always_ff @(posedge iClk, negedge nRst) begin
         oID.pc4 <= 32'd0;
         oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
         oID.valid <= 1'b0;
-    end else if(iFlush | ~iIM_rdy | iStall | iPCS_EXT) begin
+    end else if(iFlush | ~iIM_rdy | iPCS_EXT) begin
         oID.pc <= iPC_EXT;
         oID.pc4 <= pc_next;
         // Insert a NOP (addi r0, r0, 0) as a pipeline stall
         oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
         oID.valid <= 1'b0;
+    end else if(iStall) begin
+        // Change nothing on a stall
     end else begin
         oID.pc <= pc_current;
         oID.pc4 <= pc_fetch;
