@@ -235,29 +235,25 @@ async def if_stall(dut):
 
 @cocotb.test()
 async def if_mem_stall(dut):
-    return
     mem = HexCreator()
     # Clear R1
     mem.add_Iins(OpAluI, 1, OpF3ADD, 0, 0)
     # Calculate summation of all values between 0 and 5
-    for i in range(0, 5):
+    for i in range(1, 6):
         mem.add_Iins(OpAluI, 1, OpF3ADD, 1, i)
     dut = IF(dut)
-    # Setup memory with two stall cycles
     await dut.setup(mem, 2)
     await RisingEdge(dut.iClk)
-    await RisingEdge(dut.iClk)
-    # Start the test
-    assert dut.oID.pc == 0, "PC 0 Failed"
-    # Wait for memory stall to expire
-    while dut.oID.instruction == 0x13:
+    # for _ in range(0, 10):
+    #     await RisingEdge(dut.iClk)
+    # return
+    # Attempt to loop through the sample instructions
+    for i, ins in enumerate(mem.instructions):
         await RisingEdge(dut.iClk)
-    assert dut.oID.instruction == mem.get_ins()[0], "Ins 0 Failed"
-    await RisingEdge(dut.iClk)
-    assert dut.oID.pc == 4, "PC 4 Failed"
-    # Wait for memory stall to expire
-    while dut.oID.instruction == 0x13:
-        await RisingEdge(dut.iClk)
-    assert dut.oID.instruction == mem.get_ins()[1], "Ins 1 Failed"
-    await RisingEdge(dut.iClk)
+        while dut.oID.valid == 0:
+            await RisingEdge(dut.iClk)
+        oins = int(if_id_t(dut.oID).instruction)
+        assert oins == ins, f"INS Assert Failed {i}"
+        assert dut.oID.pc == i*4, "Incorrect INS Returned"
+        assert dut.oID.pc4 == (i+1)*4, "Incorrect INS Returned"
     pass

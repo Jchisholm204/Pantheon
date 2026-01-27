@@ -35,6 +35,7 @@ assign oIM_addr = iPCS_EXT ? iPC_EXT : pc_fetch;
 assign oIM_rd = nRst & ~iStall;
 
 logic [31:0] pc_current, pc_next, pc_fetch, pc_adder_in;
+logic IM_stall;
 // Unused wires for CLA
 wire unused_neg, unused_overflow, unused_carry, unused_zero;
 
@@ -58,7 +59,7 @@ always_ff @(posedge iClk, negedge nRst) begin
         pc_current <= START_ADDR;
     end else begin
         // PC External Load Select (Stall is active high)
-        if (!iStall) begin
+        if (!iStall && iIM_rdy) begin
             pc_fetch <= pc_next;
             pc_current <= iPCS_EXT ? pc_adder_in : pc_fetch;
         end
@@ -71,7 +72,7 @@ always_ff @(posedge iClk, negedge nRst) begin
         oID.pc4 <= 32'd0;
         oID.instruction <= {{12{1'b0}}, {5{1'b0}}, OpF3ADD, {5{1'b0}}, OpAluI};
         oID.valid <= 1'b0;
-    end else if(iFlush | ~iIM_rdy | iPCS_EXT) begin
+    end else if(iFlush | iPCS_EXT | IM_stall) begin
         oID.pc <= iPC_EXT;
         oID.pc4 <= pc_next;
         // Insert a NOP (addi r0, r0, 0) as a pipeline stall
@@ -85,6 +86,7 @@ always_ff @(posedge iClk, negedge nRst) begin
         oID.instruction <= iIM_data;
         oID.valid <= 1'b1;
     end
+    IM_stall <= ~iIM_rdy;
 end
 
 endmodule
